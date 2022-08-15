@@ -13,6 +13,7 @@ SOURCES += \
     startscreen.cpp
 
 HEADERS += \
+    dataModel.hpp \
     startscreen.h
 
 FORMS += \
