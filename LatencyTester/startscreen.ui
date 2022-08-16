@@ -74,7 +74,7 @@
    </widget>
    <widget class="QFrame" name="helpFrame">
     <property name="enabled">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <property name="geometry">
      <rect>
@@ -113,20 +113,43 @@
        <number>5</number>
       </property>
       <item>
+       <widget class="QPushButton" name="userManualButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Manual de usuario</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="generalInfoButton">
         <property name="text">
          <string>Información general</string>
         </property>
        </widget>
       </item>
-      <item>
-       <widget class="QPushButton" name="userManualButton">
-        <property name="text">
-         <string>Manual de usuario</string>
-        </property>
-       </widget>
-      </item>
      </layout>
+    </widget>
+    <widget class="QPushButton" name="backButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>50</y>
+       <width>83</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(248, 228, 92);
+border-color: rgb(246, 211, 45);</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
     </widget>
    </widget>
   </widget>
