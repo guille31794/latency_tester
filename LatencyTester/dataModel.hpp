@@ -14,16 +14,7 @@ enum class MenuScreen
     HELP_SCREEN,
     GENERAL_INFO_SCREEN,
     USER_MANUAL_SCREEN,
-
 };
-
-QMap<MenuScreen, MenuScreen> backButtonOutputs{{MenuScreen::HELP_SCREEN, MenuScreen::START_SCREEN},
-                                               {MenuScreen::USER_MANUAL_SCREEN, MenuScreen::START_MEASURE_SCREEN},
-                                               {MenuScreen::SETTINGS_SCREEN, MenuScreen::START_SCREEN},
-                                               {MenuScreen::GENERAL_INFO_SCREEN, MenuScreen::START_SCREEN},
-                                               {MenuScreen::START_MEASURE_SCREEN, MenuScreen::START_SCREEN},
-                                               {MenuScreen::MEASURES_REGISTRY_SCREEN, MenuScreen::START_SCREEN},
-                                              };
 
 struct GeneralConfig
 {

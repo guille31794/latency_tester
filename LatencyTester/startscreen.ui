@@ -131,26 +131,74 @@
       </item>
      </layout>
     </widget>
-    <widget class="QPushButton" name="backButton">
+   </widget>
+   <widget class="QFrame" name="generalInfoFrame">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>800</width>
+      <height>600</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QPlainTextEdit" name="generalInfoText">
      <property name="enabled">
       <bool>false</bool>
      </property>
      <property name="geometry">
       <rect>
-       <x>30</x>
-       <y>50</y>
-       <width>83</width>
-       <height>25</height>
+       <x>230</x>
+       <y>110</y>
+       <width>311</width>
+       <height>341</height>
       </rect>
      </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(248, 228, 92);
-border-color: rgb(246, 211, 45);</string>
+     <property name="font">
+      <font>
+       <family>DejaVu Sans</family>
+       <pointsize>12</pointsize>
+      </font>
      </property>
-     <property name="text">
-      <string/>
+     <property name="plainText">
+      <string>Medidor de lantecias para sistemas de videovigilancia críticos.
+
+Versión de HW: 1.0
+Versión de SW: 1.0
+Autor: Guillermo Girón García
+GitHub: @guille31794
+
+Todos los derechos reservados.</string>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::NoTextInteraction</set>
      </property>
     </widget>
+   </widget>
+   <widget class="QPushButton" name="backButton">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>30</y>
+      <width>83</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(248, 228, 92);
+border-color: rgb(246, 211, 45);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
    </widget>
   </widget>
  </widget>
