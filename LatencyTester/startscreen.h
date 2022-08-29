@@ -25,10 +25,12 @@ public:
 
 private slots:
     void on_helpButton_released();
-
     void on_generalInfoButton_released();
-
     void on_backButton_released();
+    void on_usersManualButton_released();
+    void on_settingsButton_released();
+
+    void on_languageBox_textChanged(const QString &arg1);
 
 private:
     /**
@@ -46,10 +48,16 @@ private:
      * @param toShow next screen asked
      */
     void setUpNextScreen(QList<QPointer<QWidget>> &toHide, QList<QPointer<QWidget>> &toShow);
+    /**
+     * @brief Used by the buttons to handle transition to next screen
+     * @param nextScreen to show
+     */
+    void transitionScreen(MenuScreen nextScreen);
     Ui::StartScreen *ui;
     MenuScreen mCurrentScreen;
     QList<QPointer<QWidget>> mCurrentScreenWidgets;
     QMultiMap<MenuScreen, QPointer<QWidget>> mWidgets;
     QMap<MenuScreen, MenuScreen> mBackButtonOutputs;
+    GeneralConfigSettings mSettings;
 };
 #endif // STARTSCREEN_H

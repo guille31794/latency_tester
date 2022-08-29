@@ -13,15 +13,23 @@ enum class MenuScreen
     SETTINGS_SCREEN,
     HELP_SCREEN,
     GENERAL_INFO_SCREEN,
-    USER_MANUAL_SCREEN,
+    USERS_MANUAL_SCREEN,
 };
 
-struct GeneralConfig
+enum class Languages
 {
-    QString language;
-    bool daltonicMode;
-    quint8 fontSize;
+    SPANISH,
+    ENGLISH,
+    POLISH
 };
+
+struct GeneralConfigSettings
+{
+    Languages language;
+    bool daltonicMode;
+    quint8 fontSize = 12;
+};
+
 
 
 #endif // DATAMODEL_HPP

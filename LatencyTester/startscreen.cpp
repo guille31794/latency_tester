@@ -19,20 +19,12 @@ StartScreen::~StartScreen()
 
 void StartScreen::on_helpButton_released()
 {
-    mCurrentScreenWidgets = mWidgets.values(mCurrentScreen);
-    mCurrentScreen = MenuScreen::HELP_SCREEN;
-    QList<QPointer<QWidget>> nextWidgets{mWidgets.values(mCurrentScreen)};
-    setUpNextScreen(mCurrentScreenWidgets, nextWidgets);
-    mCurrentScreenWidgets = nextWidgets;
+    transitionScreen(MenuScreen::HELP_SCREEN);
 }
 
 void StartScreen::on_generalInfoButton_released()
 {
-    mCurrentScreenWidgets = mWidgets.values(mCurrentScreen);
-    mCurrentScreen = MenuScreen::GENERAL_INFO_SCREEN;
-    QList<QPointer<QWidget>> nextWidgets{mWidgets.values(mCurrentScreen)};
-    setUpNextScreen(mCurrentScreenWidgets, nextWidgets);
-    mCurrentScreenWidgets = nextWidgets;
+    transitionScreen(MenuScreen::GENERAL_INFO_SCREEN);
 }
 
 void StartScreen::on_backButton_released()
@@ -47,6 +39,16 @@ void StartScreen::on_backButton_released()
         ui->backButton->setVisible(false);
         ui->backButton->setEnabled(false);
     }
+}
+
+void StartScreen::on_usersManualButton_released()
+{
+
+}
+
+void StartScreen::on_settingsButton_released()
+{
+    transitionScreen(MenuScreen::SETTINGS_SCREEN);
 }
 
 void StartScreen::init()
@@ -66,15 +68,18 @@ void StartScreen::widgetsMapInit()
                 {MenuScreen::START_SCREEN, ui->startMeasuringButton},
                 {MenuScreen::START_SCREEN, ui->historicOfMeasuresButton},
                 {MenuScreen::HELP_SCREEN, ui->helpFrame},
-                {MenuScreen::HELP_SCREEN, ui->userManualButton},
+                {MenuScreen::HELP_SCREEN, ui->usersManualButton},
                 {MenuScreen::HELP_SCREEN, ui->generalInfoButton},
                 {MenuScreen::HELP_SCREEN, ui->backButton},
                 {MenuScreen::GENERAL_INFO_SCREEN, ui->generalInfoFrame},
                 {MenuScreen::GENERAL_INFO_SCREEN, ui->generalInfoText},
                 {MenuScreen::GENERAL_INFO_SCREEN, ui->backButton},
+                {MenuScreen::SETTINGS_SCREEN, ui->settingsFrame},
+                {MenuScreen::SETTINGS_SCREEN, ui->languageBox},
+                {MenuScreen::SETTINGS_SCREEN, ui->backButton}
                };
 
-    auto it{mWidgets.find(MenuScreen::HELP_SCREEN)};
+    auto it{mWidgets.find(MenuScreen::SETTINGS_SCREEN)};
     while (it != mWidgets.end() )
     {
         it.value()->setVisible(false);
@@ -83,7 +88,7 @@ void StartScreen::widgetsMapInit()
     }
 
     mBackButtonOutputs = {{MenuScreen::HELP_SCREEN, MenuScreen::START_SCREEN},
-                          {MenuScreen::USER_MANUAL_SCREEN, MenuScreen::START_MEASURE_SCREEN},
+                          {MenuScreen::USERS_MANUAL_SCREEN, MenuScreen::START_MEASURE_SCREEN},
                           {MenuScreen::SETTINGS_SCREEN, MenuScreen::START_SCREEN},
                           {MenuScreen::GENERAL_INFO_SCREEN, MenuScreen::START_SCREEN},
                           {MenuScreen::START_MEASURE_SCREEN, MenuScreen::START_SCREEN},
@@ -105,5 +110,20 @@ void StartScreen::setUpNextScreen(QList<QPointer<QWidget> > &toHide, QList<QPoin
         widget->setVisible(true);
         widget->setEnabled(true);
     }
+}
+
+void StartScreen::transitionScreen(MenuScreen nextScreen)
+{
+    mCurrentScreenWidgets = mWidgets.values(mCurrentScreen);
+    mCurrentScreen = nextScreen;
+    QList<QPointer<QWidget>> nextWidgets{mWidgets.values(mCurrentScreen)};
+    setUpNextScreen(mCurrentScreenWidgets, nextWidgets);
+    mCurrentScreenWidgets = nextWidgets;
+}
+
+
+void StartScreen::on_languageBox_textChanged(const QString &arg1)
+{
+
 }
 

@@ -16,6 +16,9 @@
   <property name="styleSheet">
    <string notr="true">background-color: rgb(28, 113, 216);</string>
   </property>
+  <property name="toolButtonStyle">
+   <enum>Qt::ToolButtonTextOnly</enum>
+  </property>
   <widget class="QWidget" name="startWidget">
    <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
@@ -113,7 +116,7 @@
        <number>5</number>
       </property>
       <item>
-       <widget class="QPushButton" name="userManualButton">
+       <widget class="QPushButton" name="usersManualButton">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -199,6 +202,44 @@ border-color: rgb(246, 211, 45);</string>
     <property name="text">
      <string/>
     </property>
+   </widget>
+   <widget class="QFrame" name="settingsFrame">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>800</width>
+      <height>600</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QWidget" name="verticalLayoutWidget_3">
+     <property name="geometry">
+      <rect>
+       <x>220</x>
+       <y>60</y>
+       <width>371</width>
+       <height>471</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="settingsLayout">
+      <item>
+       <widget class="QSpinBox" name="languageBox">
+        <property name="maximum">
+         <number>3</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </widget>
   </widget>
  </widget>
