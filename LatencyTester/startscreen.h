@@ -30,12 +30,11 @@ private slots:
     void on_usersManualButton_released();
     void on_settingsButton_released();
 
-    void on_languageBox_textChanged(const QString &arg1);
     void on_daltonicModeBox_stateChanged(int arg1);
-
-    void on_settingsButtonBox_accepted();
-
     void on_fontSizeSlider_valueChanged(int value);
+    void on_languagesComboBox_currentIndexChanged(int index);
+    void on_settingsButtonBox_accepted();
+    void on_settingsButtonBox_rejected();
 
 private:
     /**

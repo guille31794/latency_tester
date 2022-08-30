@@ -49,17 +49,25 @@ void StartScreen::on_usersManualButton_released()
 void StartScreen::on_settingsButton_released()
 {
     transitionScreen(MenuScreen::SETTINGS_SCREEN);
+    ui->settingsButtonBox->setEnabled(false);
 }
 
-void StartScreen::on_languageBox_textChanged(const QString &arg1)
+void StartScreen::on_languagesComboBox_currentIndexChanged(int index)
 {
-
+    mNextSettings.language = Languages(index);
+    ui->settingsButtonBox->setEnabled(true);
 }
-
 
 void StartScreen::on_daltonicModeBox_stateChanged(int arg1)
 {
     mNextSettings.daltonicMode = arg1;
+    ui->settingsButtonBox->setEnabled(true);
+}
+
+void StartScreen::on_fontSizeSlider_valueChanged(int value)
+{
+    mNextSettings.fontSize = value;
+    ui->settingsButtonBox->setEnabled(true);
 }
 
 void StartScreen::on_settingsButtonBox_accepted()
@@ -70,9 +78,12 @@ void StartScreen::on_settingsButtonBox_accepted()
     mCurrentSettings = mNextSettings;
 }
 
-void StartScreen::on_fontSizeSlider_valueChanged(int value)
+void StartScreen::on_settingsButtonBox_rejected()
 {
-    mNextSettings.fontSize = value;
+    ui->languagesComboBox->setCurrentIndex(static_cast<int>(mCurrentSettings.language));
+    ui->fontSizeSlider->setValue(mCurrentSettings.fontSize);
+    ui->daltonicModeBox->setCheckState(mCurrentSettings.daltonicMode ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
+    ui->settingsButtonBox->setEnabled(false);
 }
 
 void StartScreen::init()
@@ -100,7 +111,7 @@ void StartScreen::widgetsMapInit()
                 {MenuScreen::GENERAL_INFO_SCREEN, ui->backButton},
                 {MenuScreen::SETTINGS_SCREEN, ui->settingsFrame},
                 {MenuScreen::SETTINGS_SCREEN, ui->languageText},
-                {MenuScreen::SETTINGS_SCREEN, ui->languageBox},
+                {MenuScreen::SETTINGS_SCREEN, ui->languagesComboBox},
                 {MenuScreen::SETTINGS_SCREEN, ui->backButton},
                 {MenuScreen::SETTINGS_SCREEN, ui->daltonicModeBox},
                 {MenuScreen::SETTINGS_SCREEN, ui->fontSizeText},
@@ -185,4 +196,3 @@ void StartScreen::setTranslation()
         }
     }
 }
-

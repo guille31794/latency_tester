@@ -238,11 +238,23 @@ border-color: rgb(246, 211, 45);</string>
         </property>
        </widget>
       </item>
-      <item>
-       <widget class="QSpinBox" name="languageBox">
-        <property name="maximum">
-         <number>3</number>
-        </property>
+      <item alignment="Qt::AlignHCenter">
+       <widget class="QComboBox" name="languagesComboBox">
+        <item>
+         <property name="text">
+          <string>Español</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>English</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Polski</string>
+         </property>
+        </item>
        </widget>
       </item>
       <item alignment="Qt::AlignHCenter">
