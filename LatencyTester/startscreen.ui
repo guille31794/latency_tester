@@ -205,7 +205,7 @@ border-color: rgb(246, 211, 45);</string>
    </widget>
    <widget class="QFrame" name="settingsFrame">
     <property name="enabled">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
@@ -227,10 +227,17 @@ border-color: rgb(246, 211, 45);</string>
        <x>220</x>
        <y>60</y>
        <width>371</width>
-       <height>471</height>
+       <height>475</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="settingsLayout">
+      <item alignment="Qt::AlignHCenter">
+       <widget class="QLineEdit" name="languageText">
+        <property name="text">
+         <string>Idioma</string>
+        </property>
+       </widget>
+      </item>
       <item>
        <widget class="QSpinBox" name="languageBox">
         <property name="maximum">
@@ -238,9 +245,48 @@ border-color: rgb(246, 211, 45);</string>
         </property>
        </widget>
       </item>
+      <item alignment="Qt::AlignHCenter">
+       <widget class="QLineEdit" name="fontSizeText">
+        <property name="text">
+         <string>Tamaño de la fuente</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSlider" name="fontSizeSlider">
+        <property name="minimum">
+         <number>11</number>
+        </property>
+        <property name="maximum">
+         <number>20</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item alignment="Qt::AlignHCenter">
+       <widget class="QCheckBox" name="daltonicModeBox">
+        <property name="text">
+         <string>Modo daltónicos</string>
+        </property>
+       </widget>
+      </item>
+      <item alignment="Qt::AlignHCenter">
+       <widget class="QDialogButtonBox" name="settingsButtonBox">
+        <property name="standardButtons">
+         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </widget>
+   <zorder>verticalLayoutWidget</zorder>
+   <zorder>helpFrame</zorder>
+   <zorder>generalInfoFrame</zorder>
+   <zorder>settingsFrame</zorder>
+   <zorder>backButton</zorder>
   </widget>
  </widget>
  <resources/>

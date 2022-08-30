@@ -31,6 +31,11 @@ private slots:
     void on_settingsButton_released();
 
     void on_languageBox_textChanged(const QString &arg1);
+    void on_daltonicModeBox_stateChanged(int arg1);
+
+    void on_settingsButtonBox_accepted();
+
+    void on_fontSizeSlider_valueChanged(int value);
 
 private:
     /**
@@ -53,11 +58,25 @@ private:
      * @param nextScreen to show
      */
     void transitionScreen(MenuScreen nextScreen);
+    /**
+     * @brief Enable / disable daltonic mode
+     */
+    void enabledDaltonicMode();
+    /**
+     * @brief Change the font size of all texts
+     */
+    void setFontSize();
+    /**
+     * @brief Translate the texts to the selected language
+     */
+    void setTranslation();
+
     Ui::StartScreen *ui;
     MenuScreen mCurrentScreen;
     QList<QPointer<QWidget>> mCurrentScreenWidgets;
     QMultiMap<MenuScreen, QPointer<QWidget>> mWidgets;
     QMap<MenuScreen, MenuScreen> mBackButtonOutputs;
-    GeneralConfigSettings mSettings;
+    GeneralConfigSettings mNextSettings;
+    GeneralConfigSettings mCurrentSettings;
 };
 #endif // STARTSCREEN_H

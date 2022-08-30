@@ -51,6 +51,30 @@ void StartScreen::on_settingsButton_released()
     transitionScreen(MenuScreen::SETTINGS_SCREEN);
 }
 
+void StartScreen::on_languageBox_textChanged(const QString &arg1)
+{
+
+}
+
+
+void StartScreen::on_daltonicModeBox_stateChanged(int arg1)
+{
+    mNextSettings.daltonicMode = arg1;
+}
+
+void StartScreen::on_settingsButtonBox_accepted()
+{
+    setTranslation();
+    setFontSize();
+    enabledDaltonicMode();
+    mCurrentSettings = mNextSettings;
+}
+
+void StartScreen::on_fontSizeSlider_valueChanged(int value)
+{
+    mNextSettings.fontSize = value;
+}
+
 void StartScreen::init()
 {
     ui->setupUi(this);
@@ -75,8 +99,13 @@ void StartScreen::widgetsMapInit()
                 {MenuScreen::GENERAL_INFO_SCREEN, ui->generalInfoText},
                 {MenuScreen::GENERAL_INFO_SCREEN, ui->backButton},
                 {MenuScreen::SETTINGS_SCREEN, ui->settingsFrame},
+                {MenuScreen::SETTINGS_SCREEN, ui->languageText},
                 {MenuScreen::SETTINGS_SCREEN, ui->languageBox},
-                {MenuScreen::SETTINGS_SCREEN, ui->backButton}
+                {MenuScreen::SETTINGS_SCREEN, ui->backButton},
+                {MenuScreen::SETTINGS_SCREEN, ui->daltonicModeBox},
+                {MenuScreen::SETTINGS_SCREEN, ui->fontSizeText},
+                {MenuScreen::SETTINGS_SCREEN, ui->fontSizeSlider},
+                {MenuScreen::SETTINGS_SCREEN, ui->settingsButtonBox}
                };
 
     auto it{mWidgets.find(MenuScreen::SETTINGS_SCREEN)};
@@ -121,9 +150,39 @@ void StartScreen::transitionScreen(MenuScreen nextScreen)
     mCurrentScreenWidgets = nextWidgets;
 }
 
-
-void StartScreen::on_languageBox_textChanged(const QString &arg1)
+void StartScreen::enabledDaltonicMode()
 {
+    if(mNextSettings.daltonicMode)
+    {
 
+    }
+    else
+    {
+
+    }
+}
+
+void StartScreen::setFontSize()
+{
+    if(mNextSettings.fontSize != mCurrentSettings.fontSize)
+    {
+
+    }
+}
+
+void StartScreen::setTranslation()
+{
+    if(mNextSettings.language != mCurrentSettings.language)
+    {
+        switch (mNextSettings.language)
+        {
+            case Languages::SPANISH:
+            break;
+            case Languages::ENGLISH:
+            break;
+            case Languages::POLISH:
+            break;
+        }
+    }
 }
 
