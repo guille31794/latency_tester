@@ -28,7 +28,7 @@ struct GeneralConfigSettings
 {
     Languages language = Languages::SPANISH;
     bool daltonicMode = false;
-    quint8 fontSize = 11;
+    quint8 fontSize = 10;
 };
 
 #endif // DATAMODEL_HPP

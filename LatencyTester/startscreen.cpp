@@ -74,7 +74,7 @@ void StartScreen::on_settingsButtonBox_accepted()
 {
     setTranslation();
     setFontSize();
-    enabledDaltonicMode();
+    //enabledDaltonicMode();
     mCurrentSettings = mNextSettings;
 }
 
@@ -177,7 +177,13 @@ void StartScreen::setFontSize()
 {
     if(mNextSettings.fontSize != mCurrentSettings.fontSize)
     {
-
+        QFont font;
+        for(auto widget : mWidgets)
+        {
+            font = widget->font();
+            font.setPointSize(mNextSettings.fontSize);
+            widget->setFont(font);
+        }
     }
 }
 
