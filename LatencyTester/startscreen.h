@@ -30,7 +30,6 @@ private slots:
     void on_usersManualButton_released();
     void on_settingsButton_released();
 
-    void on_daltonicModeBox_stateChanged(int arg1);
     void on_fontSizeSlider_valueChanged(int value);
     void on_languagesComboBox_currentIndexChanged(int index);
     void on_settingsButtonBox_accepted();
@@ -58,10 +57,6 @@ private:
      */
     void transitionScreen(MenuScreen nextScreen);
     /**
-     * @brief Enable / disable daltonic mode
-     */
-    void enabledDaltonicMode();
-    /**
      * @brief Change the font size of all texts
      */
     void setFontSize();
@@ -69,6 +64,10 @@ private:
      * @brief Translate the texts to the selected language
      */
     void setTranslation();
+    /**
+     * @brief load initial configuration
+     */
+    void loadConfig();
 
     Ui::StartScreen *ui;
     MenuScreen mCurrentScreen;

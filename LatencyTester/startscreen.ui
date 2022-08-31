@@ -10,8 +10,26 @@
     <height>600</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>800</width>
+    <height>600</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>800</width>
+    <height>600</height>
+   </size>
+  </property>
   <property name="windowTitle">
-   <string>StartScreen</string>
+   <string>Medidor de latencias</string>
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: rgb(28, 113, 216);</string>
@@ -283,13 +301,6 @@ border-color: rgb(246, 211, 45);</string>
         </property>
         <property name="tickInterval">
          <number>1</number>
-        </property>
-       </widget>
-      </item>
-      <item alignment="Qt::AlignHCenter">
-       <widget class="QCheckBox" name="daltonicModeBox">
-        <property name="text">
-         <string>Modo daltónicos</string>
         </property>
        </widget>
       </item>

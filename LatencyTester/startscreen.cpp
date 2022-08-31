@@ -3,6 +3,7 @@
 #include <QList>
 #include <QStyle>
 #include <QCommonStyle>
+#include <QSettings>
 
 StartScreen::StartScreen(QWidget *parent)
     : QMainWindow(parent)
@@ -58,12 +59,6 @@ void StartScreen::on_languagesComboBox_currentIndexChanged(int index)
     ui->settingsButtonBox->setEnabled(true);
 }
 
-void StartScreen::on_daltonicModeBox_stateChanged(int arg1)
-{
-    mNextSettings.daltonicMode = arg1;
-    ui->settingsButtonBox->setEnabled(true);
-}
-
 void StartScreen::on_fontSizeSlider_valueChanged(int value)
 {
     mNextSettings.fontSize = value;
@@ -74,7 +69,6 @@ void StartScreen::on_settingsButtonBox_accepted()
 {
     setTranslation();
     setFontSize();
-    //enabledDaltonicMode();
     mCurrentSettings = mNextSettings;
 }
 
@@ -82,22 +76,22 @@ void StartScreen::on_settingsButtonBox_rejected()
 {
     ui->languagesComboBox->setCurrentIndex(static_cast<int>(mCurrentSettings.language));
     ui->fontSizeSlider->setValue(mCurrentSettings.fontSize);
-    ui->daltonicModeBox->setCheckState(mCurrentSettings.daltonicMode ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
     ui->settingsButtonBox->setEnabled(false);
 }
 
 void StartScreen::init()
 {
-    ui->setupUi(this);
-    QCommonStyle style;
-    ui->backButton->setIcon(style.standardIcon(QStyle::SP_ArrowBack));
-    ui->backButton->setVisible(false);
-    ui->backButton->setEnabled(false);
     widgetsMapInit();
+    loadConfig();
 }
 
 void StartScreen::widgetsMapInit()
 {
+    ui->setupUi(this);
+
+    QCommonStyle style;
+    ui->backButton->setIcon(style.standardIcon(QStyle::SP_ArrowBack));
+
     mWidgets = {{MenuScreen::START_SCREEN, ui->helpButton},
                 {MenuScreen::START_SCREEN, ui->settingsButton},
                 {MenuScreen::START_SCREEN, ui->startMeasuringButton},
@@ -113,7 +107,6 @@ void StartScreen::widgetsMapInit()
                 {MenuScreen::SETTINGS_SCREEN, ui->languageText},
                 {MenuScreen::SETTINGS_SCREEN, ui->languagesComboBox},
                 {MenuScreen::SETTINGS_SCREEN, ui->backButton},
-                {MenuScreen::SETTINGS_SCREEN, ui->daltonicModeBox},
                 {MenuScreen::SETTINGS_SCREEN, ui->fontSizeText},
                 {MenuScreen::SETTINGS_SCREEN, ui->fontSizeSlider},
                 {MenuScreen::SETTINGS_SCREEN, ui->settingsButtonBox}
@@ -161,18 +154,6 @@ void StartScreen::transitionScreen(MenuScreen nextScreen)
     mCurrentScreenWidgets = nextWidgets;
 }
 
-void StartScreen::enabledDaltonicMode()
-{
-    if(mNextSettings.daltonicMode)
-    {
-
-    }
-    else
-    {
-
-    }
-}
-
 void StartScreen::setFontSize()
 {
     if(mNextSettings.fontSize != mCurrentSettings.fontSize)
@@ -200,5 +181,20 @@ void StartScreen::setTranslation()
             case Languages::POLISH:
             break;
         }
+    }
+}
+
+void StartScreen::loadConfig()
+{
+    QSettings settings{"TFG Guillermo Giron Garcia", "Latency Tester"};
+
+    if(settings.value("Language") != 0)
+    {
+        mCurrentSettings.language = settings.value("Language").value<Languages>();
+    }
+
+    if(settings.value("FontSize") != 0)
+    {
+        mCurrentSettings.fontSize = settings.value("FontSize").value<quint8>();
     }
 }

@@ -4,7 +4,7 @@
 #include <QString>
 #include <QVector>
 #include <QMap>
-#include <iostream>
+#include <QMetaType>
 
 enum class MenuScreen
 {
@@ -27,8 +27,9 @@ enum class Languages
 struct GeneralConfigSettings
 {
     Languages language = Languages::SPANISH;
-    bool daltonicMode = false;
     quint8 fontSize = 10;
 };
+
+Q_DECLARE_METATYPE(Languages);
 
 #endif // DATAMODEL_HPP
