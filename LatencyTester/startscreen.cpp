@@ -82,7 +82,7 @@ void StartScreen::on_settingsButtonBox_rejected()
 void StartScreen::init()
 {
     widgetsMapInit();
-    loadConfig();
+    loadSettings();
 }
 
 void StartScreen::widgetsMapInit()
@@ -184,7 +184,7 @@ void StartScreen::setTranslation()
     }
 }
 
-void StartScreen::loadConfig()
+void StartScreen::loadSettings()
 {
     QSettings settings{"TFG Guillermo Giron Garcia", "Latency Tester"};
 
@@ -198,3 +198,16 @@ void StartScreen::loadConfig()
         mCurrentSettings.fontSize = settings.value("FontSize").value<quint8>();
     }
 }
+
+void StartScreen::saveSettings()
+{
+    QSettings settings{"TFG Guillermo Giron Garcia", "Latency Tester"};
+    settings.setValue("Language", static_cast<quint8>(mCurrentSettings.language));
+    settings.setValue("FontSize", mCurrentSettings.fontSize);
+}
+
+void StartScreen::on_startWidget_destroyed()
+{
+    saveSettings();
+}
+

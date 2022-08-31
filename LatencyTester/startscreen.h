@@ -35,6 +35,8 @@ private slots:
     void on_settingsButtonBox_accepted();
     void on_settingsButtonBox_rejected();
 
+    void on_startWidget_destroyed();
+
 private:
     /**
      * @brief init Initialize all widgets and connecttions
@@ -67,7 +69,11 @@ private:
     /**
      * @brief load initial configuration
      */
-    void loadConfig();
+    void loadSettings();
+    /**
+     * @brief save current settings for next app launch
+     */
+    void saveSettings();
 
     Ui::StartScreen *ui;
     MenuScreen mCurrentScreen;
