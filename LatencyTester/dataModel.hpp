@@ -19,7 +19,7 @@ enum class MenuScreen
 
 enum class Languages
 {
-    SPANISH = 1,
+    SPANISH = 0,
     ENGLISH,
     POLISH
 };

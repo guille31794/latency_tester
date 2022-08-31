@@ -6,6 +6,7 @@
 #include <QMultiMap>
 #include <QPointer>
 #include <QSharedPointer>
+#include <QCloseEvent>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class StartScreen; }
@@ -34,8 +35,6 @@ private slots:
     void on_languagesComboBox_currentIndexChanged(int index);
     void on_settingsButtonBox_accepted();
     void on_settingsButtonBox_rejected();
-
-    void on_startWidget_destroyed();
 
 private:
     /**
@@ -74,6 +73,7 @@ private:
      * @brief save current settings for next app launch
      */
     void saveSettings();
+    void closeEvent(QCloseEvent *event) override;
 
     Ui::StartScreen *ui;
     MenuScreen mCurrentScreen;

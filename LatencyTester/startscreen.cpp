@@ -79,6 +79,12 @@ void StartScreen::on_settingsButtonBox_rejected()
     ui->settingsButtonBox->setEnabled(false);
 }
 
+void StartScreen::closeEvent(QCloseEvent *event)
+{
+    saveSettings();
+    QMainWindow::closeEvent(event);
+}
+
 void StartScreen::init()
 {
     widgetsMapInit();
@@ -165,6 +171,8 @@ void StartScreen::setFontSize()
             font.setPointSize(mNextSettings.fontSize);
             widget->setFont(font);
         }
+
+        ui->fontSizeSlider->setSliderPosition(mNextSettings.fontSize);
     }
 }
 
@@ -181,6 +189,8 @@ void StartScreen::setTranslation()
             case Languages::POLISH:
             break;
         }
+
+        ui->languagesComboBox->setCurrentIndex(static_cast<int>(mNextSettings.language));
     }
 }
 
@@ -190,13 +200,18 @@ void StartScreen::loadSettings()
 
     if(settings.value("Language") != 0)
     {
-        mCurrentSettings.language = settings.value("Language").value<Languages>();
+        mNextSettings.language = settings.value("Language").value<Languages>();
     }
 
     if(settings.value("FontSize") != 0)
     {
-        mCurrentSettings.fontSize = settings.value("FontSize").value<quint8>();
+        mNextSettings.fontSize = settings.value("FontSize").value<quint8>();
     }
+
+
+    setTranslation();
+    setFontSize();
+    mCurrentSettings = mNextSettings;
 }
 
 void StartScreen::saveSettings()
@@ -205,9 +220,3 @@ void StartScreen::saveSettings()
     settings.setValue("Language", static_cast<quint8>(mCurrentSettings.language));
     settings.setValue("FontSize", mCurrentSettings.fontSize);
 }
-
-void StartScreen::on_startWidget_destroyed()
-{
-    saveSettings();
-}
-
