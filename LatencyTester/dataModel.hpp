@@ -5,6 +5,7 @@
 #include <QVector>
 #include <QMap>
 #include <QMetaType>
+#include <QDate>
 
 enum class MenuScreen
 {
@@ -28,6 +29,14 @@ struct GeneralConfigSettings
 {
     Languages language = Languages::SPANISH;
     quint8 fontSize = 10;
+};
+
+struct Measures
+{
+    QString name;
+    QDate date;
+    QVector<uint> time;
+    QVector<uint> latencys;
 };
 
 Q_DECLARE_METATYPE(Languages);

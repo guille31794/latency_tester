@@ -30,11 +30,16 @@ private slots:
     void on_backButton_released();
     void on_usersManualButton_released();
     void on_settingsButton_released();
+    void on_historicOfMeasuresButton_released();
 
     void on_fontSizeSlider_valueChanged(int value);
     void on_languagesComboBox_currentIndexChanged(int index);
     void on_settingsButtonBox_accepted();
     void on_settingsButtonBox_rejected();
+
+    void on_checkRegistryEntryButton_released();
+    void on_deleteRegistryEntryButton_released();
+    void on_renameRegistryEntryButton_released();
 
 private:
     /**

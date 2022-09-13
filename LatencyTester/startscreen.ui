@@ -314,10 +314,95 @@ border-color: rgb(246, 211, 45);</string>
      </layout>
     </widget>
    </widget>
+   <widget class="QFrame" name="registryFrame">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>800</width>
+      <height>600</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QTreeView" name="registryTreeView">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>90</y>
+       <width>581</width>
+       <height>391</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QGroupBox" name="registryButtonsBox">
+     <property name="geometry">
+      <rect>
+       <x>119</x>
+       <y>500</y>
+       <width>581</width>
+       <height>80</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="flat">
+      <bool>false</bool>
+     </property>
+     <widget class="QPushButton" name="checkRegistryEntryButton">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>30</y>
+        <width>83</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Comprobar</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="deleteRegistryEntryButton">
+      <property name="geometry">
+       <rect>
+        <x>270</x>
+        <y>30</y>
+        <width>83</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Borrar</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="renameRegistryEntryButton">
+      <property name="geometry">
+       <rect>
+        <x>490</x>
+        <y>30</y>
+        <width>83</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Renombrar</string>
+      </property>
+     </widget>
+    </widget>
+   </widget>
    <zorder>verticalLayoutWidget</zorder>
    <zorder>helpFrame</zorder>
    <zorder>generalInfoFrame</zorder>
    <zorder>settingsFrame</zorder>
+   <zorder>registryFrame</zorder>
    <zorder>backButton</zorder>
   </widget>
  </widget>

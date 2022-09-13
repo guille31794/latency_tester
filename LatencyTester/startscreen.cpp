@@ -17,7 +17,6 @@ StartScreen::~StartScreen()
     delete ui;
 }
 
-
 void StartScreen::on_helpButton_released()
 {
     transitionScreen(MenuScreen::HELP_SCREEN);
@@ -26,6 +25,11 @@ void StartScreen::on_helpButton_released()
 void StartScreen::on_generalInfoButton_released()
 {
     transitionScreen(MenuScreen::GENERAL_INFO_SCREEN);
+}
+
+void StartScreen::on_historicOfMeasuresButton_released()
+{
+    transitionScreen(MenuScreen::MEASURES_REGISTRY_SCREEN);
 }
 
 void StartScreen::on_backButton_released()
@@ -79,6 +83,21 @@ void StartScreen::on_settingsButtonBox_rejected()
     ui->settingsButtonBox->setEnabled(false);
 }
 
+void StartScreen::on_checkRegistryEntryButton_released()
+{
+
+}
+
+void StartScreen::on_deleteRegistryEntryButton_released()
+{
+
+}
+
+void StartScreen::on_renameRegistryEntryButton_released()
+{
+
+}
+
 void StartScreen::closeEvent(QCloseEvent *event)
 {
     saveSettings();
@@ -115,10 +134,16 @@ void StartScreen::widgetsMapInit()
                 {MenuScreen::SETTINGS_SCREEN, ui->backButton},
                 {MenuScreen::SETTINGS_SCREEN, ui->fontSizeText},
                 {MenuScreen::SETTINGS_SCREEN, ui->fontSizeSlider},
-                {MenuScreen::SETTINGS_SCREEN, ui->settingsButtonBox}
+                {MenuScreen::SETTINGS_SCREEN, ui->settingsButtonBox},
+                {MenuScreen::MEASURES_REGISTRY_SCREEN, ui->registryFrame},
+                {MenuScreen::MEASURES_REGISTRY_SCREEN, ui->registryButtonsBox},
+                {MenuScreen::MEASURES_REGISTRY_SCREEN, ui->renameRegistryEntryButton},
+                {MenuScreen::MEASURES_REGISTRY_SCREEN, ui->deleteRegistryEntryButton},
+                {MenuScreen::MEASURES_REGISTRY_SCREEN, ui->checkRegistryEntryButton},
+                {MenuScreen::MEASURES_REGISTRY_SCREEN, ui->backButton}
                };
 
-    auto it{mWidgets.find(MenuScreen::SETTINGS_SCREEN)};
+    auto it{mWidgets.find(MenuScreen::MEASURES_REGISTRY_SCREEN)};
     while (it != mWidgets.end() )
     {
         it.value()->setVisible(false);
