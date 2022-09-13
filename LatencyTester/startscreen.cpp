@@ -4,6 +4,7 @@
 #include <QStyle>
 #include <QCommonStyle>
 #include <QSettings>
+#include <QFileSystemModel>
 
 StartScreen::StartScreen(QWidget *parent)
     : QMainWindow(parent)
@@ -108,6 +109,7 @@ void StartScreen::init()
 {
     widgetsMapInit();
     loadSettings();
+    loadRegistry();
 }
 
 void StartScreen::widgetsMapInit()
@@ -244,4 +246,13 @@ void StartScreen::saveSettings()
     QSettings settings{"TFG Guillermo Giron Garcia", "Latency Tester"};
     settings.setValue("Language", static_cast<quint8>(mCurrentSettings.language));
     settings.setValue("FontSize", mCurrentSettings.fontSize);
+}
+
+void StartScreen::loadRegistry()
+{
+    QPointer<QFileSystemModel> model = new QFileSystemModel;
+    QDir registryFolder{"/home/guillermogiron/Documentos/TFG/latency_tester/Measures"};
+    model->setRootPath(registryFolder.currentPath());
+    ui->registryTreeView->setModel(model);
+    ui->registryTreeView->setRootIndex(model->index(registryFolder.currentPath()));
 }

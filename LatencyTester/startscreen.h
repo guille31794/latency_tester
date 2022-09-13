@@ -78,6 +78,14 @@ private:
      * @brief save current settings for next app launch
      */
     void saveSettings();
+    /**
+     * @brief loadRegistry loads all saved measures entry
+     */
+    void loadRegistry();
+    /**
+     * @brief closeEvent Triggers ctions unchained when application closes
+     * @param event close event
+     */
     void closeEvent(QCloseEvent *event) override;
 
     Ui::StartScreen *ui;
