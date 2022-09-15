@@ -5,6 +5,7 @@
 #include <QCommonStyle>
 #include <QSettings>
 #include <QFileSystemModel>
+#include <QDebug>
 
 StartScreen::StartScreen(QWidget *parent)
     : QMainWindow(parent)
@@ -251,8 +252,12 @@ void StartScreen::saveSettings()
 void StartScreen::loadRegistry()
 {
     QPointer<QFileSystemModel> model = new QFileSystemModel;
-    QDir registryFolder{"/home/guillermogiron/Documentos/TFG/latency_tester/Measures"};
-    model->setRootPath(registryFolder.currentPath());
+    QDir registryFolder{QDir::current()};
+    model->setRootPath(registryFolder.currentPath() + "/Measures");
     ui->registryTreeView->setModel(model);
-    ui->registryTreeView->setRootIndex(model->index(registryFolder.currentPath()));
+    ui->registryTreeView->setRootIndex(model->index(registryFolder.currentPath() + "/Measures"));
+    // Hide size and type colums
+    ui->registryTreeView->hideColumn(1);
+    ui->registryTreeView->hideColumn(2);
+    ui->registryTreeView->setColumnWidth(0, 450);
 }
