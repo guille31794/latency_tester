@@ -253,7 +253,7 @@ void StartScreen::saveSettings()
 void StartScreen::loadRegistry()
 {
     QPointer<QFileSystemModel> model = new QFileSystemModel;
-    QPointer<ExtensionFileDelegate> delegate = new ExtensionFileDelegate;
+    QPointer<NoIconOrExtensionFileDelegate> delegate = new NoIconOrExtensionFileDelegate;
     QDir registryFolder{QDir::current()};
 
     // If registry directory doesn't exist, is created
