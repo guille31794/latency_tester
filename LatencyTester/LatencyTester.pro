@@ -14,7 +14,8 @@ SOURCES += \
 
 HEADERS += \
     dataModel.hpp \
-    startscreen.h
+    startscreen.h \
+    extensionfiledelegate.h
 
 FORMS += \
     startscreen.ui

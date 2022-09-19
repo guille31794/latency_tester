@@ -1,5 +1,6 @@
 #include "startscreen.h"
 #include "ui_startscreen.h"
+#include "extensionfiledelegate.h"
 #include <QList>
 #include <QStyle>
 #include <QCommonStyle>
@@ -252,6 +253,7 @@ void StartScreen::saveSettings()
 void StartScreen::loadRegistry()
 {
     QPointer<QFileSystemModel> model = new QFileSystemModel;
+    QPointer<ExtensionFileDelegate> delegate = new ExtensionFileDelegate;
     QDir registryFolder{QDir::current()};
 
     // If registry directory doesn't exist, is created
@@ -262,6 +264,7 @@ void StartScreen::loadRegistry()
 
     model->setRootPath(registryFolder.currentPath() + "/Measures");
     ui->registryTreeView->setModel(model);
+    ui->registryTreeView->setItemDelegate(delegate);
     ui->registryTreeView->setRootIndex(model->index(registryFolder.currentPath() + "/Measures"));
     // Hide size and type colums
     ui->registryTreeView->hideColumn(1);
