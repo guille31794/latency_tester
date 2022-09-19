@@ -253,6 +253,13 @@ void StartScreen::loadRegistry()
 {
     QPointer<QFileSystemModel> model = new QFileSystemModel;
     QDir registryFolder{QDir::current()};
+
+    // If registry directory doesn't exist, is created
+    if(!registryFolder.exists(registryFolder.currentPath() + "/Measures"))
+    {
+        registryFolder.mkdir("Measures");
+    }
+
     model->setRootPath(registryFolder.currentPath() + "/Measures");
     ui->registryTreeView->setModel(model);
     ui->registryTreeView->setRootIndex(model->index(registryFolder.currentPath() + "/Measures"));
