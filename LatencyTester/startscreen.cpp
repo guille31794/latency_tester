@@ -147,11 +147,14 @@ void StartScreen::widgetsMapInit()
                 {MenuScreen::MEASURES_REGISTRY_SCREEN, ui->backButton}
                };
 
-    auto it{mWidgets.find(MenuScreen::MEASURES_REGISTRY_SCREEN)};
+    auto it{mWidgets.begin()};
     while (it != mWidgets.end() )
     {
-        it.value()->setVisible(false);
-        it.value()->setEnabled(false);
+        if(MenuScreen::START_SCREEN != it.key())
+        {
+            it.value()->setVisible(false);
+            it.value()->setEnabled(false);
+        }
         ++it;
     }
 
@@ -199,6 +202,7 @@ void StartScreen::setFontSize()
             font = widget->font();
             font.setPointSize(mNextSettings.fontSize);
             widget->setFont(font);
+            widget->adjustSize();
         }
 
         ui->fontSizeSlider->setSliderPosition(mNextSettings.fontSize);
