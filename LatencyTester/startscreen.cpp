@@ -93,7 +93,8 @@ void StartScreen::on_checkRegistryEntryButton_released()
 
 void StartScreen::on_deleteRegistryEntryButton_released()
 {
-
+    QPointer<QFileSystemModel> model = (QFileSystemModel*)ui->registryTreeView->model();
+    model->remove(ui->registryTreeView->currentIndex());
 }
 
 void StartScreen::on_renameRegistryEntryButton_released()
@@ -274,4 +275,6 @@ void StartScreen::loadRegistry()
     ui->registryTreeView->hideColumn(1);
     ui->registryTreeView->hideColumn(2);
     ui->registryTreeView->setColumnWidth(0, 450);
+    ui->registryTreeView->setSelectionBehavior (QAbstractItemView::SelectRows);
 }
+

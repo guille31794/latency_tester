@@ -7,6 +7,7 @@
 #include <QPointer>
 #include <QSharedPointer>
 #include <QCloseEvent>
+#include <QItemSelectionModel>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class StartScreen; }
