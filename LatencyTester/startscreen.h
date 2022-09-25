@@ -9,10 +9,13 @@
 #include <QSharedPointer>
 #include <QCloseEvent>
 #include <QItemSelectionModel>
+#include <QString>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class StartScreen; }
 QT_END_NAMESPACE
+
+class RenamePopUp;
 
 /**
  * @brief The StartScreen class controls navigation between screens and as it names says, first screen
@@ -25,6 +28,9 @@ class StartScreen : public QMainWindow
 public:
     StartScreen(QWidget *parent = nullptr);
     ~StartScreen();
+
+public slots:
+    void changedName(const QString& name);
 
 private slots:
     void on_helpButton_released();

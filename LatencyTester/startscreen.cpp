@@ -81,7 +81,7 @@ void StartScreen::on_settingsButtonBox_accepted()
 {
     setTranslation();
     setFontSize();
-    setDatonicMode();
+    setDaltonicMode();
     mCurrentSettings = mNextSettings;
 }
 
@@ -111,6 +111,18 @@ void StartScreen::on_renameRegistryEntryButton_released()
     QString name = nameList.first();
     mRenameWindow->setName(name);
     mRenameWindow->show();
+}
+
+void StartScreen::changedName(const QString& name)
+{
+    QPointer<QFileSystemModel> model = (QFileSystemModel*)ui->registryTreeView->model();
+    QString currentNameWithExtension = model->fileName(ui->registryTreeView->currentIndex());
+    QString path = model->rootPath();
+    QDir file(path);
+    if(!file.rename(currentNameWithExtension, name))
+    {
+        qDebug() << path << file.currentPath() << currentNameWithExtension << name;
+    }
 }
 
 void StartScreen::closeEvent(QCloseEvent *event)

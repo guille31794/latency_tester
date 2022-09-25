@@ -1,12 +1,17 @@
 #ifndef RENAMEPOPUP_H
 #define RENAMEPOPUP_H
 
+#include "startscreen.h"
 #include <QDialog>
+#include <QAbstractButton>
 
 namespace Ui {
 class RenamePopUp;
 }
 
+/**
+ * @brief The RenamePopUp class allows to rename a registry measure file in a new window
+ */
 class RenamePopUp : public QDialog
 {
     Q_OBJECT
@@ -14,7 +19,15 @@ class RenamePopUp : public QDialog
 public:
     explicit RenamePopUp(QWidget *parent = nullptr);
     ~RenamePopUp();
-    void setName(const QString& name);
+    void setName(QString name);
+
+signals:
+    void nameSaved(const QString& name);
+
+private slots:
+    void on_renameButtonBox_accepted();
+    void on_renameButtonBox_clicked(QAbstractButton *button);
+
 private:
     Ui::RenamePopUp *ui;
 };
