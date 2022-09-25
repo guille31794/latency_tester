@@ -243,7 +243,7 @@ border-color: rgb(246, 211, 45);</string>
      <property name="geometry">
       <rect>
        <x>220</x>
-       <y>60</y>
+       <y>70</y>
        <width>371</width>
        <height>475</height>
       </rect>
@@ -307,6 +307,13 @@ border-color: rgb(246, 211, 45);</string>
         </property>
         <property name="tickInterval">
          <number>1</number>
+        </property>
+       </widget>
+      </item>
+      <item alignment="Qt::AlignHCenter">
+       <widget class="QCheckBox" name="datonicCheckBox">
+        <property name="text">
+         <string>Modo daltónicos</string>
         </property>
        </widget>
       </item>
@@ -413,9 +420,9 @@ border-color: rgb(246, 211, 45);</string>
    <zorder>verticalLayoutWidget</zorder>
    <zorder>helpFrame</zorder>
    <zorder>generalInfoFrame</zorder>
-   <zorder>settingsFrame</zorder>
    <zorder>registryFrame</zorder>
    <zorder>backButton</zorder>
+   <zorder>settingsFrame</zorder>
   </widget>
  </widget>
  <resources/>

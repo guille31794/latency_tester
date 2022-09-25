@@ -10,7 +10,7 @@
 
 StartScreen::StartScreen(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::StartScreen), mCurrentScreen(MenuScreen::START_SCREEN)
+    , ui(new Ui::StartScreen), mCurrentScreen(MenuScreen::START_SCREEN), mRenameWindow(new RenamePopUp(this))
 {
     init();
 }
@@ -72,10 +72,16 @@ void StartScreen::on_fontSizeSlider_valueChanged(int value)
     ui->settingsButtonBox->setEnabled(true);
 }
 
+void StartScreen::on_datonicCheckBox_stateChanged(int arg1)
+{
+    mNextSettings.daltonicMode = arg1;
+}
+
 void StartScreen::on_settingsButtonBox_accepted()
 {
     setTranslation();
     setFontSize();
+    setDatonicMode();
     mCurrentSettings = mNextSettings;
 }
 
@@ -99,7 +105,12 @@ void StartScreen::on_deleteRegistryEntryButton_released()
 
 void StartScreen::on_renameRegistryEntryButton_released()
 {
-
+    QPointer<QFileSystemModel> model = (QFileSystemModel*)ui->registryTreeView->model();
+    QString nameWithExtension = model->fileName(ui->registryTreeView->currentIndex());
+    QStringList nameList = nameWithExtension.split(".", Qt::SkipEmptyParts, Qt::CaseInsensitive);
+    QString name = nameList.first();
+    mRenameWindow->setName(name);
+    mRenameWindow->show();
 }
 
 void StartScreen::closeEvent(QCloseEvent *event)
@@ -140,12 +151,13 @@ void StartScreen::widgetsMapInit()
                 {MenuScreen::SETTINGS_SCREEN, ui->fontSizeText},
                 {MenuScreen::SETTINGS_SCREEN, ui->fontSizeSlider},
                 {MenuScreen::SETTINGS_SCREEN, ui->settingsButtonBox},
+                {MenuScreen::SETTINGS_SCREEN, ui->datonicCheckBox},
                 {MenuScreen::MEASURES_REGISTRY_SCREEN, ui->registryFrame},
                 {MenuScreen::MEASURES_REGISTRY_SCREEN, ui->registryButtonsBox},
                 {MenuScreen::MEASURES_REGISTRY_SCREEN, ui->renameRegistryEntryButton},
                 {MenuScreen::MEASURES_REGISTRY_SCREEN, ui->deleteRegistryEntryButton},
                 {MenuScreen::MEASURES_REGISTRY_SCREEN, ui->checkRegistryEntryButton},
-                {MenuScreen::MEASURES_REGISTRY_SCREEN, ui->backButton}
+                {MenuScreen::MEASURES_REGISTRY_SCREEN, ui->backButton},
                };
 
     auto it{mWidgets.begin()};
@@ -226,6 +238,11 @@ void StartScreen::setTranslation()
 
         ui->languagesComboBox->setCurrentIndex(static_cast<int>(mNextSettings.language));
     }
+}
+
+void StartScreen::setDaltonicMode()
+{
+
 }
 
 void StartScreen::loadSettings()

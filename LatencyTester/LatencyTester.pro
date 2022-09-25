@@ -10,14 +10,17 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
+    renamepopup.cpp \
     startscreen.cpp
 
 HEADERS += \
     dataModel.hpp \
+    renamepopup.h \
     startscreen.h \
     extensionfiledelegate.h
 
 FORMS += \
+    renamepopup.ui \
     startscreen.ui
 
 TRANSLATIONS += \

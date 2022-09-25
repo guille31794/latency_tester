@@ -29,6 +29,7 @@ struct GeneralConfigSettings
 {
     Languages language = Languages::SPANISH;
     quint8 fontSize = 10;
+    bool daltonicMode = false;
 };
 
 struct Measures

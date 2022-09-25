@@ -2,6 +2,7 @@
 #define STARTSCREEN_H
 
 #include "dataModel.hpp"
+#include "renamepopup.h"
 #include <QMainWindow>
 #include <QMultiMap>
 #include <QPointer>
@@ -37,6 +38,7 @@ private slots:
     void on_languagesComboBox_currentIndexChanged(int index);
     void on_settingsButtonBox_accepted();
     void on_settingsButtonBox_rejected();
+    void on_datonicCheckBox_stateChanged(int arg1);
 
     void on_checkRegistryEntryButton_released();
     void on_deleteRegistryEntryButton_released();
@@ -72,6 +74,10 @@ private:
      */
     void setTranslation();
     /**
+     * @brief Activate or deactivate daltonic mode depending on its state
+    */
+    void setDaltonicMode();
+    /**
      * @brief load initial configuration
      */
     void loadSettings();
@@ -96,5 +102,6 @@ private:
     QMap<MenuScreen, MenuScreen> mBackButtonOutputs;
     GeneralConfigSettings mNextSettings;
     GeneralConfigSettings mCurrentSettings;
+    QPointer<RenamePopUp> mRenameWindow;
 };
 #endif // STARTSCREEN_H
