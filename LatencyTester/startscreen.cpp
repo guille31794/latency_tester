@@ -7,6 +7,7 @@
 #include <QSettings>
 #include <QFileSystemModel>
 #include <QDebug>
+#include <QJsonObject>
 
 const static QString backButtonStr{"Back_Button"};
 
@@ -96,7 +97,14 @@ void StartScreen::on_settingsButtonBox_clicked(QAbstractButton *button)
 
 void StartScreen::on_checkRegistryEntryButton_released()
 {
+    QPointer<QFileSystemModel> model = (QFileSystemModel*)ui->registryTreeView->model();
 
+    if(ui->registryTreeView->currentIndex().isValid())
+    {
+        Measures measure;
+        QJsonObject parser;
+        transitionScreen(MenuScreen::REGISTRY_DISPLAYER_SCREEN);
+    }
 }
 
 void StartScreen::on_deleteRegistryEntryButton_released()
@@ -108,11 +116,15 @@ void StartScreen::on_deleteRegistryEntryButton_released()
 void StartScreen::on_renameRegistryEntryButton_released()
 {
     QPointer<QFileSystemModel> model = (QFileSystemModel*)ui->registryTreeView->model();
-    QString nameWithExtension = model->fileName(ui->registryTreeView->currentIndex());
-    QStringList nameList = nameWithExtension.split(".", Qt::SkipEmptyParts, Qt::CaseInsensitive);
-    QString name = nameList.first();
-    mRenameWindow->setName(name);
-    mRenameWindow->show();
+
+    if(ui->registryTreeView->currentIndex().isValid())
+    {
+        QString nameWithExtension = model->fileName(ui->registryTreeView->currentIndex());
+        QStringList nameList = nameWithExtension.split(".", Qt::SkipEmptyParts, Qt::CaseInsensitive);
+        QString name = nameList.first();
+        mRenameWindow->setName(name);
+        mRenameWindow->show();
+    }
 }
 
 void StartScreen::changedName(const QString& name)
@@ -174,6 +186,16 @@ void StartScreen::widgetsMapInit()
                 {MenuScreen::MEASURES_REGISTRY_SCREEN, ui->deleteRegistryEntryButton},
                 {MenuScreen::MEASURES_REGISTRY_SCREEN, ui->checkRegistryEntryButton},
                 {MenuScreen::MEASURES_REGISTRY_SCREEN, ui->backButton},
+                {MenuScreen::REGISTRY_DISPLAYER_SCREEN, ui->registryDisplayerFrame},
+                {MenuScreen::REGISTRY_DISPLAYER_SCREEN, ui->latencyLabel},
+                {MenuScreen::REGISTRY_DISPLAYER_SCREEN, ui->latencyText},
+                {MenuScreen::REGISTRY_DISPLAYER_SCREEN, ui->timeLabel},
+                {MenuScreen::REGISTRY_DISPLAYER_SCREEN, ui->timeText},
+                {MenuScreen::REGISTRY_DISPLAYER_SCREEN, ui->nameLabel},
+                {MenuScreen::REGISTRY_DISPLAYER_SCREEN, ui->nameText},
+                {MenuScreen::REGISTRY_DISPLAYER_SCREEN, ui->dateLabel},
+                {MenuScreen::REGISTRY_DISPLAYER_SCREEN, ui->dateTimeEdit},
+                {MenuScreen::REGISTRY_DISPLAYER_SCREEN, ui->backButton}
                };
 
     auto it{mWidgets.begin()};
@@ -193,7 +215,8 @@ void StartScreen::widgetsMapInit()
                           {MenuScreen::GENERAL_INFO_SCREEN, MenuScreen::START_SCREEN},
                           {MenuScreen::START_MEASURE_SCREEN, MenuScreen::START_SCREEN},
                           {MenuScreen::MEASURES_REGISTRY_SCREEN, MenuScreen::START_SCREEN},
-                          {MenuScreen::GENERAL_INFO_SCREEN, MenuScreen::HELP_SCREEN}
+                          {MenuScreen::GENERAL_INFO_SCREEN, MenuScreen::HELP_SCREEN},
+                          {MenuScreen::REGISTRY_DISPLAYER_SCREEN, MenuScreen::MEASURES_REGISTRY_SCREEN}
                          };
 }
 

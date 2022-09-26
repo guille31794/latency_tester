@@ -15,7 +15,8 @@ enum class MenuScreen
     SETTINGS_SCREEN,
     HELP_SCREEN,
     GENERAL_INFO_SCREEN,
-    USERS_MANUAL_SCREEN
+    USERS_MANUAL_SCREEN,
+    REGISTRY_DISPLAYER_SCREEN
 };
 
 enum class Languages
