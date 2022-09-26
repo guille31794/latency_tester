@@ -32,6 +32,12 @@ struct GeneralConfigSettings
     bool daltonicMode = false;
 };
 
+struct Colors
+{
+    QString backButton;
+    QString widgets;
+};
+
 struct Measures
 {
     QString name;

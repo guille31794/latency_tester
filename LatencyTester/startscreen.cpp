@@ -8,6 +8,8 @@
 #include <QFileSystemModel>
 #include <QDebug>
 
+const static QString backButtonStr{"Back_Button"};
+
 StartScreen::StartScreen(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::StartScreen), mCurrentScreen(MenuScreen::START_SCREEN), mRenameWindow(new RenamePopUp(this))
@@ -72,24 +74,24 @@ void StartScreen::on_fontSizeSlider_valueChanged(int value)
     ui->settingsButtonBox->setEnabled(true);
 }
 
-void StartScreen::on_datonicCheckBox_stateChanged(int arg1)
+void StartScreen::on_daltonicCheckbox_stateChanged(int arg1)
 {
     mNextSettings.daltonicMode = arg1;
+    ui->settingsButtonBox->setEnabled(true);
 }
 
-void StartScreen::on_settingsButtonBox_accepted()
+void StartScreen::on_settingsButtonBox_clicked(QAbstractButton *button)
 {
-    setTranslation();
-    setFontSize();
-    setDaltonicMode();
-    mCurrentSettings = mNextSettings;
-}
-
-void StartScreen::on_settingsButtonBox_rejected()
-{
-    ui->languagesComboBox->setCurrentIndex(static_cast<int>(mCurrentSettings.language));
-    ui->fontSizeSlider->setValue(mCurrentSettings.fontSize);
-    ui->settingsButtonBox->setEnabled(false);
+    if(ui->settingsButtonBox->Apply == ui->settingsButtonBox->standardButton(button))
+    {
+        setSettings();
+    }
+    else if(ui->settingsButtonBox->Reset == ui->settingsButtonBox->standardButton(button))
+    {
+        ui->languagesComboBox->setCurrentIndex(static_cast<int>(mCurrentSettings.language));
+        ui->fontSizeSlider->setValue(mCurrentSettings.fontSize);
+        ui->settingsButtonBox->setEnabled(false);
+    }
 }
 
 void StartScreen::on_checkRegistryEntryButton_released()
@@ -144,8 +146,10 @@ void StartScreen::widgetsMapInit()
 
     QCommonStyle style;
     ui->backButton->setIcon(style.standardIcon(QStyle::SP_ArrowBack));
+    ui->backButton->setAccessibleName(backButtonStr);
 
-    mWidgets = {{MenuScreen::START_SCREEN, ui->helpButton},
+    mWidgets = {{MenuScreen::START_SCREEN, ui->startFrame},
+                {MenuScreen::START_SCREEN, ui->helpButton},
                 {MenuScreen::START_SCREEN, ui->settingsButton},
                 {MenuScreen::START_SCREEN, ui->startMeasuringButton},
                 {MenuScreen::START_SCREEN, ui->historicOfMeasuresButton},
@@ -157,13 +161,13 @@ void StartScreen::widgetsMapInit()
                 {MenuScreen::GENERAL_INFO_SCREEN, ui->generalInfoText},
                 {MenuScreen::GENERAL_INFO_SCREEN, ui->backButton},
                 {MenuScreen::SETTINGS_SCREEN, ui->settingsFrame},
-                {MenuScreen::SETTINGS_SCREEN, ui->languageText},
+                {MenuScreen::SETTINGS_SCREEN, ui->languageLabel},
                 {MenuScreen::SETTINGS_SCREEN, ui->languagesComboBox},
                 {MenuScreen::SETTINGS_SCREEN, ui->backButton},
-                {MenuScreen::SETTINGS_SCREEN, ui->fontSizeText},
+                {MenuScreen::SETTINGS_SCREEN, ui->fontSizeLabel},
                 {MenuScreen::SETTINGS_SCREEN, ui->fontSizeSlider},
                 {MenuScreen::SETTINGS_SCREEN, ui->settingsButtonBox},
-                {MenuScreen::SETTINGS_SCREEN, ui->datonicCheckBox},
+                {MenuScreen::SETTINGS_SCREEN, ui->daltonicCheckbox},
                 {MenuScreen::MEASURES_REGISTRY_SCREEN, ui->registryFrame},
                 {MenuScreen::MEASURES_REGISTRY_SCREEN, ui->registryButtonsBox},
                 {MenuScreen::MEASURES_REGISTRY_SCREEN, ui->renameRegistryEntryButton},
@@ -227,7 +231,10 @@ void StartScreen::setFontSize()
             font = widget->font();
             font.setPointSize(mNextSettings.fontSize);
             widget->setFont(font);
-            widget->adjustSize();
+            if(widget->accessibleName() != backButtonStr)
+            {
+                widget->adjustSize();
+            }
         }
 
         ui->fontSizeSlider->setSliderPosition(mNextSettings.fontSize);
@@ -254,7 +261,22 @@ void StartScreen::setTranslation()
 
 void StartScreen::setDaltonicMode()
 {
+    if(mNextSettings.daltonicMode != mCurrentSettings.daltonicMode)
+    {
+        ui->startWidget->setStyleSheet(mColorMap.value(mNextSettings.daltonicMode).widgets);
 
+        for(auto widget : mWidgets)
+        {
+            if(widget->accessibleName() == backButtonStr)
+            {
+                widget->setStyleSheet(mColorMap.value(mNextSettings.daltonicMode).backButton);
+            }
+            else
+            {
+                widget->setStyleSheet(mColorMap.value(mNextSettings.daltonicMode).widgets);
+            }
+        }
+    }
 }
 
 void StartScreen::loadSettings()
@@ -271,10 +293,28 @@ void StartScreen::loadSettings()
         mNextSettings.fontSize = settings.value("FontSize").value<quint8>();
     }
 
+    if(settings.value("DaltonicMode") != 0)
+    {
+        mNextSettings.daltonicMode = settings.value("DaltonicMode").value<bool>();
+    }
 
-    setTranslation();
-    setFontSize();
-    mCurrentSettings = mNextSettings;
+    Colors daltonicColors;
+    Colors colors;
+
+    daltonicColors.backButton = "background-color: rgb(157, 2, 8)";
+    daltonicColors.widgets = "background-color: rgb(82, 183, 136)";
+    mColorMap.insert(true, daltonicColors);
+
+    colors.backButton = "background-color: rgb(255, 214, 10)";
+    colors.widgets = "background-color: rgb(0, 180, 216)";
+    mColorMap.insert(false, colors);
+
+    if(mNextSettings.daltonicMode)
+    {
+        ui->daltonicCheckbox->setCheckState(Qt::CheckState::Checked);
+    }
+
+    setSettings();
 }
 
 void StartScreen::saveSettings()
@@ -282,6 +322,15 @@ void StartScreen::saveSettings()
     QSettings settings{"TFG Guillermo Giron Garcia", "Latency Tester"};
     settings.setValue("Language", static_cast<quint8>(mCurrentSettings.language));
     settings.setValue("FontSize", mCurrentSettings.fontSize);
+    settings.setValue("DaltonicMode", mCurrentSettings.daltonicMode);
+}
+
+void StartScreen::setSettings()
+{
+    setTranslation();
+    setFontSize();
+    setDaltonicMode();
+    mCurrentSettings = mNextSettings;
 }
 
 void StartScreen::loadRegistry()
@@ -306,4 +355,5 @@ void StartScreen::loadRegistry()
     ui->registryTreeView->setColumnWidth(0, 450);
     ui->registryTreeView->setSelectionBehavior (QAbstractItemView::SelectRows);
 }
+
 

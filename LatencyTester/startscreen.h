@@ -10,6 +10,7 @@
 #include <QCloseEvent>
 #include <QItemSelectionModel>
 #include <QString>
+#include <QPalette>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class StartScreen; }
@@ -42,9 +43,8 @@ private slots:
 
     void on_fontSizeSlider_valueChanged(int value);
     void on_languagesComboBox_currentIndexChanged(int index);
-    void on_settingsButtonBox_accepted();
-    void on_settingsButtonBox_rejected();
-    void on_datonicCheckBox_stateChanged(int arg1);
+    void on_daltonicCheckbox_stateChanged(int arg1);
+    void on_settingsButtonBox_clicked(QAbstractButton *button);
 
     void on_checkRegistryEntryButton_released();
     void on_deleteRegistryEntryButton_released();
@@ -92,6 +92,10 @@ private:
      */
     void saveSettings();
     /**
+     * @brief set new settings over the current ones
+     */
+    void setSettings();
+    /**
      * @brief loadRegistry loads all saved measures entry
      */
     void loadRegistry();
@@ -109,5 +113,6 @@ private:
     GeneralConfigSettings mNextSettings;
     GeneralConfigSettings mCurrentSettings;
     QPointer<RenamePopUp> mRenameWindow;
+    QMap<bool, Colors> mColorMap;
 };
 #endif // STARTSCREEN_H

@@ -32,67 +32,14 @@
    <string>Medidor de latencias</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: rgb(28, 113, 216);</string>
+   <string notr="true">background-color: rgb(0, 180, 216);
+alternate-background-color: rgb(82, 183, 136);
+</string>
   </property>
   <property name="toolButtonStyle">
    <enum>Qt::ToolButtonTextOnly</enum>
   </property>
   <widget class="QWidget" name="startWidget">
-   <widget class="QWidget" name="verticalLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>200</x>
-      <y>40</y>
-      <width>391</width>
-      <height>461</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="startLayout">
-     <property name="spacing">
-      <number>6</number>
-     </property>
-     <property name="sizeConstraint">
-      <enum>QLayout::SetDefaultConstraint</enum>
-     </property>
-     <property name="leftMargin">
-      <number>5</number>
-     </property>
-     <property name="rightMargin">
-      <number>5</number>
-     </property>
-     <item>
-      <widget class="QPushButton" name="startMeasuringButton">
-       <property name="styleSheet">
-        <string notr="true"/>
-       </property>
-       <property name="text">
-        <string>Comenzar medición</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="historicOfMeasuresButton">
-       <property name="text">
-        <string>Historial de mediciones</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="settingsButton">
-       <property name="text">
-        <string>Ajustes</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="helpButton">
-       <property name="text">
-        <string>Ayuda</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
    <widget class="QFrame" name="helpFrame">
     <property name="enabled">
      <bool>false</bool>
@@ -201,26 +148,6 @@ Todos los derechos reservados.</string>
      </property>
     </widget>
    </widget>
-   <widget class="QPushButton" name="backButton">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>30</y>
-      <width>83</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(248, 228, 92);
-border-color: rgb(246, 211, 45);</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
    <widget class="QFrame" name="settingsFrame">
     <property name="enabled">
      <bool>true</bool>
@@ -242,20 +169,35 @@ border-color: rgb(246, 211, 45);</string>
     <widget class="QWidget" name="verticalLayoutWidget_3">
      <property name="geometry">
       <rect>
-       <x>220</x>
-       <y>70</y>
-       <width>371</width>
-       <height>475</height>
+       <x>170</x>
+       <y>100</y>
+       <width>481</width>
+       <height>411</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="settingsLayout">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetNoConstraint</enum>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
       <item alignment="Qt::AlignHCenter">
-       <widget class="QLineEdit" name="languageText">
+       <widget class="QLabel" name="languageLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>2</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="text">
          <string>Idioma</string>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -279,17 +221,26 @@ border-color: rgb(246, 211, 45);</string>
        </widget>
       </item>
       <item alignment="Qt::AlignHCenter">
-       <widget class="QLineEdit" name="fontSizeText">
+       <widget class="QLabel" name="fontSizeLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
          <string>Tamaño de la fuente</string>
         </property>
-        <property name="readOnly">
-         <bool>true</bool>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QSlider" name="fontSizeSlider">
+        <property name="styleSheet">
+         <string notr="true">color: rgb(0, 0, 0);</string>
+        </property>
         <property name="minimum">
          <number>10</number>
         </property>
@@ -311,7 +262,7 @@ border-color: rgb(246, 211, 45);</string>
        </widget>
       </item>
       <item alignment="Qt::AlignHCenter">
-       <widget class="QCheckBox" name="datonicCheckBox">
+       <widget class="QCheckBox" name="daltonicCheckbox">
         <property name="text">
          <string>Modo daltónicos</string>
         </property>
@@ -320,7 +271,7 @@ border-color: rgb(246, 211, 45);</string>
       <item alignment="Qt::AlignHCenter">
        <widget class="QDialogButtonBox" name="settingsButtonBox">
         <property name="standardButtons">
-         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+         <set>QDialogButtonBox::Apply|QDialogButtonBox::Reset</set>
         </property>
        </widget>
       </item>
@@ -417,12 +368,111 @@ border-color: rgb(246, 211, 45);</string>
      </widget>
     </widget>
    </widget>
-   <zorder>verticalLayoutWidget</zorder>
-   <zorder>helpFrame</zorder>
+   <widget class="QFrame" name="startFrame">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>800</width>
+      <height>600</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QWidget" name="verticalLayoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>60</y>
+       <width>391</width>
+       <height>461</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="startLayout">
+      <property name="spacing">
+       <number>6</number>
+      </property>
+      <property name="sizeConstraint">
+       <enum>QLayout::SetDefaultConstraint</enum>
+      </property>
+      <property name="leftMargin">
+       <number>5</number>
+      </property>
+      <property name="rightMargin">
+       <number>5</number>
+      </property>
+      <item>
+       <widget class="QPushButton" name="startMeasuringButton">
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="text">
+         <string>Comenzar medición</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="historicOfMeasuresButton">
+        <property name="text">
+         <string>Historial de mediciones</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="settingsButton">
+        <property name="text">
+         <string>Ajustes</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="helpButton">
+        <property name="text">
+         <string>Ayuda</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+   <widget class="QPushButton" name="backButton">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>20</y>
+      <width>83</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 214, 10);
+alternate-background-color: rgb(157, 2, 8);
+border-color: rgb(246, 211, 45);
+color: rgb(0, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
    <zorder>generalInfoFrame</zorder>
+   <zorder>helpFrame</zorder>
    <zorder>registryFrame</zorder>
-   <zorder>backButton</zorder>
+   <zorder>startFrame</zorder>
    <zorder>settingsFrame</zorder>
+   <zorder>backButton</zorder>
   </widget>
  </widget>
  <resources/>
