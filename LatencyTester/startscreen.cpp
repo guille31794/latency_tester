@@ -8,12 +8,14 @@
 #include <QFileSystemModel>
 #include <QDebug>
 #include <QJsonObject>
+#include <QJsonDocument>
 
 const static QString backButtonStr{"Back_Button"};
 
 StartScreen::StartScreen(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::StartScreen), mCurrentScreen(MenuScreen::START_SCREEN), mRenameWindow(new RenamePopUp(this))
+    , ui(new Ui::StartScreen), mCurrentScreen(MenuScreen::START_SCREEN),
+      mRenameWindow(new RenamePopUp(this)), mJasonOperator(new JsonOperator())
 {
     init();
 }
@@ -101,8 +103,10 @@ void StartScreen::on_checkRegistryEntryButton_released()
 
     if(ui->registryTreeView->currentIndex().isValid())
     {
+        //QJsonDocument::
         Measures measure;
         QJsonObject parser;
+
         transitionScreen(MenuScreen::REGISTRY_DISPLAYER_SCREEN);
     }
 }

@@ -3,6 +3,7 @@
 
 #include "dataModel.hpp"
 #include "renamepopup.h"
+#include "jsonoperator.h"
 #include <QMainWindow>
 #include <QMultiMap>
 #include <QPointer>
@@ -114,5 +115,6 @@ private:
     GeneralConfigSettings mCurrentSettings;
     QPointer<RenamePopUp> mRenameWindow;
     QMap<bool, Colors> mColorMap;
+    QPointer<JsonOperator> mJasonOperator;
 };
 #endif // STARTSCREEN_H
