@@ -10,7 +10,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 
-const static QString backButtonStr{"Back_Button"};
+const static QString BACKBUTTONSTR{"Back_Button"};
 
 StartScreen::StartScreen(QWidget *parent)
     : QMainWindow(parent)
@@ -106,6 +106,10 @@ void StartScreen::on_checkRegistryEntryButton_released()
         if(mJsonOperator.loadFileFromDisk(model->filePath(ui->registryTreeView->currentIndex())))
         {
             mJsonOperator.parseJsonToStruct(mMeasure);
+            ui->nameText->setText(mMeasure.name);
+            ui->dateTimeEdit->setDateTime(mMeasure.date);
+            //ui->latencyText->setText()
+            //ui->timeText->setText();
             transitionScreen(MenuScreen::REGISTRY_DISPLAYER_SCREEN);
         }
         else
@@ -167,7 +171,7 @@ void StartScreen::widgetsMapInit()
 
     QCommonStyle style;
     ui->backButton->setIcon(style.standardIcon(QStyle::SP_ArrowBack));
-    ui->backButton->setAccessibleName(backButtonStr);
+    ui->backButton->setAccessibleName(BACKBUTTONSTR);
 
     mWidgets = {{MenuScreen::START_SCREEN, ui->startFrame},
                 {MenuScreen::START_SCREEN, ui->helpButton},
@@ -263,7 +267,7 @@ void StartScreen::setFontSize()
             font = widget->font();
             font.setPointSize(mNextSettings.fontSize);
             widget->setFont(font);
-            if(widget->accessibleName() != backButtonStr)
+            if(widget->accessibleName() != BACKBUTTONSTR)
             {
                 widget->adjustSize();
             }
@@ -299,7 +303,7 @@ void StartScreen::setDaltonicMode()
 
         for(auto widget : mWidgets)
         {
-            if(widget->accessibleName() == backButtonStr)
+            if(widget->accessibleName() == BACKBUTTONSTR)
             {
                 widget->setStyleSheet(mColorMap.value(mNextSettings.daltonicMode).backButton);
             }

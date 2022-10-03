@@ -1,8 +1,8 @@
 #include "dialog.h"
 #include "ui_dialog.h"
 
-const QString openFileWarning{"Warning! Unable to open: "};
-const QString openFileWarningEnd{" . Retry again."};
+const QString OPENFILEWARNING{"Warning! Unable to open: "};
+const QString OPENFILEWARNINGEND{" . Retry again."};
 
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
@@ -20,7 +20,7 @@ Dialog::~Dialog()
 
 void Dialog::setFileNameText(const QString &name)
 {
-    ui->warningLabel->setText(openFileWarning + name + openFileWarningEnd);
+    ui->warningLabel->setText(OPENFILEWARNING + name + OPENFILEWARNINGEND);
 }
 
 void Dialog::on_okButton_released()

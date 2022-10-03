@@ -42,8 +42,8 @@ struct Colors
 struct Measures
 {
     QString name;
-    QDate date;
-    QVector<uint> time;
+    QDateTime date;
+    QVector<uint> times;
     QVector<uint> latencys;
 };
 

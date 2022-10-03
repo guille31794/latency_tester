@@ -1,16 +1,21 @@
 #include "jsonoperator.h"
 
+const QString NAME{"Name"};
+const QString DATE{"Date"};
+const QString TIMEFACTOR{"TimeFactor"};
+const QString LATENCYS{"Latencys"};
+
 bool JsonOperator::loadFileFromDisk(const QString &fileName, QIODevice::OpenModeFlag openMode)
 {
-    bool loadSucces{true};
+    bool loadSuccess{true};
     mFile = new QFile(fileName);
 
     if(!mFile->exists())
     {
-        loadSucces = false;
+        loadSuccess = false;
     }
 
-    if(loadSucces && mFile->open(openMode))
+    if(loadSuccess && mFile->open(openMode))
     {
         QByteArray bytesFile{mFile->readAll()};
         mJsonDocument = QJsonDocument(QJsonDocument::fromJson(bytesFile));
@@ -19,9 +24,33 @@ bool JsonOperator::loadFileFromDisk(const QString &fileName, QIODevice::OpenMode
     }
     else
     {
-        qDebug() << "Fallo al leer el fichero Json";
-        loadSucces = false;
+        loadSuccess = false;
     }
 
-    return loadSucces;
+    return loadSuccess;
+}
+
+bool JsonOperator::saveMeasureToDisk()
+{
+    bool saveSuccess{true};
+
+    return saveSuccess;
+}
+
+void JsonOperator::parseJsonToStruct(Measures &registry)
+{
+    registry.name = mJsonObject.value(NAME).toString();
+    registry.date = QDateTime::fromString(mJsonObject.value(DATE).toString(), Qt::ISODate);
+
+    QJsonArray timeFactors{mJsonObject.value(TIMEFACTOR).toArray()};
+    for(auto timeFactor : timeFactors)
+    {
+        registry.times.append(timeFactor.toInt());
+    }
+
+    QJsonArray latencys{mJsonObject.value(LATENCYS).toArray()};
+    for(auto latency : latencys)
+    {
+        registry.latencys.append(latency.toInt());
+    }
 }

@@ -14,7 +14,7 @@ public:
     JsonOperator() = default;
     bool loadFileFromDisk(const QString& fileName, QIODevice::OpenModeFlag openMode = QIODevice::ReadOnly);
     bool saveMeasureToDisk();
-    Measures parseJsonToStruct(Measures& registry);
+    void parseJsonToStruct(Measures& registry);
 private:
     QJsonDocument mJsonDocument;
     QJsonObject mJsonObject;
