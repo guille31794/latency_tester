@@ -4,6 +4,7 @@
 #include "dataModel.hpp"
 #include "renamepopup.h"
 #include "jsonoperator.h"
+#include "dialog.h"
 #include <QMainWindow>
 #include <QMultiMap>
 #include <QPointer>
@@ -18,6 +19,7 @@ namespace Ui { class StartScreen; }
 QT_END_NAMESPACE
 
 class RenamePopUp;
+class QAbstractButton;
 
 /**
  * @brief The StartScreen class controls navigation between screens and as it names says, first screen
@@ -115,6 +117,8 @@ private:
     GeneralConfigSettings mCurrentSettings;
     QPointer<RenamePopUp> mRenameWindow;
     QMap<bool, Colors> mColorMap;
-    QPointer<JsonOperator> mJasonOperator;
+    JsonOperator mJsonOperator;
+    QPointer<Dialog> mDialog;
+    Measures mMeasure;
 };
 #endif // STARTSCREEN_H

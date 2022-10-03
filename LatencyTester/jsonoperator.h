@@ -11,11 +11,13 @@
 class JsonOperator
 {
 public:
-    JsonOperator();
+    JsonOperator() = default;
     bool loadFileFromDisk(const QString& fileName, QIODevice::OpenModeFlag openMode = QIODevice::ReadOnly);
-
+    bool saveMeasureToDisk();
+    Measures parseJsonToStruct(Measures& registry);
 private:
-    QPointer<QJsonDocument> mJsonDocument;
+    QJsonDocument mJsonDocument;
+    QJsonObject mJsonObject;
     QPointer<QFile> mFile;
 };
 

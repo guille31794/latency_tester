@@ -15,7 +15,7 @@ const static QString backButtonStr{"Back_Button"};
 StartScreen::StartScreen(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::StartScreen), mCurrentScreen(MenuScreen::START_SCREEN),
-      mRenameWindow(new RenamePopUp(this)), mJasonOperator(new JsonOperator())
+      mRenameWindow(new RenamePopUp(this)), mDialog(new Dialog(this))
 {
     init();
 }
@@ -103,11 +103,16 @@ void StartScreen::on_checkRegistryEntryButton_released()
 
     if(ui->registryTreeView->currentIndex().isValid())
     {
-        //QJsonDocument::
-        Measures measure;
-        QJsonObject parser;
-
-        transitionScreen(MenuScreen::REGISTRY_DISPLAYER_SCREEN);
+        if(mJsonOperator.loadFileFromDisk(model->filePath(ui->registryTreeView->currentIndex())))
+        {
+            mJsonOperator.parseJsonToStruct(mMeasure);
+            transitionScreen(MenuScreen::REGISTRY_DISPLAYER_SCREEN);
+        }
+        else
+        {
+            mDialog->setFileNameText(model->fileName(ui->registryTreeView->currentIndex()));
+            mDialog->show();
+        }
     }
 }
 

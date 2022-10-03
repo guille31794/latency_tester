@@ -9,6 +9,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    dialog.cpp \
     jsonoperator.cpp \
     main.cpp \
     renamepopup.cpp \
@@ -16,12 +17,14 @@ SOURCES += \
 
 HEADERS += \
     dataModel.hpp \
+    dialog.h \
     jsonoperator.h \
     renamepopup.h \
     startscreen.h \
     extensionfiledelegate.h
 
 FORMS += \
+    dialog.ui \
     renamepopup.ui \
     startscreen.ui
 

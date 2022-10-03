@@ -1,16 +1,21 @@
 #include "jsonoperator.h"
 
-JsonOperator::JsonOperator(): mJsonDocument{nullptr}, mFile{nullptr}
-{}
-
 bool JsonOperator::loadFileFromDisk(const QString &fileName, QIODevice::OpenModeFlag openMode)
 {
     bool loadSucces{true};
     mFile = new QFile(fileName);
 
-    if(mFile->open(openMode))
+    if(!mFile->exists())
     {
+        loadSucces = false;
+    }
 
+    if(loadSucces && mFile->open(openMode))
+    {
+        QByteArray bytesFile{mFile->readAll()};
+        mJsonDocument = QJsonDocument(QJsonDocument::fromJson(bytesFile));
+        mJsonObject = mJsonDocument.object();
+        mFile->close();
     }
     else
     {
