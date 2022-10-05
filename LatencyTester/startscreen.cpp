@@ -118,8 +118,8 @@ void StartScreen::on_checkRegistryEntryButton_released()
             mJsonOperator.parseJsonToStruct(mMeasure);
             ui->nameText->setText(mMeasure.name);
             ui->dateTimeEdit->setDateTime(mMeasure.date);
-            //ui->latencyText->setText()
-            //ui->timeText->setText();
+            ui->latencyText->setText(QString::number(mMeasure.meanLatency));
+            ui->timeText->setText(QString::number(mMeasure.meanFactor));
             transitionScreen(MenuScreen::REGISTRY_DISPLAYER_SCREEN);
         }
         else

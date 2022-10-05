@@ -7,6 +7,7 @@
 #include <QJsonObject>
 #include <QFile>
 #include <QPointer>
+#include <QJsonValue>
 
 class JsonOperator
 {

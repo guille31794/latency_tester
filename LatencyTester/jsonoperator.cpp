@@ -42,15 +42,19 @@ void JsonOperator::parseJsonToStruct(Measures &registry)
     registry.name = mJsonObject.value(NAME).toString();
     registry.date = QDateTime::fromString(mJsonObject.value(DATE).toString(), Qt::ISODate);
 
-    QJsonArray timeFactors{mJsonObject.value(TIMEFACTOR).toArray()};
-    for(auto timeFactor : timeFactors)
+    for(int index = 0; index < mJsonObject.value(TIMEFACTOR).toArray().size(); ++index)
     {
-        registry.times.append(timeFactor.toInt());
+        registry.times.append(mJsonObject.value(TIMEFACTOR).toArray().at(index).toDouble());
+        registry.meanFactor += mJsonObject.value(TIMEFACTOR).toArray().at(index).toDouble();
     }
 
-    QJsonArray latencys{mJsonObject.value(LATENCYS).toArray()};
-    for(auto latency : latencys)
+    registry.meanFactor /= registry.times.size();
+
+    for(int index = 0; index < mJsonObject.value(LATENCYS).toArray().size(); ++index)
     {
-        registry.latencys.append(latency.toInt());
+        registry.latencys.append(mJsonObject.value(LATENCYS).toArray().at(index).toDouble());
+        registry.meanLatency += mJsonObject.value(LATENCYS).toArray().at(index).toDouble();
     }
+
+    registry.meanLatency /= registry.latencys.size();
 }

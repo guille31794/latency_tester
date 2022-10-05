@@ -28,9 +28,9 @@ enum class Languages
 
 struct GeneralConfigSettings
 {
-    Languages language = Languages::SPANISH;
-    quint8 fontSize = 10;
-    bool daltonicMode = false;
+    Languages language{Languages::SPANISH};
+    quint8 fontSize{10};
+    bool daltonicMode{false};
 };
 
 struct Colors
@@ -43,8 +43,10 @@ struct Measures
 {
     QString name;
     QDateTime date;
-    QVector<uint> times;
-    QVector<uint> latencys;
+    QVector<double> times{};
+    QVector<double> latencys{};
+    double meanFactor{0};
+    double meanLatency{0};
 };
 
 Q_DECLARE_METATYPE(Languages);
