@@ -7,15 +7,14 @@
 #include <QSettings>
 #include <QFileSystemModel>
 #include <QDebug>
-#include <QJsonObject>
-#include <QJsonDocument>
+#include <QTimer>
 
 const static QString BACKBUTTONSTR{"Back_Button"};
 
 StartScreen::StartScreen(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::StartScreen), mCurrentScreen(MenuScreen::START_SCREEN),
-      mRenameWindow(new RenamePopUp(this)), mDialog(new Dialog(this))
+      mRenameWindow(new RenamePopUp(this)), mDialog(new Dialog(this)), mBackTimer(new QTimer(this))
 {
     init();
 }
@@ -42,16 +41,27 @@ void StartScreen::on_historicOfMeasuresButton_released()
 
 void StartScreen::on_backButton_released()
 {
+    if(mBackTimer->isActive())
+    {
+        mBackTimer->stop();
+    }
+
     mCurrentScreen = mBackButtonOutputs.value(mCurrentScreen);
-    QList<QPointer<QWidget>> nextWidgets{mWidgets.values(mCurrentScreen)};
-    setUpNextScreen(mCurrentScreenWidgets, nextWidgets);
-    mCurrentScreenWidgets = nextWidgets;
 
     if(MenuScreen::START_SCREEN == mCurrentScreen)
     {
         ui->backButton->setVisible(false);
         ui->backButton->setEnabled(false);
     }
+
+    QList<QPointer<QWidget>> nextWidgets{mWidgets.values(mCurrentScreen)};
+    setUpNextScreen(mCurrentScreenWidgets, nextWidgets);
+    mCurrentScreenWidgets = nextWidgets;
+}
+
+void StartScreen::on_backButton_pressed()
+{
+    mBackTimer->start();
 }
 
 void StartScreen::on_usersManualButton_released()
@@ -140,6 +150,21 @@ void StartScreen::on_renameRegistryEntryButton_released()
     }
 }
 
+void StartScreen::backToStartScreen()
+{
+    mCurrentScreen = MenuScreen::START_SCREEN;
+
+    if(MenuScreen::START_SCREEN == mCurrentScreen)
+    {
+        ui->backButton->setVisible(false);
+        ui->backButton->setEnabled(false);
+    }
+
+    QList<QPointer<QWidget>> nextWidgets{mWidgets.values(mCurrentScreen)};
+    setUpNextScreen(mCurrentScreenWidgets, nextWidgets);
+    mCurrentScreenWidgets = nextWidgets;
+}
+
 void StartScreen::changedName(const QString& name)
 {
     QPointer<QFileSystemModel> model = (QFileSystemModel*)ui->registryTreeView->model();
@@ -163,6 +188,9 @@ void StartScreen::init()
     widgetsMapInit();
     loadSettings();
     loadRegistry();
+    connect(mBackTimer, &QTimer::timeout, this,  &StartScreen::backToStartScreen);
+    mBackTimer->setInterval(3000);
+    mBackTimer->setSingleShot(true);
 }
 
 void StartScreen::widgetsMapInit()
@@ -391,5 +419,3 @@ void StartScreen::loadRegistry()
     ui->registryTreeView->setColumnWidth(0, 450);
     ui->registryTreeView->setSelectionBehavior (QAbstractItemView::SelectRows);
 }
-
-

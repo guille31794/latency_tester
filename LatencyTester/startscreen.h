@@ -40,6 +40,7 @@ private slots:
     void on_helpButton_released();
     void on_generalInfoButton_released();
     void on_backButton_released();
+    void on_backButton_pressed();
     void on_usersManualButton_released();
     void on_settingsButton_released();
     void on_historicOfMeasuresButton_released();
@@ -52,6 +53,8 @@ private slots:
     void on_checkRegistryEntryButton_released();
     void on_deleteRegistryEntryButton_released();
     void on_renameRegistryEntryButton_released();
+
+    void backToStartScreen();
 
 private:
     /**
@@ -119,6 +122,7 @@ private:
     QMap<bool, Colors> mColorMap;
     JsonOperator mJsonOperator;
     QPointer<Dialog> mDialog;
+    QPointer<QTimer> mBackTimer;
     Measures mMeasure;
 };
 #endif // STARTSCREEN_H
