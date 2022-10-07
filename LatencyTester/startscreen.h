@@ -56,6 +56,10 @@ private slots:
 
     void backToStartScreen();
 
+    void on_startMeasureButton_released();
+    void on_stopMeasureButton_released();
+    void on_startMeasuringButton_released();
+
 private:
     /**
      * @brief init Initialize all widgets and connecttions
@@ -124,5 +128,6 @@ private:
     QPointer<Dialog> mDialog;
     QPointer<QTimer> mBackTimer;
     Measures mMeasure;
+    bool mTakinMeasure;
 };
 #endif // STARTSCREEN_H

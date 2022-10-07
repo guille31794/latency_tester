@@ -12,9 +12,10 @@
 const static QString BACKBUTTONSTR{"Back_Button"};
 
 StartScreen::StartScreen(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::StartScreen), mCurrentScreen(MenuScreen::START_SCREEN),
-      mRenameWindow(new RenamePopUp(this)), mDialog(new Dialog(this)), mBackTimer(new QTimer(this))
+    : QMainWindow{parent}
+    , ui{new Ui::StartScreen}, mCurrentScreen{MenuScreen::START_SCREEN},
+      mRenameWindow{new RenamePopUp{this}}, mDialog{new Dialog{this}}, mBackTimer{new QTimer{this}},
+      mTakinMeasure{false}
 {
     init();
 }
@@ -165,6 +166,23 @@ void StartScreen::backToStartScreen()
     mCurrentScreenWidgets = nextWidgets;
 }
 
+void StartScreen::on_startMeasureButton_released()
+{
+
+}
+
+
+void StartScreen::on_stopMeasureButton_released()
+{
+
+}
+
+void StartScreen::on_startMeasuringButton_released()
+{
+    transitionScreen(MenuScreen::START_MEASURE_SCREEN);
+}
+
+
 void StartScreen::changedName(const QString& name)
 {
     QPointer<QFileSystemModel> model = (QFileSystemModel*)ui->registryTreeView->model();
@@ -236,7 +254,15 @@ void StartScreen::widgetsMapInit()
                 {MenuScreen::REGISTRY_DISPLAYER_SCREEN, ui->nameText},
                 {MenuScreen::REGISTRY_DISPLAYER_SCREEN, ui->dateLabel},
                 {MenuScreen::REGISTRY_DISPLAYER_SCREEN, ui->dateTimeEdit},
-                {MenuScreen::REGISTRY_DISPLAYER_SCREEN, ui->backButton}
+                {MenuScreen::REGISTRY_DISPLAYER_SCREEN, ui->backButton},
+                {MenuScreen::START_MEASURE_SCREEN, ui->startMeasureFrame},
+                {MenuScreen::START_MEASURE_SCREEN, ui->DurationLabel},
+                {MenuScreen::START_MEASURE_SCREEN, ui->timeFactorLabel},
+                {MenuScreen::START_MEASURE_SCREEN, ui->backButton},
+                {MenuScreen::START_MEASURE_SCREEN, ui->DurationSlider},
+                {MenuScreen::START_MEASURE_SCREEN, ui->TimeFactorSlider},
+                {MenuScreen::START_MEASURE_SCREEN, ui->startMeasureButton},
+                {MenuScreen::START_MEASURE_SCREEN, ui->stopMeasureButton}
                };
 
     auto it{mWidgets.begin()};
