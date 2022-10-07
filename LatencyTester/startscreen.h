@@ -59,6 +59,8 @@ private slots:
     void on_startMeasureButton_released();
     void on_stopMeasureButton_released();
     void on_startMeasuringButton_released();
+    void on_TimeFactorSlider_valueChanged(int value);
+    void on_DurationSlider_valueChanged(int value);
 
 private:
     /**
@@ -128,6 +130,6 @@ private:
     QPointer<Dialog> mDialog;
     QPointer<QTimer> mBackTimer;
     Measures mMeasure;
-    bool mTakinMeasure;
+    bool mTakingMeasure;
 };
 #endif // STARTSCREEN_H

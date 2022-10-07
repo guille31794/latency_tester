@@ -1,9 +1,16 @@
 #include "jsonoperator.h"
 
+#include <QDir>
+
 const QString NAME{"Name"};
 const QString DATE{"Date"};
 const QString TIMEFACTOR{"TimeFactor"};
 const QString LATENCYS{"Latencys"};
+const QString DURATION{"Duration"};
+const QString MEASURE{"_Medicion.json"};
+
+JsonOperator::JsonOperator(const QString &path): mPath{path}
+{}
 
 bool JsonOperator::loadFileFromDisk(const QString &fileName, QIODevice::OpenModeFlag openMode)
 {
@@ -30,9 +37,23 @@ bool JsonOperator::loadFileFromDisk(const QString &fileName, QIODevice::OpenMode
     return loadSuccess;
 }
 
-bool JsonOperator::saveMeasureToDisk()
+bool JsonOperator::saveMeasureToDisk(const Measures &registry)
 {
     bool saveSuccess{true};
+
+    parseStructToJson(registry);
+
+    mFile = new QFile(mPath + registry.date.toString(Qt::ISODate) + MEASURE);
+
+    if(!mFile->open(QIODevice::OpenModeFlag::WriteOnly))
+    {
+        mFile->write(mJsonDocument.toJson());
+        mFile->close();
+    }
+    else
+    {
+        saveSuccess = false;
+    }
 
     return saveSuccess;
 }
@@ -41,14 +62,8 @@ void JsonOperator::parseJsonToStruct(Measures &registry)
 {
     registry.name = mJsonObject.value(NAME).toString();
     registry.date = QDateTime::fromString(mJsonObject.value(DATE).toString(), Qt::ISODate);
-
-    for(int index = 0; index < mJsonObject.value(TIMEFACTOR).toArray().size(); ++index)
-    {
-        registry.times.append(mJsonObject.value(TIMEFACTOR).toArray().at(index).toDouble());
-        registry.meanFactor += mJsonObject.value(TIMEFACTOR).toArray().at(index).toDouble();
-    }
-
-    registry.meanFactor /= registry.times.size();
+    registry.duration = mJsonObject.value(DURATION).toInt();
+    registry.timeFactor = mJsonObject.value(TIMEFACTOR).toInt();
 
     for(int index = 0; index < mJsonObject.value(LATENCYS).toArray().size(); ++index)
     {
@@ -57,4 +72,27 @@ void JsonOperator::parseJsonToStruct(Measures &registry)
     }
 
     registry.meanLatency /= registry.latencys.size();
+}
+
+void JsonOperator::setPath(const QString &path)
+{
+    mPath = path;
+}
+
+void JsonOperator::parseStructToJson(const Measures &registry)
+{
+    QJsonArray array;
+    mJsonObject = QJsonObject();
+    mJsonObject.insert(NAME, registry.name);
+    mJsonObject.insert(DATE, registry.date.toString(Qt::ISODate));
+    mJsonObject.insert(TIMEFACTOR, registry.timeFactor);
+    mJsonObject.insert(DURATION, registry.duration);
+
+    for(auto& latency : registry.latencys)
+    {
+        array.append(latency);
+    }
+
+    mJsonObject.insert(LATENCYS, array);
+    mJsonDocument = QJsonDocument(mJsonObject);
 }

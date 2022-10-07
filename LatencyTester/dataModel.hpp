@@ -43,9 +43,9 @@ struct Measures
 {
     QString name;
     QDateTime date;
-    QVector<double> times{};
+    int timeFactor;
+    int duration;
     QVector<double> latencys{};
-    double meanFactor{0};
     double meanLatency{0};
 };
 

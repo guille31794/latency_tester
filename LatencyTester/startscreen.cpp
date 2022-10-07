@@ -10,12 +10,13 @@
 #include <QTimer>
 
 const static QString BACKBUTTONSTR{"Back_Button"};
+const static QString MEASURES{"/Measures"};
 
 StartScreen::StartScreen(QWidget *parent)
     : QMainWindow{parent}
     , ui{new Ui::StartScreen}, mCurrentScreen{MenuScreen::START_SCREEN},
       mRenameWindow{new RenamePopUp{this}}, mDialog{new Dialog{this}}, mBackTimer{new QTimer{this}},
-      mTakinMeasure{false}
+      mTakingMeasure{false}
 {
     init();
 }
@@ -120,7 +121,7 @@ void StartScreen::on_checkRegistryEntryButton_released()
             ui->nameText->setText(mMeasure.name);
             ui->dateTimeEdit->setDateTime(mMeasure.date);
             ui->latencyText->setText(QString::number(mMeasure.meanLatency));
-            ui->timeText->setText(QString::number(mMeasure.meanFactor));
+            ui->timeText->setText(QString::number(mMeasure.timeFactor));
             transitionScreen(MenuScreen::REGISTRY_DISPLAYER_SCREEN);
         }
         else
@@ -182,6 +183,15 @@ void StartScreen::on_startMeasuringButton_released()
     transitionScreen(MenuScreen::START_MEASURE_SCREEN);
 }
 
+void StartScreen::on_TimeFactorSlider_valueChanged(int value)
+{
+    mMeasure.timeFactor = value;
+}
+
+void StartScreen::on_DurationSlider_valueChanged(int value)
+{
+    mMeasure.duration = value;
+}
 
 void StartScreen::changedName(const QString& name)
 {
@@ -430,18 +440,20 @@ void StartScreen::loadRegistry()
     QDir registryFolder{QDir::current()};
 
     // If registry directory doesn't exist, is created
-    if(!registryFolder.exists(registryFolder.currentPath() + "/Measures"))
+    if(!registryFolder.exists(registryFolder.currentPath() + MEASURES))
     {
         registryFolder.mkdir("Measures");
     }
 
-    model->setRootPath(registryFolder.currentPath() + "/Measures");
+    model->setRootPath(registryFolder.currentPath() + MEASURES);
     ui->registryTreeView->setModel(model);
     ui->registryTreeView->setItemDelegate(delegate);
-    ui->registryTreeView->setRootIndex(model->index(registryFolder.currentPath() + "/Measures"));
+    ui->registryTreeView->setRootIndex(model->index(registryFolder.currentPath() + MEASURES));
     // Hide size and type colums
     ui->registryTreeView->hideColumn(1);
     ui->registryTreeView->hideColumn(2);
     ui->registryTreeView->setColumnWidth(0, 450);
     ui->registryTreeView->setSelectionBehavior (QAbstractItemView::SelectRows);
+
+    mJsonOperator.setPath(registryFolder.currentPath() + MEASURES);
 }
