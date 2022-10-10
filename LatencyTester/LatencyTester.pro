@@ -1,6 +1,6 @@
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 CONFIG += c++17
 
@@ -12,6 +12,7 @@ SOURCES += \
     dialog.cpp \
     jsonoperator.cpp \
     main.cpp \
+    qcustomplot.cpp \
     renamepopup.cpp \
     startscreen.cpp
 
@@ -19,6 +20,7 @@ HEADERS += \
     dataModel.hpp \
     dialog.h \
     jsonoperator.h \
+    qcustomplot.h \
     renamepopup.h \
     startscreen.h \
     extensionfiledelegate.h

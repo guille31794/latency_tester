@@ -9,8 +9,10 @@
 #include <QDebug>
 #include <QTimer>
 
-const static QString BACKBUTTONSTR{"Back_Button"};
-const static QString MEASURES{"/Measures"};
+const QString BACKBUTTONSTR{"Back_Button"};
+const QString MEASURES{"/Measures"};
+const QString MS{"Latencias (ms)"};
+const QString TIMELINE{"Timeline (s)"};
 
 StartScreen::StartScreen(QWidget *parent)
     : QMainWindow{parent}
@@ -122,6 +124,7 @@ void StartScreen::on_checkRegistryEntryButton_released()
             ui->dateTimeEdit->setDateTime(mMeasure.date);
             ui->latencyText->setText(QString::number(mMeasure.meanLatency));
             ui->timeText->setText(QString::number(mMeasure.timeFactor));
+            plotMeasure();
             transitionScreen(MenuScreen::REGISTRY_DISPLAYER_SCREEN);
         }
         else
@@ -211,6 +214,26 @@ void StartScreen::closeEvent(QCloseEvent *event)
     QMainWindow::closeEvent(event);
 }
 
+void StartScreen::plotMeasure()
+{
+    QVector<double> x_axis{};
+    x_axis.insert(0, 0.0);
+
+    for(int index = 1; index < mMeasure.latencys.size(); ++index)
+    {
+        x_axis.insert(index, x_axis[index-1] + (mMeasure.timeFactor / 1000.0));
+    }
+
+    ui->plotMeasures->removeGraph(0);
+    ui->plotMeasures->addGraph();
+    ui->plotMeasures->graph(0)->setData(x_axis, mMeasure.latencys);
+    ui->plotMeasures->yAxis->setLabel(MS);
+    ui->plotMeasures->xAxis->setLabel(TIMELINE);
+    ui->plotMeasures->xAxis->setRange(0, mMeasure.duration / 1000);
+    ui->plotMeasures->yAxis->setRange(0, mMeasure.meanLatency * 2);
+    ui->plotMeasures->replot();
+}
+
 void StartScreen::init()
 {
     widgetsMapInit();
@@ -265,6 +288,7 @@ void StartScreen::widgetsMapInit()
                 {MenuScreen::REGISTRY_DISPLAYER_SCREEN, ui->dateLabel},
                 {MenuScreen::REGISTRY_DISPLAYER_SCREEN, ui->dateTimeEdit},
                 {MenuScreen::REGISTRY_DISPLAYER_SCREEN, ui->backButton},
+                {MenuScreen::REGISTRY_DISPLAYER_SCREEN, ui->plotMeasures},
                 {MenuScreen::START_MEASURE_SCREEN, ui->startMeasureFrame},
                 {MenuScreen::START_MEASURE_SCREEN, ui->DurationLabel},
                 {MenuScreen::START_MEASURE_SCREEN, ui->timeFactorLabel},
@@ -272,7 +296,8 @@ void StartScreen::widgetsMapInit()
                 {MenuScreen::START_MEASURE_SCREEN, ui->DurationSlider},
                 {MenuScreen::START_MEASURE_SCREEN, ui->TimeFactorSlider},
                 {MenuScreen::START_MEASURE_SCREEN, ui->startMeasureButton},
-                {MenuScreen::START_MEASURE_SCREEN, ui->stopMeasureButton}
+                {MenuScreen::START_MEASURE_SCREEN, ui->stopMeasureButton},
+                {MenuScreen::START_MEASURE_SCREEN, ui->plotMeasures}
                };
 
     auto it{mWidgets.begin()};

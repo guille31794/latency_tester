@@ -116,6 +116,10 @@ private:
      * @param event close event
      */
     void closeEvent(QCloseEvent *event) override;
+    /**
+     * @brief draws a registry measure at screen
+     */
+    void plotMeasure();
 
     Ui::StartScreen *ui;
     MenuScreen mCurrentScreen;
