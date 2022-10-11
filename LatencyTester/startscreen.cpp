@@ -231,6 +231,25 @@ void StartScreen::plotMeasure()
     ui->plotMeasures->xAxis->setLabel(TIMELINE);
     ui->plotMeasures->xAxis->setRange(0, mMeasure.duration / 1000);
     ui->plotMeasures->yAxis->setRange(0, mMeasure.meanLatency * 2);
+    ui->plotMeasures->graph(0)->setLineStyle(QCPGraph::LineStyle::lsStepRight);
+
+    QCPScatterStyle scatter;
+    scatter.setShape(QCPScatterStyle::ssCircle);
+    scatter.setPen(QPen(Qt::white));
+    scatter.setSize(mCurrentSettings.fontSize);
+
+    if(mCurrentSettings.daltonicMode)
+    {
+        scatter.setBrush(Qt::red);
+        ui->plotMeasures->graph(0)->setPen(QPen(Qt::darkGreen));
+    }
+    else
+    {
+        scatter.setBrush(Qt::yellow);
+        ui->plotMeasures->graph(0)->setPen(QPen(Qt::blue));
+    }
+
+    ui->plotMeasures->graph(0)->setScatterStyle(scatter);
     ui->plotMeasures->replot();
 }
 

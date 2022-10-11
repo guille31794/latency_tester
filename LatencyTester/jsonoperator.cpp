@@ -64,6 +64,8 @@ void JsonOperator::parseJsonToStruct(Measures &registry)
     registry.date = QDateTime::fromString(mJsonObject.value(DATE).toString(), Qt::ISODate);
     registry.duration = mJsonObject.value(DURATION).toInt();
     registry.timeFactor = mJsonObject.value(TIMEFACTOR).toInt();
+    registry.latencys.clear();
+    registry.meanLatency = 0;
 
     for(int index = 0; index < mJsonObject.value(LATENCYS).toArray().size(); ++index)
     {

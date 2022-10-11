@@ -599,10 +599,10 @@ color: rgb(0, 0, 0);</string>
     <widget class="QWidget" name="formLayoutWidget_2">
      <property name="geometry">
       <rect>
-       <x>480</x>
-       <y>510</y>
-       <width>210</width>
-       <height>58</height>
+       <x>450</x>
+       <y>427</y>
+       <width>321</width>
+       <height>141</height>
       </rect>
      </property>
      <layout class="QFormLayout" name="formLayout_2">
@@ -639,10 +639,10 @@ color: rgb(0, 0, 0);</string>
     <widget class="QWidget" name="formLayoutWidget_3">
      <property name="geometry">
       <rect>
-       <x>150</x>
-       <y>510</y>
-       <width>206</width>
-       <height>58</height>
+       <x>25</x>
+       <y>427</y>
+       <width>331</width>
+       <height>141</height>
       </rect>
      </property>
      <layout class="QFormLayout" name="formLayout_3">
