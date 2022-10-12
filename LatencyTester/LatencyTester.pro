@@ -14,6 +14,7 @@ SOURCES += \
     main.cpp \
     qcustomplot.cpp \
     renamepopup.cpp \
+    sensoroperator.cpp \
     startscreen.cpp
 
 HEADERS += \
@@ -22,6 +23,7 @@ HEADERS += \
     jsonoperator.h \
     qcustomplot.h \
     renamepopup.h \
+    sensoroperator.h \
     startscreen.h \
     extensionfiledelegate.h
 

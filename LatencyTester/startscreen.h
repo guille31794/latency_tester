@@ -5,6 +5,7 @@
 #include "renamepopup.h"
 #include "jsonoperator.h"
 #include "dialog.h"
+#include "sensoroperator.h"
 #include <QMainWindow>
 #include <QMultiMap>
 #include <QPointer>
@@ -134,6 +135,5 @@ private:
     QPointer<Dialog> mDialog;
     QPointer<QTimer> mBackTimer;
     Measures mMeasure;
-    bool mTakingMeasure;
 };
 #endif // STARTSCREEN_H
