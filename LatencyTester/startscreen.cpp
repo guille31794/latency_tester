@@ -17,8 +17,7 @@ const QString TIMELINE{"Timeline (s)"};
 StartScreen::StartScreen(QWidget *parent)
     : QMainWindow{parent}
     , ui{new Ui::StartScreen}, mCurrentScreen{MenuScreen::START_SCREEN},
-      mRenameWindow{new RenamePopUp{this}}, mDialog{new Dialog{this}}, mBackTimer{new QTimer{this}},
-      mTakingMeasure{false}
+      mRenameWindow{new RenamePopUp{this}}, mDialog{new Dialog{this}}, mBackTimer{new QTimer{this}}
 {
     init();
 }

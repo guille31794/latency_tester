@@ -135,5 +135,6 @@ private:
     QPointer<Dialog> mDialog;
     QPointer<QTimer> mBackTimer;
     Measures mMeasure;
+    SensorOperator mSensorOperator;
 };
 #endif // STARTSCREEN_H
