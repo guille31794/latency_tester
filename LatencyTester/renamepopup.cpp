@@ -9,6 +9,7 @@ RenamePopUp::RenamePopUp(QWidget *parent) :
     setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
     connect(this, &RenamePopUp::nameSaved, (StartScreen*)this->parentWidget(), &StartScreen::changedName);
     ui->setupUi(this);
+    ui->renameText->setAttribute(Qt::WA_AcceptTouchEvents);
 }
 
 RenamePopUp::~RenamePopUp()

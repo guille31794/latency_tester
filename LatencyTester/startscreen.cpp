@@ -195,6 +195,11 @@ void StartScreen::on_DurationSlider_valueChanged(int value)
     mMeasure.duration = value;
 }
 
+void StartScreen::on_CalibrateButton_released()
+{
+
+}
+
 void StartScreen::changedName(const QString& name)
 {
     QPointer<QFileSystemModel> model = (QFileSystemModel*)ui->registryTreeView->model();
@@ -315,7 +320,8 @@ void StartScreen::widgetsMapInit()
                 {MenuScreen::START_MEASURE_SCREEN, ui->TimeFactorSlider},
                 {MenuScreen::START_MEASURE_SCREEN, ui->startMeasureButton},
                 {MenuScreen::START_MEASURE_SCREEN, ui->stopMeasureButton},
-                {MenuScreen::START_MEASURE_SCREEN, ui->plotMeasures}
+                {MenuScreen::START_MEASURE_SCREEN, ui->plotMeasures},
+                {MenuScreen::START_MEASURE_SCREEN, ui->calibrateButton}
                };
 
     auto it{mWidgets.begin()};
@@ -500,3 +506,4 @@ void StartScreen::loadRegistry()
 
     mJsonOperator.setPath(registryFolder.currentPath() + MEASURES);
 }
+

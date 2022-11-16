@@ -590,6 +590,18 @@ color: rgb(0, 0, 0);</string>
       <verstretch>0</verstretch>
      </sizepolicy>
     </property>
+    <property name="minimumSize">
+     <size>
+      <width>800</width>
+      <height>600</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>800</width>
+      <height>600</height>
+     </size>
+    </property>
     <property name="frameShape">
      <enum>QFrame::StyledPanel</enum>
     </property>
@@ -719,8 +731,8 @@ color: rgb(0, 0, 0);</string>
     <widget class="QWidget" name="verticalLayoutWidget_4">
      <property name="geometry">
       <rect>
-       <x>80</x>
-       <y>400</y>
+       <x>40</x>
+       <y>390</y>
        <width>302</width>
        <height>181</height>
       </rect>
@@ -782,26 +794,13 @@ color: rgb(0, 0, 0);</string>
         </property>
        </widget>
       </item>
-      <item alignment="Qt::AlignHCenter">
-       <widget class="QPushButton" name="startMeasureButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Comenzar</string>
-        </property>
-       </widget>
-      </item>
      </layout>
     </widget>
     <widget class="QWidget" name="verticalLayoutWidget_5">
      <property name="geometry">
       <rect>
-       <x>460</x>
-       <y>400</y>
+       <x>480</x>
+       <y>390</y>
        <width>302</width>
        <height>181</height>
       </rect>
@@ -884,14 +883,52 @@ color: rgb(0, 0, 0);</string>
         </property>
        </widget>
       </item>
-      <item alignment="Qt::AlignHCenter">
-       <widget class="QPushButton" name="stopMeasureButton">
-        <property name="text">
-         <string>Detener</string>
-        </property>
-       </widget>
-      </item>
      </layout>
+    </widget>
+    <widget class="QPushButton" name="calibrateButton">
+     <property name="geometry">
+      <rect>
+       <x>370</x>
+       <y>440</y>
+       <width>80</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Calibrar</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="startMeasureButton">
+     <property name="geometry">
+      <rect>
+       <x>370</x>
+       <y>480</y>
+       <width>80</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Comenzar</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="stopMeasureButton">
+     <property name="geometry">
+      <rect>
+       <x>370</x>
+       <y>520</y>
+       <width>80</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Detener</string>
+     </property>
     </widget>
    </widget>
    <widget class="QCustomPlot" name="plotMeasures" native="true">
@@ -927,10 +964,10 @@ color: rgb(0, 0, 0);</string>
    <zorder>registryFrame</zorder>
    <zorder>startFrame</zorder>
    <zorder>settingsFrame</zorder>
-   <zorder>startMeasureFrame</zorder>
    <zorder>registryDisplayerFrame</zorder>
-   <zorder>backButton</zorder>
    <zorder>plotMeasures</zorder>
+   <zorder>startMeasureFrame</zorder>
+   <zorder>backButton</zorder>
   </widget>
  </widget>
  <customwidgets>
