@@ -4,6 +4,8 @@
 #include "startscreen.h"
 #include <QDialog>
 #include <QAbstractButton>
+#include <QProcess>
+#include <QPointer>
 
 namespace Ui {
 class RenamePopUp;
@@ -30,6 +32,7 @@ private slots:
 
 private:
     Ui::RenamePopUp *ui;
+    QPointer<QProcess> mVirtualKeyboard;
 };
 
 #endif // RENAMEPOPUP_H

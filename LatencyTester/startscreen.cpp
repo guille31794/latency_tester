@@ -442,6 +442,11 @@ void StartScreen::loadSettings()
         mNextSettings.fontSize = settings.value("FontSize").value<quint8>();
     }
 
+    if(0 == mNextSettings.fontSize)
+    {
+        mNextSettings.fontSize = 10;
+    }
+
     if(settings.value("DaltonicMode") != 0)
     {
         mNextSettings.daltonicMode = settings.value("DaltonicMode").value<bool>();
@@ -486,24 +491,25 @@ void StartScreen::loadRegistry()
 {
     QPointer<QFileSystemModel> model = new QFileSystemModel;
     QPointer<NoIconOrExtensionFileDelegate> delegate = new NoIconOrExtensionFileDelegate;
-    QDir registryFolder{QDir::current()};
+    QString home = QDir::homePath();
+    QDir registryFolder{home + MEASURES};
 
     // If registry directory doesn't exist, is created
-    if(!registryFolder.exists(registryFolder.currentPath() + MEASURES))
+    if(!registryFolder.exists(home + MEASURES))
     {
-        registryFolder.mkdir("Measures");
+        registryFolder.mkdir(home + MEASURES);
     }
 
-    model->setRootPath(registryFolder.currentPath() + MEASURES);
+    model->setRootPath(home + MEASURES);
     ui->registryTreeView->setModel(model);
     ui->registryTreeView->setItemDelegate(delegate);
-    ui->registryTreeView->setRootIndex(model->index(registryFolder.currentPath() + MEASURES));
+    ui->registryTreeView->setRootIndex(model->index(home + MEASURES));
     // Hide size and type colums
     ui->registryTreeView->hideColumn(1);
     ui->registryTreeView->hideColumn(2);
     ui->registryTreeView->setColumnWidth(0, 450);
     ui->registryTreeView->setSelectionBehavior (QAbstractItemView::SelectRows);
 
-    mJsonOperator.setPath(registryFolder.currentPath() + MEASURES);
+    mJsonOperator.setPath(home + MEASURES);
 }
 
