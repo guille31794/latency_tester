@@ -6,6 +6,7 @@
 #include "jsonoperator.h"
 #include "dialog.h"
 #include "sensoroperator.h"
+#include "virtualkeyboard.h"
 #include <QMainWindow>
 #include <QMultiMap>
 #include <QPointer>
@@ -36,6 +37,7 @@ public:
 
 public slots:
     void changedName(const QString& name);
+    void reEnableRegistryButtons();
 
 private slots:
     void on_helpButton_released();
@@ -137,5 +139,6 @@ private:
     QPointer<QTimer> mBackTimer;
     Measures mMeasure;
     SensorOperator mSensorOperator;
+    QPointer<VirtualKeyboard> mVirtualKeyboard;
 };
 #endif // STARTSCREEN_H

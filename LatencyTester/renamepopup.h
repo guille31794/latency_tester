@@ -25,6 +25,7 @@ public:
 
 signals:
     void nameSaved(const QString& name);
+    void reEnableRegistryButtons();
 
 private slots:
     void on_renameButtonBox_accepted();
@@ -32,7 +33,6 @@ private slots:
 
 private:
     Ui::RenamePopUp *ui;
-    QPointer<QProcess> mVirtualKeyboard;
 };
 
 #endif // RENAMEPOPUP_H

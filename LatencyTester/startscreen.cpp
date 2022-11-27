@@ -8,6 +8,7 @@
 #include <QFileSystemModel>
 #include <QDebug>
 #include <QTimer>
+#include <QtDBus/QDBusConnection>
 
 const QString BACKBUTTONSTR{"Back_Button"};
 const QString MEASURES{"/Measures"};
@@ -15,9 +16,10 @@ const QString MS{"Latencias (ms)"};
 const QString TIMELINE{"Timeline (s)"};
 
 StartScreen::StartScreen(QWidget *parent)
-    : QMainWindow{parent}
-    , ui{new Ui::StartScreen}, mCurrentScreen{MenuScreen::START_SCREEN},
-      mRenameWindow{new RenamePopUp{this}}, mDialog{new Dialog{this}}, mBackTimer{new QTimer{this}}
+    : QMainWindow{parent},
+      ui{new Ui::StartScreen}, mCurrentScreen{MenuScreen::START_SCREEN},
+      mRenameWindow{new RenamePopUp{this}}, mDialog{new Dialog{this}}, mBackTimer{new QTimer{this}},
+      mVirtualKeyboard{new VirtualKeyboard(this)}
 {
     init();
 }
@@ -146,11 +148,15 @@ void StartScreen::on_renameRegistryEntryButton_released()
 
     if(ui->registryTreeView->currentIndex().isValid())
     {
+        ui->renameRegistryEntryButton->setDisabled(true);
+        ui->checkRegistryEntryButton->setDisabled(true);
+        ui->deleteRegistryEntryButton->setDisabled(true);
         QString nameWithExtension = model->fileName(ui->registryTreeView->currentIndex());
         QStringList nameList = nameWithExtension.split(".", Qt::SkipEmptyParts, Qt::CaseInsensitive);
         QString name = nameList.first();
         mRenameWindow->setName(name);
         mRenameWindow->show();
+        mVirtualKeyboard->showKeyboard(0, 400);
     }
 }
 
@@ -210,6 +216,15 @@ void StartScreen::changedName(const QString& name)
     {
         qDebug() << path << file.currentPath() << currentNameWithExtension << name;
     }
+    reEnableRegistryButtons();
+}
+
+void StartScreen::reEnableRegistryButtons()
+{
+    mVirtualKeyboard->hideKeyboard();
+    ui->deleteRegistryEntryButton->setEnabled(true);
+    ui->checkRegistryEntryButton->setEnabled(true);
+    ui->renameRegistryEntryButton->setEnabled(true);
 }
 
 void StartScreen::closeEvent(QCloseEvent *event)
@@ -259,6 +274,14 @@ void StartScreen::plotMeasure()
 
 void StartScreen::init()
 {
+    if (!QDBusConnection::sessionBus().registerObject("/VirtualKeyboard", mVirtualKeyboard,
+                                                      QDBusConnection::ExportAllSignals |
+                                                      QDBusConnection::ExportAllSlots))
+    {
+        qFatal("Unable to register object at DBus");
+        close();
+    }
+
     widgetsMapInit();
     loadSettings();
     loadRegistry();
