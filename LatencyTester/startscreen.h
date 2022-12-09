@@ -6,7 +6,6 @@
 #include "jsonoperator.h"
 #include "dialog.h"
 #include "sensoroperator.h"
-#include "virtualkeyboard.h"
 #include <QMainWindow>
 #include <QMultiMap>
 #include <QPointer>
@@ -15,6 +14,7 @@
 #include <QItemSelectionModel>
 #include <QString>
 #include <QPalette>
+#include <QProcess>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class StartScreen; }
@@ -139,6 +139,6 @@ private:
     QPointer<QTimer> mBackTimer;
     Measures mMeasure;
     SensorOperator mSensorOperator;
-    QPointer<VirtualKeyboard> mVirtualKeyboard;
+    QPointer<QProcess> mKeyboard;
 };
 #endif // STARTSCREEN_H

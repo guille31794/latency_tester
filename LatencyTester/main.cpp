@@ -1,20 +1,12 @@
 #include "startscreen.h"
-
 #include <QApplication>
 #include <QLocale>
 #include <QTranslator>
-#include <QtDBus/QDBusConnection>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     QTranslator translator;
-
-    if (!QDBusConnection::sessionBus().registerService("com.virtualKeyboard.inputmethod"))
-    {
-        qFatal("Unable to register at DBus");
-        return 1;
-    }
 
     const QStringList uiLanguages = QLocale::system().uiLanguages();
     for (const QString &locale : uiLanguages)

@@ -17,9 +17,12 @@ const QString TIMELINE{"Timeline (s)"};
 
 StartScreen::StartScreen(QWidget *parent)
     : QMainWindow{parent},
-      ui{new Ui::StartScreen}, mCurrentScreen{MenuScreen::START_SCREEN},
-      mRenameWindow{new RenamePopUp{this}}, mDialog{new Dialog{this}}, mBackTimer{new QTimer{this}},
-      mVirtualKeyboard{new VirtualKeyboard(this)}
+      ui{new Ui::StartScreen},
+      mCurrentScreen{MenuScreen::START_SCREEN},
+      mRenameWindow{new RenamePopUp{this}},
+      mDialog{new Dialog{this}},
+      mBackTimer{new QTimer{this}},
+      mKeyboard{new QProcess(this)}
 {
     init();
 }
@@ -156,7 +159,7 @@ void StartScreen::on_renameRegistryEntryButton_released()
         QString name = nameList.first();
         mRenameWindow->setName(name);
         mRenameWindow->show();
-        mVirtualKeyboard->showKeyboard(0, 400);
+        mKeyboard->start("xvkbd", {}, QIODevice::OpenModeFlag::ReadWrite);
     }
 }
 
@@ -221,7 +224,7 @@ void StartScreen::changedName(const QString& name)
 
 void StartScreen::reEnableRegistryButtons()
 {
-    mVirtualKeyboard->hideKeyboard();
+    mKeyboard->close();
     ui->deleteRegistryEntryButton->setEnabled(true);
     ui->checkRegistryEntryButton->setEnabled(true);
     ui->renameRegistryEntryButton->setEnabled(true);
@@ -274,14 +277,6 @@ void StartScreen::plotMeasure()
 
 void StartScreen::init()
 {
-    if (!QDBusConnection::sessionBus().registerObject("/VirtualKeyboard", mVirtualKeyboard,
-                                                      QDBusConnection::ExportAllSignals |
-                                                      QDBusConnection::ExportAllSlots))
-    {
-        qFatal("Unable to register object at DBus");
-        close();
-    }
-
     widgetsMapInit();
     loadSettings();
     loadRegistry();
