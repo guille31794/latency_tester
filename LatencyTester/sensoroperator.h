@@ -2,6 +2,7 @@
 #define SENSOROPERATOR_H
 
 #include "dataModel.hpp"
+#include "pigpio.h"
 
 class SensorOperator
 {
