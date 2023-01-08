@@ -8,6 +8,7 @@ class SensorOperator
 {
 public:
     SensorOperator();
+    ~SensorOperator();
     bool isTakingMeasure() const;
     void takeMeasure(Measures& registry);
     void calibrateSensor();
