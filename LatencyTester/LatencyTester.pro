@@ -44,9 +44,4 @@ CONFIG += embed_translations
 
 LIBS += -L/usr/local/lib -lpigpio -lrt
 
-# Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
-
 QT += gui-private widgets

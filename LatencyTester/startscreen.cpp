@@ -180,13 +180,12 @@ void StartScreen::backToStartScreen()
 
 void StartScreen::on_startMeasureButton_released()
 {
-
+    mSensorOperator.takeMeasure(mMeasure);
 }
-
 
 void StartScreen::on_stopMeasureButton_released()
 {
-
+    mSensorOperator.stopMeasure();
 }
 
 void StartScreen::on_startMeasuringButton_released()
@@ -241,14 +240,14 @@ void StartScreen::plotMeasure()
     QVector<double> x_axis{};
     x_axis.insert(0, 0.0);
 
-    for(int index = 1; index < mMeasure.latencys.size(); ++index)
+    for(int index = 1; index < mMeasure.lantencies.size(); ++index)
     {
         x_axis.insert(index, x_axis[index-1] + (mMeasure.timeFactor / 1000.0));
     }
 
     ui->plotMeasures->removeGraph(0);
     ui->plotMeasures->addGraph();
-    ui->plotMeasures->graph(0)->setData(x_axis, mMeasure.latencys);
+    ui->plotMeasures->graph(0)->setData(x_axis, mMeasure.lantencies);
     ui->plotMeasures->yAxis->setLabel(MS);
     ui->plotMeasures->xAxis->setLabel(TIMELINE);
     ui->plotMeasures->xAxis->setRange(0, mMeasure.duration / 1000);

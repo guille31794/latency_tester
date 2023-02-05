@@ -45,7 +45,7 @@ struct Measures
     QDateTime date;
     int timeFactor;
     int duration;
-    QVector<double> latencys{};
+    QVector<double> lantencies{};
     double meanLatency{0};
 };
 

@@ -5,7 +5,7 @@
 const QString NAME{"Name"};
 const QString DATE{"Date"};
 const QString TIMEFACTOR{"TimeFactor"};
-const QString LATENCYS{"Latencys"};
+const QString lantencies{"lantencies"};
 const QString DURATION{"Duration"};
 const QString MEASURE{"_Medicion.json"};
 
@@ -64,16 +64,16 @@ void JsonOperator::parseJsonToStruct(Measures &registry)
     registry.date = QDateTime::fromString(mJsonObject.value(DATE).toString(), Qt::ISODate);
     registry.duration = mJsonObject.value(DURATION).toInt();
     registry.timeFactor = mJsonObject.value(TIMEFACTOR).toInt();
-    registry.latencys.clear();
+    registry.lantencies.clear();
     registry.meanLatency = 0;
 
-    for(int index = 0; index < mJsonObject.value(LATENCYS).toArray().size(); ++index)
+    for(int index = 0; index < mJsonObject.value(lantencies).toArray().size(); ++index)
     {
-        registry.latencys.append(mJsonObject.value(LATENCYS).toArray().at(index).toDouble());
-        registry.meanLatency += mJsonObject.value(LATENCYS).toArray().at(index).toDouble();
+        registry.lantencies.append(mJsonObject.value(lantencies).toArray().at(index).toDouble());
+        registry.meanLatency += mJsonObject.value(lantencies).toArray().at(index).toDouble();
     }
 
-    registry.meanLatency /= registry.latencys.size();
+    registry.meanLatency /= registry.lantencies.size();
 }
 
 void JsonOperator::setPath(const QString &path)
@@ -90,11 +90,11 @@ void JsonOperator::parseStructToJson(const Measures &registry)
     mJsonObject.insert(TIMEFACTOR, registry.timeFactor);
     mJsonObject.insert(DURATION, registry.duration);
 
-    for(auto& latency : registry.latencys)
+    for(auto& latency : registry.lantencies)
     {
         array.append(latency);
     }
 
-    mJsonObject.insert(LATENCYS, array);
+    mJsonObject.insert(lantencies, array);
     mJsonDocument = QJsonDocument(mJsonObject);
 }
