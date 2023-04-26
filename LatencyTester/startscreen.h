@@ -15,6 +15,7 @@
 #include <QString>
 #include <QPalette>
 #include <QProcess>
+#include <QTranslator>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class StartScreen; }
@@ -34,6 +35,11 @@ class StartScreen : public QMainWindow
 public:
     StartScreen(QWidget *parent = nullptr);
     ~StartScreen();
+    /**
+     * @brief used to translate ui
+     * @param event triggered to translate ui
+     */
+    void changeEvent(QEvent *event) override;
 
 public slots:
     void changedName(const QString& name);
@@ -140,5 +146,6 @@ private:
     Measures mMeasure;
     SensorOperator mSensorOperator;
     QPointer<QProcess> mKeyboard;
+    QTranslator mTranslator;
 };
 #endif // STARTSCREEN_H

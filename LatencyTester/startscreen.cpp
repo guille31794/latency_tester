@@ -14,6 +14,8 @@ const QString BACKBUTTONSTR{"Back_Button"};
 const QString MEASURES{"/Measures"};
 const QString MS{"Latencias (ms)"};
 const QString TIMELINE{"Timeline (s)"};
+const QString ENGLISH{"/home/pi/LatencyTester/bin/LatencyTester_en_EN.qm"};
+const QString POLSKI{"/home/pi/LatencyTester/bin/LatencyTester_pl_PL.qm"};
 
 StartScreen::StartScreen(QWidget *parent)
     : QMainWindow{parent},
@@ -411,13 +413,32 @@ void StartScreen::setTranslation()
 {
     if(mNextSettings.language != mCurrentSettings.language)
     {
-        switch (mNextSettings.language)
+        switch (mCurrentSettings.language)
         {
             case Languages::SPANISH:
             break;
             case Languages::ENGLISH:
+            mTranslator.load(ENGLISH);
             break;
             case Languages::POLISH:
+            mTranslator.load(POLSKI);
+            break;
+        }
+
+        switch (mNextSettings.language)
+        {
+            case Languages::SPANISH:
+            qApp->removeTranslator(&mTranslator);
+            break;
+            case Languages::ENGLISH:
+            //qApp->removeTranslator(&translator);
+            qDebug() << mTranslator.load(ENGLISH);
+            qApp->installTranslator(&mTranslator);
+            break;
+            case Languages::POLISH:
+            qApp->removeTranslator(&mTranslator);
+            mTranslator.load(POLSKI);
+            qApp->installTranslator(&mTranslator);
             break;
         }
 
@@ -530,3 +551,12 @@ void StartScreen::loadRegistry()
     mJsonOperator.setPath(home + MEASURES);
 }
 
+void StartScreen::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::LanguageChange)
+    {
+        ui->retranslateUi(this);
+    }
+
+    QWidget::changeEvent(event);
+}

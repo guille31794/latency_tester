@@ -38,10 +38,19 @@ FORMS += \
     startscreen.ui
 
 TRANSLATIONS += \
-    LatencyTester_es_ES.ts
+    LatencyTester_en_EN.ts
+    #LatencyTester_pl_PL.ts
+
 CONFIG += lrelease
 CONFIG += embed_translations
 
 LIBS += -L/usr/local/lib -lpigpio -lrt
 
 QT += gui-private widgets
+
+DISTFILES += \
+    LatencyTester_en_EN.qm \
+    LatencyTester_pl_PL.ts
+
+RESOURCES += \
+    translations.qrc

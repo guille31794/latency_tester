@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>LatencyTester_en_EN.qm</file>
+    </qresource>
+</RCC>
