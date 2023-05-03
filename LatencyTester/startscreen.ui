@@ -343,7 +343,7 @@ Todos los derechos reservados.</string>
       <item alignment="Qt::AlignHCenter">
        <widget class="QDialogButtonBox" name="settingsButtonBox">
         <property name="standardButtons">
-         <set>QDialogButtonBox::Apply|QDialogButtonBox::Reset</set>
+         <set>QDialogButtonBox::NoButton</set>
         </property>
        </widget>
       </item>

@@ -173,5 +173,17 @@ All rights reserved.</translation>
         <source>Detener</source>
         <translation>Stop</translation>
     </message>
+    <message>
+        <location filename="startscreen.cpp" line="303"/>
+        <source>Aplicar</source>
+        <oldsource>&amp;Aplicar</oldsource>
+        <translation>Apply</translation>
+    </message>
+    <message>
+        <location filename="startscreen.cpp" line="304"/>
+        <source>Cancelar</source>
+        <oldsource>&amp;Cancelar</oldsource>
+        <translation>Cancel</translation>
+    </message>
 </context>
 </TS>

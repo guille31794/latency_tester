@@ -16,6 +16,12 @@ const QString MS{"Latencias (ms)"};
 const QString TIMELINE{"Timeline (s)"};
 const QString ENGLISH{"/home/pi/LatencyTester/bin/LatencyTester_en_EN.qm"};
 const QString POLSKI{"/home/pi/LatencyTester/bin/LatencyTester_pl_PL.qm"};
+const QString APLICAR{"Aplicar"};
+const QString CANCELAR{"Cancelar"};
+const QString APPLY{"Apply"};
+const QString CANCEL{"Cancel"};
+const QString STOSOWAC{"Stosować"};
+const QString ANULOWAC{"Anulować"};
 
 StartScreen::StartScreen(QWidget *parent)
     : QMainWindow{parent},
@@ -105,11 +111,11 @@ void StartScreen::on_daltonicCheckbox_stateChanged(int arg1)
 
 void StartScreen::on_settingsButtonBox_clicked(QAbstractButton *button)
 {
-    if(ui->settingsButtonBox->Apply == ui->settingsButtonBox->standardButton(button))
+    if(QDialogButtonBox::ButtonRole::ApplyRole == ui->settingsButtonBox->buttonRole(button))
     {
         setSettings();
     }
-    else if(ui->settingsButtonBox->Reset == ui->settingsButtonBox->standardButton(button))
+    else
     {
         ui->languagesComboBox->setCurrentIndex(static_cast<int>(mCurrentSettings.language));
         ui->fontSizeSlider->setValue(mCurrentSettings.fontSize);
@@ -294,6 +300,12 @@ void StartScreen::widgetsMapInit()
     ui->backButton->setIcon(style.standardIcon(QStyle::SP_ArrowBack));
     ui->backButton->setAccessibleName(BACKBUTTONSTR);
 
+    QAbstractButton* applyButton{new QPushButton(tr("Aplicar"), ui->settingsButtonBox)};
+    QAbstractButton* cancelButton{new QPushButton(tr("Cancelar"), ui->settingsButtonBox)};
+
+    ui->settingsButtonBox->addButton(applyButton, QDialogButtonBox::ButtonRole::ApplyRole);
+    ui->settingsButtonBox->addButton(cancelButton, QDialogButtonBox::ButtonRole::RejectRole);
+
     mWidgets = {{MenuScreen::START_SCREEN, ui->startFrame},
                 {MenuScreen::START_SCREEN, ui->helpButton},
                 {MenuScreen::START_SCREEN, ui->settingsButton},
@@ -413,32 +425,28 @@ void StartScreen::setTranslation()
 {
     if(mNextSettings.language != mCurrentSettings.language)
     {
-        switch (mCurrentSettings.language)
-        {
-            case Languages::SPANISH:
-            break;
-            case Languages::ENGLISH:
-            mTranslator.load(ENGLISH);
-            break;
-            case Languages::POLISH:
-            mTranslator.load(POLSKI);
-            break;
-        }
+        QList<QAbstractButton*> buttons = ui->settingsButtonBox->buttons();
 
         switch (mNextSettings.language)
         {
             case Languages::SPANISH:
             qApp->removeTranslator(&mTranslator);
+            buttons[1]->setText(APLICAR);
+            buttons[0]->setText(CANCELAR);
             break;
             case Languages::ENGLISH:
-            //qApp->removeTranslator(&translator);
-            qDebug() << mTranslator.load(ENGLISH);
+            qApp->removeTranslator(&mTranslator);
+            mTranslator.load(ENGLISH);
             qApp->installTranslator(&mTranslator);
+            buttons[1]->setText(APPLY);
+            buttons[0]->setText(CANCEL);
             break;
             case Languages::POLISH:
             qApp->removeTranslator(&mTranslator);
             mTranslator.load(POLSKI);
             qApp->installTranslator(&mTranslator);
+            buttons[1]->setText(STOSOWAC);
+            buttons[0]->setText(ANULOWAC);
             break;
         }
 
