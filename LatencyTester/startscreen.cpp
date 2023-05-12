@@ -555,6 +555,8 @@ void StartScreen::loadRegistry()
     ui->registryTreeView->hideColumn(2);
     ui->registryTreeView->setColumnWidth(0, 450);
     ui->registryTreeView->setSelectionBehavior (QAbstractItemView::SelectRows);
+    // While it's not possible to translate header labels they'll be hidden
+    ui->registryTreeView->setHeaderHidden(true);
 
     mJsonOperator.setPath(home + MEASURES);
 }
