@@ -32,3 +32,6 @@ Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/*.acr
 Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/*.alg
 Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/*.xdy
 Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/.qm/
+
+# Context/tracking file (local use only)
+Latency_tester.md

@@ -5,8 +5,13 @@
 
 /**
  * @brief c like high level library to operate rpi gpio.
+ * On non-RPi platforms, a stub is used instead.
  */
+#ifdef RASPBERRY_PI
 #include "pigpio.h"
+#else
+#include "pigpio_stub.h"
+#endif
 
 /**
  * @brief The SensorOperator class controls the logic behind the process of taking measures

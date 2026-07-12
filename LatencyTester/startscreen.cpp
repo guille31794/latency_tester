@@ -14,8 +14,8 @@ const QString BACKBUTTONSTR{"Back_Button"};
 const QString MEASURES{"/Measures"};
 const QString MS{"Latencias (ms)"};
 const QString TIMELINE{"Timeline (s)"};
-const QString ENGLISH{"/home/pi/LatencyTester/bin/LatencyTester_en_EN.qm"};
-const QString POLSKI{"/home/pi/LatencyTester/bin/LatencyTester_pl_PL.qm"};
+const QString ENGLISH{":/i18n/LatencyTester_en_EN.qm"};
+const QString POLSKI{":/i18n/LatencyTester_pl_PL.qm"};
 const QString APLICAR{"Aplicar"};
 const QString CANCELAR{"Cancelar"};
 const QString APPLY{"Apply"};
@@ -436,14 +436,14 @@ void StartScreen::setTranslation()
             break;
             case Languages::ENGLISH:
             qApp->removeTranslator(&mTranslator);
-            mTranslator.load(ENGLISH);
+            (void)mTranslator.load(ENGLISH);
             qApp->installTranslator(&mTranslator);
             buttons[1]->setText(APPLY);
             buttons[0]->setText(CANCEL);
             break;
             case Languages::POLISH:
             qApp->removeTranslator(&mTranslator);
-            mTranslator.load(POLSKI);
+            (void)mTranslator.load(POLSKI);
             qApp->installTranslator(&mTranslator);
             buttons[1]->setText(STOSOWAC);
             buttons[0]->setText(ANULOWAC);

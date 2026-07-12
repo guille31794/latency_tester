@@ -156,7 +156,7 @@ class QCPPolarGraph;
   
   It provides QMetaObject-based reflection of its enums and flags via \a QCP::staticMetaObject.
 */
-#ifndef Q_MOC_RUN
+#if 1 // Always use namespace (Qt 6.8+ MOC incompatible with the class trick)
 namespace QCP {
 #else
 class QCP { // when in moc-run, make it look like a class, so we get Q_GADGET, Q_ENUMS/Q_FLAGS features in namespace
@@ -379,15 +379,16 @@ inline int getMarginValue(const QMargins &margins, QCP::MarginSide side)
 }
 
 
-extern const QMetaObject staticMetaObject; // in moc-run we create a static meta object for QCP "fake" object. This line is the link to it via QCP::staticMetaObject in normal operation as namespace
+extern const QMetaObject staticMetaObject; // NOTE: disabled for Qt 6.8+ compatibility (no MOC class trick)
 
 } // end of namespace QCP
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCP::AntialiasedElements)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCP::PlottingHints)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCP::MarginSides)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCP::Interactions)
-Q_DECLARE_METATYPE(QCP::ExportPen)
-Q_DECLARE_METATYPE(QCP::ResolutionUnit)
+// Q_DECLARE_METATYPE disabled - QCP namespace enums not registered with Qt meta-object system
+// Q_DECLARE_METATYPE(QCP::ExportPen)
+// Q_DECLARE_METATYPE(QCP::ResolutionUnit)
 Q_DECLARE_METATYPE(QCP::SignDomain)
 Q_DECLARE_METATYPE(QCP::MarginSide)
 Q_DECLARE_METATYPE(QCP::AntialiasedElement)

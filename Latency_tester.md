@@ -254,7 +254,14 @@ a:
 
 ### Arquitectura General
 
-Aplicación Qt 5.15 (C++17) diseñada para ejecutarse en Raspberry Pi 3 Model B con pantalla táctil. Usa la biblioteca `pigpio` para acceso GPIO y `QCustomPlot` para gráficos.
+Aplicación Qt (C++17) diseñada para ejecutarse en Raspberry Pi 3 Model B con pantalla táctil. Usa la biblioteca `pigpio` para acceso GPIO y `QCustomPlot` para gráficos. Ahora compila tanto en Desktop (Windows MinGW) como en ARM (Raspberry Pi).
+
+### Entorno de Desarrollo Actual
+
+- **Qt**: 6.11.1 MinGW 64-bit (Desktop)
+- **Compilador**: g++ 13.1.0 (MinGW-w64)
+- **IDE**: Qt Creator
+- **OS desarrollo**: Windows
 
 ### Estructura de Archivos
 
@@ -268,9 +275,9 @@ Aplicación Qt 5.15 (C++17) diseñada para ejecutarse en Raspberry Pi 3 Model B 
 | `jsonoperator.h/cpp` | Persistencia de mediciones en formato JSON |
 | `dataModel.hpp` | Structs y enums: `Measures`, `GeneralConfigSettings`, `MenuScreen`, `Languages` |
 | `extensionfiledelegate.h` | Delegado Qt para mostrar archivos sin extensión en listas |
-| `qcustomplot.h/cpp` | Biblioteca externa para gráficas (terceros) |
+| `qcustomplot.h/cpp` | Biblioteca externa para gráficas (terceros, parcheada) |
+| `pigpio_stub.h` | Stub de pigpio para compilación Desktop (sin hardware) |
 | `LatencyTester.pro` | Archivo de proyecto qmake |
-| `translations.qrc` | Recurso Qt para traducciones |
 | `LatencyTester_en_EN.ts` | Traducción inglés |
 | `LatencyTester_pl_PL.ts` | Traducción polaco |
 | `Measures/` | Carpeta donde se guardan las mediciones JSON |
@@ -296,20 +303,63 @@ Aplicación Qt 5.15 (C++17) diseñada para ejecutarse en Raspberry Pi 3 Model B 
 
 ### Dependencias Externas
 
-- **Qt 5.15** (core, gui, widgets, printsupport)
-- **pigpio** - biblioteca C para GPIO en Raspberry Pi
-- **QCustomPlot** - gráficas 2D (incluida como fuente)
+- **Qt 6.11.1** (core, gui, widgets, printsupport) — migrado desde Qt 5.15
+- **pigpio** - biblioteca C para GPIO en Raspberry Pi (stub en Desktop)
+- **QCustomPlot 2.1.0** - gráficas 2D (incluida como fuente, parcheada para Qt 6.11)
 
 ### Configuración de Deploy
 
-- Target: `/home/pi/LatencyTester/bin` (Raspberry Pi)
-- Compilación cruzada ARM desde x86-64
-- Sistema operativo: Raspi OS Lite personalizado
+- **Desktop**: Compilación local para desarrollo/debug (pigpio stub)
+- **Raspberry Pi**: Compilación cruzada ARM, target `/home/pi/LatencyTester/bin`
+- Sistema operativo RPi: Raspi OS Lite personalizado
+
+### Toolchain - Cambios Realizados
+
+| Cambio | Motivo |
+|---|---|
+| `pigpio_stub.h` creado | Permite compilar en Desktop sin hardware GPIO |
+| `sensoroperator.h` — include condicional `#ifdef RASPBERRY_PI` | Selección automática pigpio real vs stub |
+| `.pro` — detección ARM/Desktop automática | Define `RASPBERRY_PI` solo en ARM, linkea pigpio solo ahí |
+| `.pro` — `QMAKE_CXXFLAGS += -Wa,-mbig-obj` | Fix "too many sections" de qcustomplot.o en Debug MinGW |
+| `.pro` — `DEFINES += QT_NO_CONSTEXPR_METAOBJECT_DATA` | Intento de fix MOC (parcial) |
+| `qcustomplot.h` — parcheado namespace QCP | `#ifndef Q_MOC_RUN` → `#if 1` para evitar Q_GADGET fake class incompatible con MOC Qt 6.8+ |
+| `qcustomplot.h` — comentado `Q_DECLARE_METATYPE` para enums QCP | Sin MOC class trick, estos no aplican |
+| `translations.qrc` eliminado | Qt 6 `embed_translations` gestiona .qm automáticamente |
+| `startscreen.cpp` — paths traducción → `:/i18n/...` | Rutas de recurso embebido Qt 6 |
+| `startscreen.cpp` — `(void)mTranslator.load()` | Silenciar `[[nodiscard]]` de Qt 6 |
+| `.pro` — eliminado `QT += gui-private` | No se usaba, causaba warnings |
 
 ---
 
 ## Gitignore
 
 Se ha creado `.gitignore` en la raíz del repositorio que excluye:
-- `build-LatencyTester-*/` (3 carpetas de build: Desktop-Debug, Desktop-Release, RaspberryPi-Release)
+- `build-LatencyTester-*/` (carpetas de build Qt Creator)
 - Archivos auxiliares de LaTeX (*.aux, *.log, *.bbl, etc.)
+- `document.pdf` (generado)
+- `Latency_tester.md` (fichero de contexto local)
+
+---
+
+## Tareas Pendientes
+
+### PRIORITARIAS — Código fuente (LatencyTester)
+
+1. ⬜ **Revisar warnings de compilación** — qcustomplot.cpp emite ~9 warnings de APIs deprecadas en Qt 6 (`toTimeSpec`, `mirrored`, `startOfDay`, `implicit-fallthrough`). No bloquean pero ensucian la salida.
+2. ⬜ **Actualizar proyecto de Qt 5 a Qt 6.11.1 de forma completa** — Actualmente funciona con parches mínimos. Una migración completa implicaría:
+   - Actualizar QCustomPlot a una versión compatible nativamente con Qt 6.8+ (cuando exista) o portar los cambios de API deprecada
+   - Revisar uso de APIs Qt 5 que están deprecadas o eliminadas en Qt 6
+   - Eliminar el define `QT_NO_CONSTEXPR_METAOBJECT_DATA` cuando ya no sea necesario
+   - Migrar de qmake a CMake (recomendado por Qt para Qt 6)
+   - Revisar `Q_DECLARE_METATYPE` y registro de tipos con el nuevo sistema de metatypes Qt 6
+3. ⬜ **Revisar startscreen.cpp** — Posibles incompatibilidades de API Qt 6 en runtime (signals/slots, modelos, etc.)
+
+### DOCUMENTO LaTeX
+
+4. ⬜ Capítulo "Implementación" - vacío
+5. ⬜ Capítulo "Pruebas y validación" - vacío
+6. ⬜ Capítulo "Resumen" - vacío
+7. ⬜ Capítulo "Conclusiones y trabajo futuro" - vacío
+8. ⬜ Apéndices (Manual de instalación, usuario, desarrollador) - vacíos
+9. ⬜ Subsección "Modelo conceptual de datos del dominio" - vacía
+10. ⬜ (Opcional) Resolver tracklang/datatool warning LaTeX
