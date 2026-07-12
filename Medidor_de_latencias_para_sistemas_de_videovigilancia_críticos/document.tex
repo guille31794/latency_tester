@@ -1,0 +1,1650 @@
+%% LyX 2.3.3 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\pdfminorversion=7
+\documentclass[12pt,spanish,bibliography=totoc,index=totoc,BCOR=0mm,captions=tableheading]{scrbook}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper]{geometry}
+\geometry{verbose,lmargin=3.5cm,rmargin=2.5cm,marginparwidth=0pt}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[spanish]{babel}
+\addto\shorthandsspanish{\spanishdeactivate{~<>}}
+\usepackage{eurosym} % para el euro
+\usepackage{csquotes}
+\usepackage{float}
+\usepackage{scrhack}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage[hyphens]{url}
+\usepackage{glossaries}
+\usepackage[unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=true,bookmarksopen=false,
+ breaklinks=true,pdfborder={0 0 1},backref=false,colorlinks=true]
+ {hyperref}
+ \usepackage{pdfpages}
+\hypersetup{
+ linkcolor=black, citecolor=black, urlcolor=blue, filecolor=blue,pdfpagelayout=OneColumn, pdfnewwindow=true,pdfstartview=XYZ, plainpages=false}
+
+\makeatletter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+\providecommand{\LyX}{\texorpdfstring%
+  {L\kern-.1667em\lower.25em\hbox{Y}\kern-.125emX\@}
+  {LyX}}
+%% Because html converters don't know tabularnewline
+\providecommand{\tabularnewline}{\\}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+% DO NOT ALTER THIS PREAMBLE!!!
+%
+% This preamble is designed to ensure that the User's Guide prints
+% out as advertised. If you mess with this preamble,
+% parts of the User's Guide may not print out as expected.  If you
+% have problems LaTeXing this file, please contact 
+% the documentation team
+% email: lyx-docs@lists.lyx.org
+
+%\usepackage[utf8]{inputenc}
+
+\usepackage{ifpdf} % part of the hyperref bundle
+\ifpdf % if pdflatex is used
+
+ % set fonts for nicer pdf view
+ \IfFileExists{lmodern.sty}{\usepackage{lmodern}}{}
+
+\fi % end if pdflatex is used
+
+% for correct jump positions whe clicking on a link to a float
+\usepackage[figure]{hypcap}
+%\usepackage[printonlyused]{acronym-custom}
+\usepackage{acronym-custom}
+
+% the pages of the TOC is numbered roman
+% and a pdf-bookmark for the TOC is added
+\let\myTOC\tableofcontents
+\renewcommand\tableofcontents{%
+  \frontmatter
+  \pdfbookmark[1]{\contentsname}{}
+  \myTOC
+  \mainmatter }
+
+% redefine the \LyX macro for PDF bookmarks
+\def\LyX{\texorpdfstring{%
+  L\kern-.1667em\lower.25em\hbox{Y}\kern-.125emX\@}
+  {LyX}}
+
+% define a short command for \textvisiblespace
+\newcommand{\spce}{\textvisiblespace}
+
+% macro for italic page numbers in the index
+\newcommand{\IndexDef}[1]{\textit{#1}}
+
+\usepackage{listings}
+\renewcommand{\lstlistlistingname}{Listados}
+\renewcommand{\lstlistingname}{Listado}
+
+\usepackage{hyphenat}
+\usepackage{verbatim}
+
+\AtBeginDocument{
+   \renewcommand{\tablename}{Tabla}
+   \renewcommand{\listtablename}{Índice de tablas}
+}
+
+\newenvironment{changemargin}[2]{
+  \begin{list}{}{
+    \setlength{\topsep}{0pt}
+    \setlength{\leftmargin}{#1}
+    \setlength{\rightmargin}{#2}
+    \setlength{\listparindent}{\parindent}
+    \setlength{\itemindent}{\parindent}
+    \setlength{\parsep}{\parskip}
+  }
+  \item[]}{\end{list}}
+
+\newenvironment{nota}{
+  \begin{changemargin}{2em}{2em}
+    \textbf{\textsc{Nota: }}
+}{
+  \end{changemargin}
+}
+
+\makeatother
+
+\begin{document}
+\raggedbottom
+
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+    
+  \centering
+  \includepdf{Documents/Portada-externa.pdf}
+
+\end{titlepage}
+\newpage{\pagestyle{empty}\cleardoublepage}  
+{
+  \thispagestyle{empty} 
+  \centering
+  \includepdf{Documents/Primera-interna.pdf}
+}
+
+\clearpage
+\newpage{\pagestyle{empty}\cleardoublepage}  
+\includepdf{Documents/Segunda-interna.pdf}
+\setcounter{page}{0}
+\hypersetup{pageanchor=true}
+\tableofcontents{}
+
+\listoffigures
+
+\listoftables
+
+
+\chapter{Introducción\label{cap:introducci=0000F3n}}
+
+Durante la lectura de este documento, le será presentado con todo lujo de detalles un dispositivo electrónico de nuevo desarrollo, cuyas aplicaciones, serán especialmente útiles en el ámbito militar y de la seguridad de entornos en tiempo real, pero que también puede tener aplicaciones en otros sectores, como la industria, donde puede ayudar a cuantificar y estandarizar así una medida, como es el retardo de vídeo.
+
+Para comenzar, se dice que un sistema de videovigilancia es aquel que permite a través de la utilización de un circuito cerrado de televisión, la monitorización de vídeos e imágenes a distancia, con el objetivo de aumentar la seguridad de un entorno \cite{videovigilancia}.
+ 
+A su vez, un sistema de videovigilancia es crítico cuando tiene que funcionar “en tiempo real”, es decir, ser capaz de captar una imagen, y mostrarla en un monitor con un tiempo de latencia suficientemente bajo como para que el operador de cámaras no tenga sensación de disonancia entre las entradas que recibe la cámara y el tiempo que tarda ésta en dar una respuesta a dichas entradas.
+
+Se vuelve importante este hecho en entornos donde se conjugan un altísimo nivel de seguridad, con la necesidad de una respuesta muy rápida a cualquier evento que se produzca y pueda afectar a la mísma.
+
+Se contextualiza este concepto, en el hecho que se conoce como revolución digital, cuyo avance ha afectado enormemente a los dispositivos y medios de captación de imágenes y su posterior tratamiento y adecuación al medio en el que serán utilizadas.
+ 
+Este proyecto pretende dar respuesta a si un sistema de videovigilancia es o no de tiempo real.
+Consistirá en el desarrollo de un sistema de medición de latencias para sistemas de videovigilancia, que incluye un dispositivo de medición de bajo coste y alta efectividad, equipado con un software capaz de suplir las necesidades del personal técnico encargado de realizar dichas mediciones. 
+ 
+Así mismo, se realizará una descripción de toda la metodología aplicada al realizar las mediciones, una completo análisis de todo el transfondo tecnológico del hardware utilizado durante el proyecto y se proporcionará al menos un par de prototipos del sistema que obtienen resultados fiables.
+
+% \section*{Listados}
+
+% Una opción es incluir directamente el código en el documento utilizando
+% \emph{verbatim}: \begin{verbatim}
+% epService.getEPRuntime().sendEvent(evento);
+% \end{verbatim}
+
+% \LaTeX{} también permite incluir listados desde ficheros de texto,
+% ajustando automáticamente las líneas de código a la configuración
+% especificada. Puede verse un ejemplo en el Listado~\ref{lst:enviarEvento}.
+
+% \lstset{basicstyle=\footnotesize, frame=single, breaklines=true, tabsize=3}
+% \lstinputlisting[caption=Envío de un evento a Esper, label=lst:enviarEvento]{enviarEvento.txt}
+
+\section{Motivación}
+
+Dado el actual auge de los sistemas digitales en todos los posibles ámbitos de la vida cotidiana, hay uno que ha destacado de sobre manera, y es la captación, tratamiento y visualización de las imágenes, y por ende, al vídeo.
+
+Aplicada esta revolución digital al entorno de la defensa y seguridad, llegamos a los sistemas de videovigilancia modernos, los cuales aumentan la complejidad de los antiguos sistemas analógicos, añadiendo componentes electrónicos de diversa índole que son los encargados de conseguir una imagen digital de calidad, pero a que su vez, producen inherentemente un retardo en la consecución y retransmisión de la misma a través de un monitor.
+
+La necesidad laboral y el interés de algunas empresas en el desarrollo de un producto, de bajo coste, y de eficacia probada son el motivo principal de este estudio.
+
+Eso nos lleva hasta la idea de este estudio el cuál, pretende dar una herramienta sencilla y barata para medir dichos retardos y a la vez, establecer una serie de pautas generales las cuales para identificar que sistemas pueden ser considerados como críticos y cuales no, precisamente, en base a este criterio de medida que es su latencia de funcionamiento.
+
+Se comenzará el desarrollo del sistema con la premisa de desarrollar un prototipo de producto funcional, el cuál, disponga entre sus características técnicas:
+
+\begin{itemize}
+    \item La capacidad de ser portátil y transportable.
+    \item Funcionar utilizando una batería incorporada en lugar de conectado a una red de corriente.
+    \item Tener una interfaz de usuario sencilla y amigable.
+    \item Ser capaz de realizar mediciones precisas de las latencias de un sistemas de vídeo.
+    \item Tener un bajo coste y estar desarrollado inicialmente con hardware open source.
+\end{itemize}
+
+Para ello, se ha comenzado revisando el estado del arte y la existencia de dispositivos similares en el mercado. Comercialmente, no se ha encontrado ninguno, y de fabricación casera, aunque usado profesionalmente, se ha encontrado un sistema similar, construido  por los ingenieros de la empresa sueca Voysys, con la salvedad de que no es portátil y solo trabaja bajo entorno Windows, dependiendo de un ordenador que realice los cálculos e inicie las mediciones. Este dispositivo es brevemente mostrado en un vídeo subido en el canal de Youtube de la compañía y no se proporciona información de como está construido, utilizando que componentes, como se conecta con el ordenador o que lenguaje se ha utilizado para su programación, pero a simple vista se puede observar que utiliza los mismos componentes que se pretenden utilizar en este proyecto conectados mediante una conexión serie o usb. Estos son:
+
+\begin{itemize}
+    \item Placa microcontroladora.
+    \item Fotosensor.
+    \item Led.
+\end{itemize}
+
+Estos dispositivos, que son los responsables de las mediciones en el sistema de Voysys, serán los encargados de tanto de tomar mediciones como de realizar los cálculos y representar las mismas para su visualización, y es por ello y por su condición de portátil por lo que se realizarán los siguientes cambios en los componentes:
+
+\begin{itemize}
+    \item SBC en lugar de placa microcontroladora.
+    \item Se añadirá una batería.
+    \item Pantalla táctil.
+    \item Interfaz gráfica propia y adaptada integrada en un sistema operativo propio.
+\end{itemize}
+
+Respecto a la medición de latencias en sistemas de visión nocturna, se debe tener en cuenta que existe un amplio abanico de tecnologías disponibles actualmente, partiendo de las tradicionales con iluminación fosfórica verde a las modernas imágenes térmicas digitales. Pese a ello, no se ha encontrado nada similar al dispositivo que pretende desarrollar este proyecto. Teniendo en cuenta que todo lo relacionado a este ámbito de la vigilancia nocturna suele pertenecer al ámbito militar, es comprensible que haya menos información al respecto.
+
+\section{Objetivos}
+
+El objetivo de este proyecto no es otro que el desarrollo de un producto hardware y otro software, unidos los cuales compongan un medidor de latencias para sistemas de videovigilancia críticos, que sea funcional, sencillo de utilizar y barato de producir. Para lograr dicho objetivo se acometerán los siguientes puntos:
+
+\begin{itemize}
+    \item Describir las pautas y comportamientos que tiene un sistema de videovigilancia crítico.
+    \item Estudiar como afectan los distintos componentes de un sistema de videovigilancia a su latencia.
+    \item Establecer el proceso a seguir a la hora de medir distintos sistemas de videovigilancia con distintas características.
+    \item Desarrollar un producto que sea capaz de medir las latencias de un sistema de videovigilancia y determinar si puede clasificarse como crítico .
+    \item Realizar un estudio con diversidad de sistemas videográficos, tanto de índole doméstica como profesional en el cuál se puedan observar los resultados del proyecto y que cabida tiene este producto en el mercado actual.
+\end{itemize}
+
+\section{Alcance}
+
+Se dará por concluido el proyecto, cuando se tenga desarrollado el producto medidor de latencias, con un funcionamiento eficaz y adecuado, y además haya sido testado en diversas situaciones y con diferentes equipos de videovigilancia o videográficos, siguiendo el proceso previamente redactado y teniendo en cuenta como pueden afectar los distintos componentes de estos equipos al resultado de las mediciones.
+Respecto a los dispositivos de visión nocturna se han mostrado de forma introductoria y no serán cubiertos en primera instancia por el alcance de este proyecto.
+
+\section{Glosario}
+
+\begin{description}
+    \item [{Balance de blancos}] Ajuste de la cámara que sirve para equilibrar el nivel de los colores básicos, rojo verde y azul.
+    \item [{Zoom}] Variación de la longitud focal y  ángulo de visión manteniendo el plano de la imagen en el mismo sitio.
+    \item [{Resolución}] Cantidad de detalles que pueden apreciarse en una imagen. Medida en píxeles. 
+    \item [{Apertura}] Indica la luminosidad del objetivo que incorpora la cámara.
+    \item [{ISO}] Sensibilidad que tiene el sensor de la cámara para captar luz.
+    \item [{Fotones}] Partículas con energía lumínica.
+\end{description}
+
+\subsection{Acrónimos}
+
+\begin{acronym}
+  \label{acro}  
+  \acro{PFC}{Proyecto Fin de Carrera}
+  \acro{UCA}{Universidad de Cádiz}
+  \acro{SVC}{Sistema de videovigilancia crítico}
+  \acro{CCTV}{Circuito de televisión cerrado}
+  \acro{NIR}{Near Infrared - Cercano al infrarrojo}
+  \acro{PPP}{Pixels por pulgada}
+  \acro{CMOS}{Semiconductor complementario de óxido metálico}
+  \acro{CCD}{Dispositivo de carga acoplada}
+  \acro{MCP}{Placa de microcanales}
+  \acro{GaAs}{Arseniuro de gallio}
+  \acro{CRA}{Central receptora de alarmas}
+  \acro{SBC}{Ordenador en una unica placa}
+  \acro{ARM}{Maquina RISC Avanzada}
+  \acro{RISC}{Conjunto reducido de instrucciones de computación}
+  \acro{USB}{Bus de serie universal}
+  \acro{SOC}{Sistema en chip}
+\end{acronym}
+
+\chapter{Transfondo tecnológico}
+
+En este capítulo se darán a conocer las tecnologías con las que se trabajará durante el transcurso del documento y el desarrollo del producto de cara a ilustrar sus contextos históricos y motivación de uso.
+
+\section{Comienzos}
+
+A finales del siglo XIX, alrededor del 1880 surgen las vídeo cámaras \cite{gray1993multiformat}, con fines cinematográficos, y es desde entonces, que son dispositivos que no han dejado de evolucionar, tanto en forma, como en calidad, funcionalidad o tamaño.
+
+\hfill\break
+A mitad del siglo XX, en 1942, nace en plena segunda guerra mundial, el termino que acuñamos como vídeovigilancia, de la mano del primer circuito de televisión cerrado o CCTV. Fue en este momento, cuando se comenzó a utilizar un sistema videográfico \enquote*{a tiempo real} como elemento de seguridad en un entorno crítico \cite{fan2015survey}. Ver Figura \ref{fig:cctv_simple}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.44]{Figures/Simple_CCTV.png}
+    \caption{CCTV Simple con 4 cámaras conmutadas. Fuente: \cite{cctv_4}}
+    \label{fig:cctv_simple}
+\end{figure}
+
+Al principio, estos circuitos de televisión eran enormemente sencillos, y solo incluían cámaras en blanco y negro conectadas a monitores remotos, que eran a su vez utilizados, para controlar el lanzamiento de cohetes. Desde entonces, y hasta la fecha, los avances en vídeo vigilancia han tenido un enorme auge, y han propiciado el desarrollo de nuevas tecnologías que han ido escalando a la vez que estos sistemas.
+
+\hfill \break
+En un principio, los CCTV, requerían de supervisión humana constante para funcionar y ser eficaces, pero con el paso de los años y la invención de las cintas de vídeo se facilitó el proceso de vigilancia, gracias a poder grabar lo que sucedía en las cámaras. Ver Figura \ref{fig:cctv_recorder}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.81]{Figures/cctv_con_grabacion.png}
+    \caption{CCTV con sistema de grabación. Fuente: \cite{cctv_4}}
+    \label{fig:cctv_recorder}
+\end{figure}
+
+Poco después, en los años 60's, se comenzó a popularizar el uso de cámaras de vídeo vigilancia en lugares públicos, situándolas en puntos estratégicos, los cuales permitían aprovechar al máximo sus recursos, e incluso pasar desapercibidas en muchos casos\cite{videovigilancia_historia:2017:Online}. 
+
+\hfill \break
+Unos años más tarde, este boom de la vídeo vigilancia, comienza a afectar a otros sectores de la sociedad, y se populariza, la utilización de CCTV's en otros lugares, como bancos y tiendas, utilizándose como una medida de seguridad añadida antirrobos. Es gracias a este auge, que al igual que sucedió en el sector de la informática, con las cámaras de vídeo vigilancia, se fueron mejorando enormemente las características de los sistemas, abaratando costes, reduciendo sus tamaños, y mejorando la visibilidad en situaciones de poca luz, lo que conllevó con el paso de los años a su irrupción en el mercado doméstico como una medida para mantener a las familias seguras disuadiendo a posibles invasores del hogar.
+
+\section{Visión Nocturna}
+
+Se conoce como visión Nocturna al fenómeno de poder vislumbrar en ausencia de luz, el entorno que nos rodea, y no resulta nada nuevo. Desde mucho tiempo atrás, se sabe que ciertos animales, como son los búhos, los gatos, pueden ver en la oscuridad y otros como las abejas, incluso llegan a detectar partes del espectro visible que son invisibles al ojo humano. Este fenómeno tiene cabida, al ser estos animales capaces de detectar con sus ojos frecuencias del espectro electromagnético que nosotros no podemos \cite{sionyx_night_vision}. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.5]{Figures/espectro_luminoso.PNG}
+    \caption{Espectro luminoso visible + infrarrojo. Fuente: \cite{spectre}}
+    \label{fig:espectre}
+\end{figure}
+
+Durante la segunda guerra mundial y sucesivas, se comenzaron a desarrollar y utilizar distintas soluciones técnicas, que permitían a los soldados, operar en completa oscuridad, imitando con ellas, el comportamiento de la visión animal \cite{tsuji2002development}. No mucho más tarde, se aplicarían estas técnicas a la vídeo vigilancia, añadiendo estos dispositivos a vídeo cámaras de un CCTV, en forma de filtros o sensores, dando así lugar a las primeras cámaras de visión nocturna.
+
+\break
+
+Esencialmente, podríamos clasificar los tipos de visión nocturnas utilizados en la actualidad en cuatro \cite{chrzanowski2013review}:
+
+\begin{itemize}
+    \item Visión nocturna analógica: mediante un tubo intensificador de luz con fósforo y una batería.
+    \item Visión nocturna digital: utiliza sensores fotográficos ultrasensibles y postprocesado de imágenes para proyectar una imagen nítida.
+    \item Visión térmica: basada en la detección de la radiación infrarroja.
+    \item Dispositivos novedosos: destacan por el auge de una nueva tecnología que incorpora la utilización de visión nocturna digital y analógica para la reducción de ruido en la señal de imagen.
+\end{itemize}
+
+\subsection{Visión nocturna analógica}
+
+Comenzaremos explicando la principal morfología común que comparten casi todos los dispositivos de visión nocturna analógicos. Dichos componentes se conocen como:
+
+\begin{itemize}
+    \item Lentes objetivo.
+    \item Una pieza ocular.
+    \item Fuente de alimentación.
+    \item Un tubo intensificador de imágenes.
+\end{itemize}
+
+La visión nocturna, en este caso, surge durante la intensificación de la imagen en el tubo intensificador, el cuál cuenta con dos subcomponentes principales que son los que se encargan de mejorar la imagen. Estos son:
+
+\begin{itemize}
+    \item \textbf{Fotocátodo} Absorbe fotones y libera electrones.
+    \item \textbf{Fotomultiplicador} Absorbe electrones, los multiplica y libera fotones intensificados o multiplicados.
+\end{itemize}
+
+A continuación se detalla como funciona la visión nocturna analógica. Al frente de cualquier dispositivo, se encuentran las lentes objetivo, cuyo trabajo consiste en reunir toda energía infrarroja ambiental y artificial disponible antes de enviarla al tubo de amplificación. Este tubo tiene forma de túnel y está alimentado electrónicamente.
+Todos estos fotones captados, pasan a trace de un fotocátodo, el cuál los convierte en electrones. Estos electrones se mueven hacia una placa de micro canales, donde son amplificados por un factor de miles a través de una de reacción eléctrica y química en cadena que se produce cuando estos electrones impactan en las paredes de los micro canales. Ver Figura \ref{fig:analog_intensification}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.5]{Figures/amplificacion_analogica.PNG}
+    \caption{Amplificación analógica de fotones. Fuente: \cite{intensifier}}
+    \label{fig:analog_intensification}
+\end{figure}
+
+Estos electrones supercargados, son golpeados en una pantalla cubierta de fósforo donde alcanzan un estado de excitación, liberando así nuevas partículas fotónicas o de luz visible las cuales pueden verse a través de una pieza ocular. La imagen aparecerá como una recreación clara y lúcida de la escena que estamos observando, pero en una combinación de tonos verdes y negros.
+
+El motivo de que el color de imagen sea verde o verdoso viene del uso de la pantalla de fósforo, el cuál se utiliza a su vez por una sencilla razón, y es que el ojo humano es muy sensible a los tonos verdes y puede distinguir más formas de verde que de ningún otro color en el espectro. Ver Figura \ref{fig:analog_vision}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.25]{Figures/vision_amplificacion_analogica.png}
+    \caption{Ejemplo de visión nocturna analógica. Fuente: \cite{sionyx_night_vision}}
+    \label{fig:analog_vision}
+\end{figure}
+
+\subsection{Visión nocturna digital}
+
+Los dispositivos de visión nocturna digital operan de manera diferente a los analógicos. En su lugar, la luz que captan las lentes objetivo, es transformada en una señal digital mediante un sensor de imagen que puede variar entre dos tipos:
+
+\begin{description}
+        \item [{CMOS}] Complementary Metal Oxide Semiconductor
+        \item [{CCD}] Charge Coupled Device
+\end{description}
+
+Estas son las mismas tecnologías empleadas en todas las cámaras digitales domésticas. 
+En ellas, la imagen es mejorada varias veces antes de ser visible en las pantallas de los dispositivos. Cuanto más grandes los tamaños de píxeles de los sensores CMOS o CCD, mejor rendirán en entornos de baja luminosidad.
+En este tipo de dispositivos se utilizan y desarrollan tecnologías de sensores que funcionan en el espectro NIR, consiguiendo así imágenes con nitidez, pero que en ausencia de luz, se representan con aberraciones cromáticas. Se los conoce como dispositivos "low light".
+
+Como desventaja frente a sistemas analógicos tradicionales, presentan una muy baja resolución de imagen, ya que al tener píxeles muy grandes, apenas se pueden introducir entre uno y dos megapíxeles en un sensor.
+Como ventaja, tienen un menor coste y una enorme capacidad para superponer iconos, indicadores y otra información de valor sobre la imagen proyectada. Ver Figura \ref{fig:digital_vision}.
+
+Ya que estos dispositivos convierten imágenes ópticas en señales digitales, son dispositivos que tienen la posibilidad nativa de grabar vídeo, imágenes y sonido, el cuál puede ser almacenado a bordo fácilmente en una memoria, serán los principalmente utilizados durante el estudio y pruebas de éste proyecto.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.7]{Figures/low_light_example.jpg}
+    \caption{Ejemplo de visión low light (izquierda) vs térmica (derecha). Fuente: \cite{night_vision}}
+    \label{fig:digital_vision}
+\end{figure}
+
+\subsection{Visión Artificial}
+
+En la actualidad, los dispositivos de visión nocturna van equipados con un nivel de tecnología enorme, pero aún con él, en condiciones de apagón total, en ausencia completa de radiación lumínica, siguen sin ser más útil que un ojo humano sin ayudas. Es aquí donde aparece el \textbf{iluminador infrarrojo}. Ver Figura \ref{fig:ir_iluminator}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.8]{Figures/no_ir_iluminator.PNG}
+    \caption{Ejemplo de visión sin iluminador infrarrojo. Fuente: \cite{sionyx_night_vision}}
+    \label{fig:no_ir_iluminator}
+\end{figure}
+
+Como ocurre en los ya mencionados dispositivos, analógicos y digitales, todos los aparatos de visión nocturna deben tener alguna luz que amplificar. Existen situaciones donde simplemente no existe suficiente luz para que un amplificador de luz las intensifique. Ejemplos de ellas pueden ser:
+
+\begin{itemize}
+    \item Estructuras subterráneas.
+    \item Cuevas.
+    \item Noche nublada sin luna.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.75]{Figures/ir_iluminator.PNG}
+    \caption{Ejemplo de visión con iluminador infrarrojo. Fuente: \cite{sionyx_night_vision}}
+    \label{fig:ir_iluminator}
+\end{figure}
+
+En estas situaciones, es cuando el iluminador infrarrojo entra en acción. Se trata de un dispositivo que provee de iluminación artificial de una longitud de onda apropiada cercana al espectro infrarrojo que permite al usuario iluminar áreas de interés específico mientras además mejoran el contraste de la imagen.
+Se puede interpretar como una linterna invisible que solo puede ser vista a través de un dispositivo de visión nocturna. En las siguientes figuras se mostrarán tres ejemplos de visión con iluminador infrarrojo (Figura \ref{fig:laser_ir_iluminator} y sin él ver Figura \ref{fig:no_ir_iluminator}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.7]{Figures/laser_ir_iluminator.PNG}
+    \caption{Ejemplo de visión con iluminador infrarrojo láser}
+    \label{fig:laser_ir_iluminator}
+\end{figure}
+
+\subsection{Clasificación de los dispositivos de visión nocturna en generaciones}
+
+Comúnmente se clasifican en tres generaciones para facilitar la segmentación según su tecnología. Esta clasificación es dada por el Ejercito de Estados Unidos \cite{kotulak1992methods}.
+
+\subsubsection{Primera Generación}
+
+El primer sistema de visión nocturna fue creado por la Armada de los Estados Unidos y utilizado durante la segunda guerra mundial. Este sistema dependía enteramente de una fuente de iluminación infrarroja para funcionar. La tecnología desarrollada llevó a lo que se conocen como Starlight Scopes (Visores de estrellas), popularizados en la década de 1960 y utilizados durante la guerra de Vietnam.
+Siendo dispositivos arcaicos, se caracterizaban por ser capaces de proveer una imagen utilizable en todo entorno ayudados de un iluminador infrarrojo, del cual eran capaces de prescindir en las noches de luna llena sin nubes, y de proporcionar imágenes plagadas de ruido eléctrico. Ver Figura \ref{fig:starlight_scope}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 1]{Figures/first_gen.PNG}
+    \caption{Ejemplo de Starlight Scope. Fuente: \cite{sionyx_night_vision}}
+    \label{fig:starlight_scope}
+\end{figure}
+
+\subsubsection{Segunda Generación}
+
+Se considera como primordial diferencia en este cambio generacional la incorporación de una placa de microcanales (MCP) al tubo intensificador de imágenes. Un MCP es un disco de vidrio recubierto de metal que multiplica los electrones producidos por el intensificador de imágenes y que además, elimina la distorsión. Adicionalmente, el número de agujeros, o canales, es un factor contribuyente en la determinación de la resolución. Ver Figura \ref{fig:second_gen}.
+
+Los MCP, actuan como un supercargador de electrones y se encuentran localizados detrás del fotocátodo. Consisten en miles de orificios paralelos en el vidrio. A medida que los electrones pasan a través de estos tubos, miles de electrones adicionales se liberan, permitiendo a la luz ser amplificada muchas más veces que en los dispositivos de primera generación. Con esto al final, se consiguen mejores imágenes. Ver Figura \ref{fig:second_gen_example}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 1]{Figures/second_gen.PNG}
+    \caption{Ejemplo de dispositivo de segunda generación. Fuente: \cite{sionyx_night_vision}}
+    \label{fig:second_gen}
+\end{figure}
+
+\subsubsection{Tercera Generación}
+
+Son dispositivos que se benefician primordialmente de la utilización de un material semiconductor, conocido como arseniuro de gallio (GaAs), añadido al proceso de fabricación del fotocátodo contenido en el tubo intensificador de imagen. La adición del GaAs, ayuda en la consecución de imágenes aún más brillantes, y más nítidas, gracias a su alto nivel de eficiencia en convertir fotones en electrones, mejorando así la detección de objetos a mayores distancias, en condiciones lumínicas más adversas.
+
+Otro hito de esta generación es la inclusión de una película de iones, que actúan como barrera incrementando la vida útil del tubo intensificador de imágenes y protegiéndolo de fuentes de luz adversas.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.8]{Figures/second_gen_example.PNG}
+    \caption{Ejemplo de visión a con dispositivo de segunda generación. Fuente: \cite{sionyx_night_vision}}
+    \label{fig:second_gen_example}
+\end{figure}
+
+Los dispositivos de visión nocturna de de tercera generación típicos, ven resoluciones de aproximadamente 64 a 72 pares de lineas por milímetro y se benefician de una fuente de alimentación de alto voltaje. Los más actuales, también utilizan una fuente de alimentación cerrada, comúnmente conocida como Autogating. Esta fuente provee de rendimiento aumentado en entornos urbanos donde existen condiciones excesivas de luz ambiental, la cuales, crean lo que comúnmente se conoce como efecto blooming o halo. Este efecto consiste en la pérdida de porciones o de la mísma imagen completa, debido a sobrecargas por una fuente de luz brillante, que blanquean la imagen.
+El autogating minimiza las interferencias de estas luces brillantes encendiéndose y apagándose a un ritmo que es indetectable para el usuario incrementando así la efectividad de estos dispositivos en entornos urbanos. Ver Figura \ref{fig:third_gen}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 1]{Figures/thrid_gen.PNG}
+    \caption{Ejemplo de dispositivo de tercera generación. Fuente: \cite{sionyx_night_vision}}
+    \label{fig:third_gen}
+\end{figure}
+
+\subsubsection{Fósforo blanco, pseudo cuarta generación}
+
+Los dispositivos de cuarta generación per se, no existen ya que el Ejercito de Estados Unidos no ha dado aún tal designación. Dicho lo cual, los dispositivos sin películas de iones con fósforo blanco, son el pináculo de actual de la tecnología de visión nocturna analógica.
+Estos dispositivos equipan un MCP sin película que proveen un ratio mucho más alto de señal-ruido que los típicos dispositivos de tercera generación, reduciendo así el ruido estático o electrónico en condiciones muy oscuras.
+
+Estas unidades de fósforo blanco ofrecen un nivel de detalle incrementado, mayor contraste y rango de tonos. La imagen azulado cálido también ofrece mayor gama de intensidad, resultante en mejor percepción de profundidad que con los tradicionales dispositivos de fósforo verde. En uso prolongado, parecen reducir también la fatiga ocular y los dolores de cabeza comparados con sus homólogos de verde. Ver figura \ref{fig:white_phosphore}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.4]{Figures/thrid_gen_example.PNG}
+    \caption{Ejemplo de dispositivo con fósforo blanco. Fuente: \cite{white_phosphore}}
+    \label{fig:white_phosphore}
+\end{figure}
+
+\subsubsection{Visión Térmica}
+
+Podríamos considerar la visión Térmica como una subcategoría de la visión nocturna, ya que es una de las principales técnicas utilizadas en la actualidad cuando se trata de realizar videovigilancia en entornos de baja visibilidad.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.4]{Figures/thermal_example.PNG}
+    \caption{Ejemplo de dispositivo con fósforo blanco. Fuente \cite{thermal}}
+    \label{fig:thermal_example}
+\end{figure}
+
+En estos dispositivos, en lugar de buscar luz que amplificar, se detecta radiación infrarroja mediante microbolómetros que cambian su resistencia basándose en la temperatura. Este cambio de microbolómetros puede ser medido y convertido a una imagen visible en miles de píxeles.
+Para su funcionamiento se parte de la base de que todo objeto emite algún nivel de luz infrarroja. A más caliente esté el objeto, más radiación emitirá y más cambiará la luz, la resistencia de cada bolómetro.
+
+La resolución de estos dispositivos está bastante por detrás de los dispositivos de visión nocturna actuales, aún así, las distancias de detección de objetivos son típicamente mayores. La regla general es que cuanto mayor sea la resolución, más capaz será la unidad y más va a costar económicamente. También, como la resolución en este caso es más baja que en los dispositivos de visión nocturna, sus imágenes son más dificiles de interpretar y dificultan el reconocimiento de objetos y paisajes. Para más inri, si todos los objetos de la escena se encuentran a similar temperatura, habrá poco contraste entre ellos. Ver figura \ref{fig:thermal_example}.
+
+\section{Video vigilancia IP}
+
+Se conoce como vídeo vigilancia IP a aquella tecnología de seguridad que permite la observación mediante cámaras de vídeo pertenecientes a un CCTV, en red, utilizando para ello internet y protocolos de interconexión. Con ello se consigue la transmisión y supervisión remotas de vídeo a distancia aún sin estar conectado directamente al CCTV \cite{norris2004growth}.
+
+Esta tecnología, que es de alta implantación y utilización en la actualidad, aprovecha el cableado de red local existente para la interconexión de cámaras del circuito e incluso pueden transmitir las imágenes al exterior de la red local por medio de un ISP, permitiendo una transmisión de imágenes en línea. Con ello, se ahorra parte del coste del cableado que utilizan los CCTV y se re-aprovecha en muchos casos el ya existente de red. Otra posible ventaja que ofrecen, es la completa eliminación de cables y la transmisión de vídeo mediante tecnologías inalámbricas \cite{ipvm}.
+
+Entre sus posibles usos, aparte de como cámaras de seguridad tradicionales, en la actualidad se la utiliza principalmente en aplicaciones de adquisición de datos mediante inteligencia artificial, ya que al ser cámaras digitales conectadas a una red donde puede haber ordenadores, resulta más sencillo tratar directamente las imágenes que estas captan.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.2]{Figures/ip_cctv.png}
+    \caption{Esquema de sistema de videovigilancia IP distribuido. Fuente: \cite{novus}}
+    \label{fig:ip_cctv_example}
+\end{figure}
+
+\section{Comparativa de Hardware}
+\label{hardware}
+
+\begin{table}[H]
+\caption{Comparativa de placas programables}
+\label{tab:hardware}
+
+\small
+\begin{longtable}[c]{|c|p{5cm}|p{5cm}|}
+\toprule 
+&\textbf{Arduino} & \textbf{Raspberry Pi}\tabularnewline
+\midrule
+\midrule 
+Tipo de hardware & Hardware libre  & Hardware propietario\tabularnewline
+\midrule 
+Arquitectura CPU & Microcontrolador ATMEL & Microprocesador ARM \tabularnewline
+& 8 bits& quadcore 32/64 bits \tabularnewline
+\midrule
+RAM & 2KB & 1GB SDRAM \tabularnewline
+\midrule
+Almacenamiento & EEPROM 1 KB & MicroSD \tabularnewline
+\midrule 
+Sistema operativo & Sin sistema operativo & Sistema operativo completo\tabularnewline
+\midrule 
+Orientación & Sencillo para desarrollos & Facilidad para desarrollos\tabularnewline
+& orientados al hardware & software de alto nivel\tabularnewline
+\midrule 
+Paralelismo & Procesamiento secuencial & Procesos paralelos\tabularnewline
+\midrule 
+Enfoque & Poca potencia, tareas sencillas & Cálculos intensivos, tareas\tabularnewline
+& y repetitivas & más complejas\tabularnewline
+\midrule 
+I/O & Entradas analógicas y digitales & Entradas digitales hasta 16mA\tabularnewline
+& hasta 20mA & \tabularnewline
+\midrule 
+Interfaz I2C & Sí & Sí\tabularnewline
+\midrule
+Conectividad & Sin conectividad, & Wifi, bluetooth,\tabularnewline
+& ampliable mediante shields & ethernet \tabularnewline
+\midrule
+Salidas de & No & HDMI/ \tabularnewline
+audio/video & & auriculares \tabularnewline
+\bottomrule
+\end{longtable}
+\end{table}
+
+Para el desarrollo de este medidor de latencias, tal como se ha comentado en anteriores apartados, se han barajado varias opciones hardware, entre las disponibles, para su desarrollo. De entre todas estas, se han seleccionado como viables dos representantes, basadas principalmente en su arquitectura de procesador, y desarrollos software actuales, y se han comparado siguiendo los criterios de la siguiente tabla, la cual muestra un resumen comparativo de las distintas placas programables. En el caso de este documento, se toman como referencias los modelos Raspberry Pi 3 Model B y Arduino Uno, aunque existen más modelos disponibles en el mercado con similares características y compatibilidad.
+
+\chapter{Desarrollo del calendario}
+
+Todo proyecto tiene una duración, y necesita de una organización y una gestión de plazos que deben cumplirse con la mayor exactitud posible, y este no es una excepción. A continuación se listan como ha sido organizado el desarrollo del producto y la gestión del proyecto.
+
+\section{Fases}
+\label{fases}
+Se ha organizado el desarrollo del proyecto en fases bien diferenciadas que son las que irán marcando la pauta de actuación. Son:
+
+\begin{enumerate}
+    \item \textcolor{OliveGreen}{Fase de reunión de información}: recavar sobre como comenzar el proyecto. Hacer acopio de bibliografía que pueda ser útil.
+    \item \textcolor{Gray}{Fase de acopio de materiales}: momento de recopilación de materiales físicos, placas programables, sensores, e instalaciones de software necesarias para el desarrollo del proyecto.
+    \item \textcolor{Blue}{Fase de prototipado de idea}: desarrollo de un prototipo semifuncional a bajísimo coste y pequeña escala que demuestre que la idea es viable para el proyecto.
+    \item \textcolor{RoyalPurple}{Fase de redacción introductoria}: comienzo del documento científico del proyecto.
+    \item \textcolor{BrickRed}{Fase de background tecnológico del proyecto}: redacción de todo el transfondo tecnológico del proyecto. Una vez sentada la base, se mantendrá abierto para ir añadiendo información según se precise.
+    \item \textcolor{Yellow}{Fase de descripción general del proyecto y análisis de funcionalidad}: especifica como operará exactamente el producto, que herramientas hardware y software se utilizarán en su desarrollo y a quién estará dirigido el mismo.
+    \item \textcolor{RedViolet}{Fase de desarrollo del proyecto}: implementación del proyecto software utilizando las herramientas de la fase anterior. Incluye el ensamblaje del producto hardware.
+    \item \textcolor{Turquoise}{Fase de pruebas y ensayos del producto}: tests y pruebas del producto en entornos reales lo más significativos posibles.
+    \item \textcolor{Cyan}{Fase de documentación del proyecto}: redacción de manual de usuario y conclusiones del proyecto.
+\end{enumerate}
+
+\section{Diagrama de Gantt}
+
+Se pone a disposición del lector un calendario en forma de diagrama de Gantt con la división de tareas realizada en fases y la duración de las mismas a lo largo del tiempo que transcurra durante el proyecto, todo ello dispuesto de forma ordenada en la linea temporal en curso, y con el mismo color que las fases descritas en el apartado \ref{fases}. Véase a continuación la Figura \ref{fig:calendar} que se ha realizado haciendo uso de la herramienta Agantty \cite{agantty}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.44, angle = 270]{Figures/diagrama_gantt.png}
+    \caption{Calendario del proyecto.}
+    \label{fig:calendar}
+\end{figure}
+
+\chapter{Descripción general del proyecto}
+
+Se procede a continuación a detallar las generalidades del proyecto, así como a quien está destinado y las herramientas que serán utilizadas en su desarrollo.
+
+\section{Perspectiva del producto}
+
+Se comienza trabajando en el entorno de la optrónica militar, en el sector defensa y seguridad, y dadas unas determinadas condiciones, en cierto momento, se concluye que tener un dispositivo de videovigilancia de alta tecnología en este ámbito no es solo tener una buena calidad de captación de vídeo y sensores de vanguardia que sean capaces de captar imágenes en todas las condiciones imaginables y proporcionar mucha información, sino que además debe realizarse todo en un tiempo de respuesta crítico, esto es, cuyo retardo no sea perceptible por el ojo humano.
+
+Descubierta la necesidad, se plantea darle una solución lo más económica posible, pero que a su vez sea funcional. Acaba de surgir la propuesta de este documento, la creación de un equipo de medición de latencias para sistemas de videovigilancia críticos y en general, cualquier dispositivo analógico o digital susceptible de tomar una imagen en movimiento y retransmitirla a una pantalla monitora.
+
+Es en este punto cuando se dedican esfuerzos a recavar información sobre como afrontar el problema y que propuestas pueden ser viables. 
+Se parte de la base de que la medición de latencias no es un concepto nuevo en la industria y puede resumirse de manera sencilla en un dispositivo que emite un estímulo de entrada al dispositivo al que se tomarán las medidas, y con un sensor se capta la salida de dicho dispositivo ya procesada. La diferencia entre el tiempo transcurrido desde que se emite el estímulo hasta que se capta la salida, es la latencia. En el caso de nuestro equipo de medición, el funcionamiento será exactamente igual. 
+
+Nuestra placa tomará un tiempo de inicio y emitirá una señal de encendido a una bombilla LED que hará de estimulador lumínico para la cámara. Esta, procesará la imagen y la retransmitirá a un monitor donde será proyectado el estímulo. En ese momento, un fotosensor captará el cambio de luz en la pantalla y enviará una señal a la placa para tomar el tiempo final. En última instancia, la placa realizará el calculo de la latencia y lo mostrará por pantalla. Este mismo proceso será realizado varias veces, para maximizar la efectividad del experimento y promediar un tiempo de latencia con mayor exactitud. Se ejemplifica en la Figura \ref{fig:latency_tester}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.75]{Figures/latency_tester.png}
+    \caption{Equipo de medición de latencias conceptual}
+    \label{fig:latency_tester}
+\end{figure}
+
+Para el desarrollo de este equipo de medición se han seleccionado como fundamentales una serie de componentes que serán descritos a continuación:
+
+\begin{itemize}
+    \item LED: será la fuente de estímulos primaria del equipo de mediciones, que este caso, serán luminosos. Se empleará esta tecnología debido principalmente a su relación entre bajo consumo energético, y alto poder luminiscente, unido a la bajísima latencia con la que son capaces de reaccionar.
+    \item Fotosensor: pegado al monitor del sistema de vídeo, actuará como el receptor de los estímulos luminosos que capte la cámara de vídeo.
+    \item Placa programable: encargada de coordinar al LED, el sensor y realizar los cálculos pertinentes para mostrar como salida la latencia que se produce en el sistema de vídeo.
+    \item Conversor analógico digital: dado que nuestra placa seleccionada solo tiene pines GPIO digitales se precisa de este componente en forma de placa más pequeña para ampliar los pines originales y poder conectar con el fotosensor.
+    \item Batería: que convertirá al equipo de medición en portátil, permitiendo así que sea transportable.
+    \item Pantalla táctil: que tendrá por función el manejo del equipo de medición y el muestreo de las latencias medidas.
+    \item Carcasa: que proteja y encapsule todos los componentes listados anteriormente.
+\end{itemize}
+
+Durante las etapas de gestación y propuesta de este mismo proyecto, se ha realizado un prototipo de sistema de medición en colaboración con GTD Defense \& Security SLU, utilizando un esquema intermedio al propuesto por Voysys y al que será final de este proyecto. Se ha llevado a cabo el desarrollo del prototipo a fin de estudiar previamente la viabilidad del proyecto antes de su realización y la redacción de este documento. Este prototipo, apenas funcional, resulta en una aproximación a ambas partes ya que cuenta con los elementos comunes ya descritos anteriormente y además es portátil, aunque dependiente de una fuente de energía externa para funcionar al no disponer de batería. Realiza cálculos y mediciones utilizando una placa Arduino Uno \cite{arduino} y además es capaz de mostrar una escueta salida de datos y mediciones a través de una pantalla digital en formato array. Ver Figura \ref{fig:prototipe}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.075]{Figures/prototipo.png}
+    \caption{Prototipo inicial de viabilidad de proyecto}
+    \label{fig:prototipe}
+\end{figure}
+
+\subsection{Entorno del producto}
+
+El producto nace bajo el paraguas de la optrónica para ser utilizado en entornos empresariales e industriales, a fin de poder los rendimientos de equipos militares de videovigilancia militares, pero lo cierto es que su aplicación puede extenderse a cualquier equipo de grabación de vídeos que lo requiera, y generalizarse su utilización al ámbito doméstico sin problemas.
+Por ejemplo, dándonos una medición de cuanto tarda un una imagen desde que es captada por la lente de nuestro teléfono, hasta que esta es proyectada en la pantalla del mismo, o cuanto retardo tienen una cámara ip o webcam al retransmitir a través de una red local o directamente en streaming a través de una conexión al exterior teniendo en cuenta procesados intermedios, latencias de la red, e incluso de tiempos de respuesta y refresco del monitor.
+
+\section{Funciones}
+
+La principal y única función de este equipo medidor de latencias es la de cuantificar el retardo de un sistema de videovigilancia tomando como punto inicial la toma de la imagen y como final, su retransmisión a través del monitor, mostrando este cálculo el equipo en su pantalla.
+El dispositivo podrá así mismo graficar el retardo que tiene la entrada en ser procesada y mostrada con respecto a una línea temporal y además será capaz de funcionar en la mayor diversidad posible de entornos lumínicos y con la mayoría de cámaras y sistemas de videovigilancia conocidos, esto incluye algunas de las variedades de sistemas de visión nocturna previamente mostradas en este documento.
+
+\section{Características del usuario}
+
+El equipo de medición de latencias desarrollado está pensado para ser un dispositivo \textbf{sencillo}, que funcione en multitud de entornos sin necesidad de grandes adaptaciones o instalaciones costosas. 
+Tendrá formas rectangulares, similar al prototipo de la figura \ref{fig:prototipe} y será \textbf{portátil}, para poder transportarlo de un lugar a otro con facilidad. Para ello estará equipado con una \textbf{batería}, que le permitirá funcionar sin conexión directa a la red eléctrica.
+Vendrá equipado con una luz \textbf{LED} de bajo consumo y alta intensidad lumínica cuyo parpadeo actuará como estímulo de entrada a ser medido por el equipo. En el otro extremo del equipo de medición, existirá un \textbf{fotosensor} que instalará en el monitor del CCTV y que será el receptor de los impulsos emitidos por el LED. Ambos, LED y fotosensor, irán conectados al equipo por medio de cables.
+Así mismo, el equipo dispondrá de una \textbf{pantalla táctil} que dará acceso a un \textbf{intuitivo} software de control para realizar las mediciones. Este software se cargará automáticamente al encender el dispositivo y tendrá un menú inicial con un botón para iniciar mediciones y un botón de configuración. Se dispondrá también de una función de calibración del sensor que permita adaptarlo a las condiciones lumínicas del entorno de medida, de forma que se facilite la obtención de resultados fiables.
+Todo este software, será ejecutado sobre una \textbf{Raspberry Pi Model 3B}.
+
+% TODO: Figura aquí con todos los componentes
+
+\section{Restricciones generales}
+
+Entre las posibles restricciones que se han encontrado a la hora de crear el equipo de medición de latencias podemos enumerar:
+
+\begin{itemize}
+    \item \textbf{Capacidad de medición en entornos muy luminoso}. Se tiene dependencia de un LED que puede variar en tamaño e intensidad, pero que en situaciones de mucha luz, se verá crispado para conseguir destacar en el ambiente. Se considera en este proyecto un ambiente muy luminoso cualquiera que parta de los 300 lúmenes, como puedan ser estancias con amplia iluminación natural o exposición solar directa. %TODO: realizar medidas y variar el número en consonancia
+    \item \textbf{Capacidad de medición en sistemas de vídeo térmico}. Al tratarse de equipos que detectan y aumentan el contraste de las imágenes que desprenden calor, el LED deja de resultar útil en estos casos, siendo preciso idear un nuevo sistema para llevar a término las mediciones en estos sistemas.
+    \item \textbf{Capacidad de la batería}. Factor limitante en tanto en cuando se depende de ella para el funcionamiento del dispositivo y establece cuanto tiempo podrá permanecer en funcionamiento el equipo de medición. A su vez, la restricción a la batería es impuesta por el coste de la misma, el peso que añada al dispositivo, que debe seguir siendo portátil, y el propio espacio disponible para ella dentro de la carcasa con el resto de componentes ensamblados.
+    \item \textbf{Longitud de los cables del medidor}. Será una restricción debido a que no se podrán realizar mediciones en CCTV's que ya se encuentren instalados, ya que el LED y el fotosensor tienen únicamente un metro de separación entre ellos. Esto será debido a que en primera instancia, el diseño del dispositivo no contempla la latencia introducida por su propio cableado en el tiempo de encendido del LED y la recepción de las señales del sensor, lo cuál obliga a utilizar un cable de corta longitud, de un metro, para no añadir más variables a las mediciones.
+    \item \textbf{Longitud de los cables de los CCTV's}. Se precisarán de los cables que se utilizarán en la instalación de los equipos para llevar a cabo las mediciones, ya que, dos cámaras conectadas al mismo monitor, pero con cables de longitud distinta, tendrán distinta latencia.
+\end{itemize}
+
+\subsection{Tecnologías empleadas}
+
+Se llevará a cabo el desarrollo e implementación del software del equipo de medición de latencias utilizando las siguientes herraminetas de programación que serán citados y descritos a continuación:
+
+\begin{itemize}
+    \item Lenguaje de programación C++ \cite{c++}. En su estándar 2020, utilizando su compilador GNU g++, en su versión 11. Será el lenguaje elegido por preferencia personal del autor, y al ser un lenguaje más cercano al entorno hardware que a menudo proporciona un rendimiento de ejecución superior en todas las aplicaciones.
+    \item Biblioteca de funciones standard de C++.
+    \item Biblioteca de funciones boost \cite{boost}. En su versión 1.77, que proporcionan un extra de funcionalidad sobre la biblioteca standard de C++, permitiendo aprovechar desarrollos de algoritmos ya implementados y probados en lugar de desarrollarlos de cero para este proyecto.
+    \item Qt framework \cite{qt}. En su versión 5.15 LTS, el cuál servirá para el desarrollo de la interfaz de usuario del equipo de medición y ayudar a elevar el nivel de la implementación gracias a la simplificación que provee para tareas que de otro modo serían muy tediosas.
+    \item Se utilizarán algunas bibliotecas de funciones externas extraídas de internet para facilitar el desarrollo de ciertas funcionalidades. Algunas de ellas serán: QtCustomPlot \cite{qtcustomplot}, para graficar los resultados de las mediciones, y PiGpio \cite{pigpio} para facilitar el acceso a los pines GPIO de la Raspberry Pi.
+\end{itemize}
+
+Tras la comparativa técnica realizada en \ref{hardware}, a continuación se mostrará otra tabla comparativa que, al final, acabará desembocando la conclusión de porqué se ha elegido la Raspberry Pi Model 3B en lugar del Arduino Uno u otras posibles alternativas. Ver tabla \ref{tab:hardware2}.
+
+\begin{table}[H]
+\caption{Comparativa de placas programables II}
+\label{tab:hardware2}
+\begin{longtable}[c]{|c|c|}
+\toprule 
+\textbf{Arduino} & \textbf{Raspberry Pi}\tabularnewline
+\midrule 
+Parte de un ordenador, que ejecuta & Es un mini PC que puede ejecutar \tabularnewline
+un único programa una y otra vez. & múltiples programas al mismo tiempo. \tabularnewline
+\midrule 
+Pensado para funcionar con & Complicado de hacer funcionar \tabularnewline
+batería. & con batería. \tabularnewline
+\midrule
+Sus componentes y sensores & Requiere instalar bibliotecas \tabularnewline
+funcionan de manera & y software para interactuar con sensores \tabularnewline
+integrada. & y otros componentes. \tabularnewline
+\midrule
+Es barato. & Es caro en relación a Arduino. \tabularnewline
+\midrule 
+Requiere hardware externo & Se conecta fácilmente a internet \tabularnewline
+para conectarse a internet & con su puerto RJ-45 o WiFi por USB. \tabularnewline
+y hay que programarlo para ello. & \tabularnewline
+\midrule 
+Puede venir con almacenamiento & No tiene almacenamiento, pero \tabularnewline
+integrado. & puede usar su ranura \tabularnewline
+& micro SD para ello. \tabularnewline
+\midrule 
+Es un dispositivo & Se debe apagar correctamente \tabularnewline
+plug \& play. & para que no haya riesgo de \tabularnewline
+& corrupción de archivos. \tabularnewline
+\midrule 
+Solo utiliza Arduino y & Se recomienda Python \tabularnewline
+y C/C++. & pero puede usar C, C++ y Ruby. \tabularnewline
+\midrule
+Tiene pines i/o & No tiene pines i/o \tabularnewline
+analógicos. & analógicos. \tabularnewline
+\bottomrule
+\end{longtable}
+\end{table}
+
+Se ha decidido utilizar finalmente la Raspberry Pi 3 Model B debido a su mayor versatilidad con respecto al Arduino, ya que a la hora de implementar el software, Arduino no es compatible con pantallas táctiles de alta resolución y profundidad de color, dando lugar así a una interfaz de usuario menos amigable.
+Se ha decidido descartar de esta comparativa arquitecturas de procesador más complejas, como x86-64 \cite{ye2006performance}, por los siguientes motivos:
+
+\begin{enumerate}
+    \item Aumento significativo del coste del SBC.
+    \item Mayor tamaño físico de las placas.
+    \item Necesidad de mayor disipación de calor.
+    \item Gran aumento del consumo energético, en detrimento de la duración de la batería.
+\end{enumerate}
+
+Se utilizarán estas herramientas ajustando sus parámetros para ser compatibles con procesadores de arquitectura ARM que es la que posee la Raspberry Pi 3 que será utilizada como SBC para el equipo. El modelo concreto cuenta con las siguientes especificaciones:
+
+\begin{itemize}
+    \item Raspberry Pi 3 Model B.
+    \item Chipset Broadcon de 64 bits y 4 núcleos ARM.
+    \item Memoria RAM de 1GB.
+    \item Coprocesador multimedia de doble núcleo.
+    \item Pines digitales de entrada y salida.
+    \item Protocolo I2C\cite{i2c}.
+\end{itemize}
+
+A estas herramientas habrá que añadir una base de trabajo en forma de sistema operativo, que para el caso, será Raspbian, versión Lite ahora llamada Raspi OS, distribución linux basada en Debian, para Raspberry Pi y que por antonomasia, es referente en buen funcionamiento y estabilidad. Este sistema irá personalizado para ofrecer una experiencia únicamente centrada en la medición de latencias.
+Sobre Raspi Os se ejecutará un script a la inicialización del sistema que será el encargado de lanzar la aplicación automáticamente.
+
+Se desarrollará todo el proyecto sobre el IDE QtCreator versión 5.15.2, el cual da soporte a todos los elementos de programación anteriormente mencionados, con gran capacidad de abstracción, y en un entorno gráfico amigable. Además provee de herramientas de trabajo compatibles con sistemas embebidos que facilitarán la tarea de generar versiones del software para un dispositivo no X86-64 como es la Raspberry Pi.
+
+De cara al control de versiones, se propone la utilización de un repositorio privado durante el desarrollo del producto, alojado en Github y controlado con Git y Qt Creator.
+
+Para facilitar todo el desarrollo, en un entorno controlado, se pretendía, en un inicio, utilizar una máquina virtual con Raspi Os la cual correrá sobre VirtualBox \cite{virtualbox}. Se encuentra el impedimento de que no existe una versión de Raspo Os, suficientemente actualizada para la ejecución del proyecto en arquitectura x86-64. A esto hay que añadir, la incompatibilidad de las bibliotecas de funciones, que compiladas en arquitectura x86-64, no resultarían útiles a la hora de portar el proyecto software a la placa programable final y además, en este caso al ser un proyecto que trabaja directamente sobre el hardware de la placa, en este caso, los pines GPIO, y la pantalla táctil, imposibilitaría la necesidad de ir haciendo pruebas directamente sobre la máquina virtual, requiriendo del hardware real para poder testar todo el código escrito relacionado a estos respectos.
+Se propone en este caso, trabajar directamente sobre arquitectura x86, sin necesidad de virtualizar nada, con el objetivo de aumentar el rendimiento de trabajo, acortar tiempos de espera y simplificar la sincronización del hardware arm con la máquina x86, eliminando la capa hipervisora que de otra forma correría funcionando sobre el ordenador de desarrollo.
+A este respecto se ha utilizado una compilación cruzada a través de un compilador para arm que trabaja directamente sobre las bibliotecas de funciones extraídas de la Raspberry Pi, ya precompiladas en ARM. Todos estos ficheros se extraen y copian a la máquina x86 la cuál servirá de plataforma para la compilación cruzada y el despliegue del proyecto posterior en la placa programable.
+La interconexión para compartir las bibliotecas de funciones entre la Raspberry Pi y el pc x86, se realizarás a través de conexión SSH \cite{ssh}, mediante la herramienta rsync\cite{rsync}. A su vez, a la hora de desplegar la aplicación ya compilada desde la máquina x86, se volverá a recurrir al protocolo SSH\cite{ssh}.
+En el caso, para compilar el proyecto, se utilizará el ARM GNU Toolchain, antiguamente conocido como Linaro. La configuración de la toolchain necesaria para compilar desde un ordenador x64 a ARM v8 se explicará más adelante en este documento, pero se adelanta que funcionará utilizando el compilador gcc y g++ en sus respectivas ediciones ARM.
+Una toolchain o cadena de herramientas, que sería su traducción literal, en informática se refiere a un conjunto de programas que utilizados en cadena, es decir, enlazando la salida de uno con la entrada de otro, ayudan en la generación de un producto software.
+
+Una consideración muy a tener en cuenta durante el análisis de la placa a utilizar, es que la Raspberry frente a Arduino, no tiene pines de entrada/salida analógicos, con lo cuál no podrá ser utilizada inicialmente para hacer lecturas del sensor de luz OPT101, que es, en este caso, el elegido para el proyecto frente al resto de sus competidores de tipo foto resistivo, los cuáles tienen un tiempo de respuesta superior y no son tan apropiados para hacer mediciones de latencias que deben ser "instantáneas". Es este y no otro, el motivo por el cual ha sido elegido candidato para la realización de este proyecto. Para salvar este escoyo, que no se tuvo en cuenta durante el análisis inicial del proyecto se ha recurrido a I2C\cite{i2c}, una interfaz de intercomunicación de circuitos que tiene integrada la Raspberry Pi en sus pines GPIO y que es posible activar desde la bios de configuración de la misma. Será, utilizando esta interfaz, la biblioteca PiGpio\cite{pigpio}, y un conversor de señal analógico digital modelo ADS1115.
+
+\chapter{Desarrollo del proyecto}
+
+El medidor de latencias para sistemas de videovigilancia, es un dispositivo, que de manera sencilla, a través de la emisión y captación de un impulso lumínico, realiza los cálculos necesarios para averiguar el tiempo existente que necesita un dispositivo de vídeo desde que capta una imagen hasta que la proyecta en un monitor.
+Se detallarán en este capítulo, las fases de su ciclo comercial, como funciona, que características y apariencia tendrán su sistema software, que problemas es capaz de resolver, como está programado y se facilitarán también algunas pruebas de campo reales con las que poder demostrar su eficacia.
+
+\section{Modelo de ciclo de vida}
+
+Se describe a continuación cuales son las posibilidades del producto a lo largo de su vida útil más allá del alcance de este proyecto. Como se pretende comercializar el producto, se proporciona a continuación un modelo de ciclo de vida con la planificación estratificada de las expectativas actuales al respecto.
+
+\begin{itemize}
+    \item \textbf{Desarrollo del producto}: Se comienza el proyecto en esta fase, que es la que ocupa la redacción de este documento. Inicialmente, se concibe la idea como un proyecto con potencial, que no tiene competencia en el mercado y en el que hay que hacer una inversión inicial para su desarrollo. Se asume aquí que el prototipo del proyecto tal como se está desarrollando cumple unos mínimos requisitos de funcionalidad y que además es viable en cuanto a coste económico y tiempo. Se desarrolla el medidor de latencia teniendo en cuenta su posible actualización posterior en función de su continuidad o las necesidades.
+    
+    \item \textbf{Crecimiento y primera gran actualización del producto}: Se proponen cambios de calado para reducir los costes de producción del prototipo, facilitar su transporte reduciendo su peso, y reducir su consumo energético como compromiso para aumentar su autonomía. Para ello, se propone el desarrollo de un sistema operativo propio que reduzca y optimice el coste de recursos software necesarios para el funcionamiento del dispositivo. En conjunción con este sistema operativo, será necesario establecer un sistema de compilación cruzada que permitirá generar y cargar versiones del software del medidor de latencias mucho más rápido que anteriormente y facilitará ampliamente su despliegue.
+    
+    \item \textbf{Madurez y adaptación a nuevos requisitos}: Se actualizará el producto con una nueva versión del software para cumplir con los nuevos requisitos que se puedan integrar en el medidor y se realizará también el cambio de la placa Raspberry Pi 3 Model B por una Pi Zero 2 W (susceptible de cambio si apareciese un nuevo modelo), mucho más pequeña, eficiente y barata.
+    
+    \item \textbf{Declive del producto}: Se irá abandonando paulatinamente el desarrollo del producto una vez alcanzado el final del desarrollo y garantías de su etapa de madurez.
+\end{itemize}
+
+En cuanto al producto software, se seguirá un modelo de ciclo de vida tradicional, en cascada, tal como puede apreciarse en el diagrama de \ref{fig:calendar}{Gantt}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.25]{Figures/cascade_life_cycle.png}
+    \caption{Modelo de ciclo de vida en cascada. Fuente: \cite{waterfall_methodology}}
+    \label{fig:waterfall_lifecycle}
+\end{figure}
+
+\section{Requisitos}
+
+\subsection{Funcionales}
+
+% En este apartado se describirá los servicios que provee y la forma en el que el dispositivo medidor de latencias responderá a las entradas del sistema y los eventos externos.
+
+\begin{enumerate}
+    \renewcommand{\theenumi}{R.F.\arabic{enumi}}
+    \renewcommand{\theenumii}{\theenumi.\arabic{enumii}}
+    \renewcommand{\theenumiii}{\theenumii.\arabic{enumiii}}
+    \item Como usuario se desea que su aspecto físico, sea el de una caja plastica PLA rectangular, impresa en 3D con unas dimensiones de (insertar dimensiones reales aquí), que incorpore una pantalla táctil en su frontal y un conmutador de encendido en alguno de sus laterales.
+    \item Como usuario se solicita que en la carcasa, se disponga también de tres aberturas funcionales. 
+    \begin{enumerate}
+        \item La primera, será utilizada para el puerto de carga de la batería del medidor de latencia.
+        \item Otras serán para la salida de los cables que conectan con el led emisor.
+        \item La tercera será para el sensor fotosensible que recibirá los estímulos del led en el monitor.
+    \end{enumerate}
+    \item Como usuario se desea que dentro de la carcasa, bajo la pantalla, se encontrarán las baterías, y una placa Raspberry Pi Model 3B. 
+    \item Como usuario se quiere que esta placa vaya anclada a la carcasa, con los cables del led y el sensor soldados en los pines de entrada/salida correspondientes. 
+    \item Como usuario se decide que la placa irá equipada con una memoria secundaria en forma de tarjeta micro SD de alta capacidad, mínimo 8GB y velocidad, mínimo 10mb/s de lectura secuencial. 
+    \item Como usuario se quiere desarrollar el Medidor de latencia como producto físico y tangible, que a su vez incorpora un producto software. 
+    \item Como usuario se quiere que dicho producto software sea sencillo y cuente con: 
+\begin{enumerate}
+    \item Un menú inicial. 
+    \item Una pantalla de configuración paramétrica. 
+    \item Una pantalla para la medición.
+    \label{rf73}
+    \item Una pantalla de ayuda.
+\end{enumerate}
+    \item Como usuario, se especifica que el medidor de latencias arrancará automáticamente el software de mediciones tras encenderse.
+    \item Como usuario se quiere conocer el estado de carga de la batería en la esquina superior de la pantalla en todo momento.
+    \item Como usuario se interactuará con el dispositivo únicamente a través de la pantalla táctil.
+    \item Como usuario se desea que se desencadenen respuesta a las entradas táctiles únicamente en los botones y cajas contenedoras de datos habilitadas para ello (checkboxes, comboboxes, botones).
+    \item Como usuario se quiere que la pantalla principal del dispositivo permita acceder a la pantalla de configuración del dispositivo, la de mediciones, al histórico de mediciones y la pantalla de ayuda.
+    \item Como usuario se especifica que en toda pantalla que no sea la principal, existirá un botón de retroceso a la pantalla anterior.
+    \item Como usuario se quiere que desde la pantalla de configuración se puedan cambiar: 
+    \begin{enumerate}
+        \item Opciones de accesibilidad.
+            \begin{enumerate}
+                \item Aumento del tamaño de la fuente del texto.
+                \label{rf1411}
+                \item Modo daltónicos.
+                \label{rf1412}
+            \end{enumerate}
+        \item El idioma de los textos entre:
+        \label{rf14}
+        \begin{enumerate}
+            \item Español.
+            \item Inglés.
+            \item Polaco.
+        \end{enumerate}
+        \item Consultar la información de versión y licencia.
+    \end{enumerate}
+    \item Como usuario, se quiere que la configuración se guarde entre reinicios.
+    \label{rf15}
+    \item Como usuario se quiere que el lenguaje por defecto del software sea español.
+    \label{rf16}
+    \item Como usuario se desea que desde la pantalla de mediciones se puedan visualizar los resultados de las mediciones de latencia en forma de gráfico bidimensional cíclico, en base al tiempo entre mediciones especificado, en tiempo real mientras se van realizando. 
+    \item Como usuario se quiere mostrar numéricamente en ms's la latencia del sistema medido en tiempo real mientras se realiza la medición.
+    \item Como usuario se quiere comenzar la medición pulsando un botón dentro de la pantalla de mediciones.
+    \item Como usuario se quiere poder pausar la medición pulsando el mismo botón de inicio dentro de la pantalla de mediciones.
+    \item Como usuario se especifica que se podrá detener la medición con un botón situado a la derecha del de iniciar medición.
+    \item Como usuario se quiere poder especificar la duración máxima de una medición en minutos y segundos previa a su realización.
+    \item Como usuario se especifica que debe saberse en todo momento el tiempo de la medición restante para su finalización.
+    \item Como usuario se requiere que este botón esté bloqueado mientras no exista una medición en curso.
+    \item Como usuario se desea tener la posibilidad de cambiar la frecuencia de las mediciones directamente desde la pantalla de mediciones.
+    \item Como usuario se especifica que al volver a la pantalla inicial, se ofrecerá guardar la medición en el registro.
+    \item Como usuario se desea que al seleccionar que se quiere guardar la medición, permitirá darle un nombre.
+    \item Como usuario se quiere que las mediciones se guarden en un registro de mediciones en formato JSON.
+    \label{rf28}
+    \item Como usuario se desea que cada medición realizada esté identificada por un nombre.
+    \label{rf29}
+    \item Como usuario se especifica que quedará registrada la fecha en que se realizó cada medición.
+    \label{rf30}
+    \item Como usuario se quiere tener almacenado de cada medición:
+    \begin{enumerate}
+        \item Nombre que la identifique
+        \item Fecha en que fue realizada en formato \textit{hh:mm dd/mm/yyyy}.
+        \item El tiempo en ms's que se ha utilizado entre mediciones.
+        \item Las latencia calculada para cada medición.
+    \end{enumerate}
+    \item Como usuario se quiere que el registro se almacene por orden cronológico.
+    \item Como usuario se desea que cada medición se muestre por su nombre en el registro.
+    \item Como usuario se especifica que al acceder a una medición registrada, se mostrará su latencia media en ms's.
+    \label{rf34}
+    \item Como usuario se quiere que el registro permita volver a ver el gráfico de una medición pulsando un botón en la pantalla del registro de la medición.
+    \label{rf35}
+    \item Como usuario se quiere mostrar un manual de instrucciones dentro de la pantalla ayuda, en forma de texto.
+    \item Como usuario se desea que el dispositivo medidor se apague tras treinta minutos sin actividad.
+    \label{rf37}
+    \item Como usuario se especifica, que el medidor de latencias deberá reducir el brillo de la pantalla al mínimo tras quince minutos de actividad.
+    \label{rf38}
+    \item Como usuario se requiere que la calibración del medidor de latencias se ajuste al entorno en el que se realice la medición.
+    \label{rf39}
+\end{enumerate}
+
+\subsection{Requisitos del hardware}
+
+Se presentan a continuación los \textbf{requisitos mínimos} hardware para desarrollar el medidor de latencias, estos corresponden a su desarrollo con una Raspberry Pi Zero 2w:
+
+\begin{enumerate}
+\renewcommand{\theenumi}{R.H.M.\arabic{enumi}}
+\renewcommand{\theenumii}{\theenumi.\arabic{enumii}}
+\renewcommand{\theenumiii}{\theenumii.\arabic{enumiii}}
+    \item Procesador: 1GHz quad-core 64-bit Arm Cortex-A53 CPU.
+    \item Memoria ram: 512MB SDRAM.
+    \item Capacidad de disco: microSD card slot y tarjeta micro sd HC de 8GB.
+    \item Pines GPIO: HAT-compatible 40-pin header footprint (unpopulated).
+    \item Energía: Micro USB power
+    \item Batería: $\geq 1200$ mAh de capacidad.
+    \item Pantalla: Tactil resistiva de 3,5'' con resolución 480 x 320 píxeles con conexión por pines GPIO.
+    \item Diodo Led de alta luminancia.
+    \item Fotosensor de alta sensibilidad.
+    \item Carcasa rectangular fabricada en PLA de alto x largo x ancho.
+\end{enumerate}
+
+Para una mayor fluidez de funcionamiento y versatilidad se proponen \textbf{requisitos recomendados}: 
+
+\begin{enumerate}
+\renewcommand{\theenumi}{R.H.R.\arabic{enumi}}
+\renewcommand{\theenumii}{\theenumi.\arabic{enumii}}
+\renewcommand{\theenumiii}{\theenumii.\arabic{enumiii}}
+    \item Procesador: 1,4GHz quad-core 64-bit Arm Cortex-A53 CPU.
+    \item Memoria ram: 1GB SDRAM.
+    \item Batería: $\geq 3000$ mAh de capacidad.
+    \item Pantalla: Tactil capacitiva multipunto de 7'' con resolución 800 x 480 pixeles y conexión SPI.
+\end{enumerate}
+
+Este medidor de latencia se utilizará un modelo más común de Raspberry, la Raspberry Pi 3 Model B, el cual sobrepasa todos los requisitos mínimos establecidos para el sistema y además añade la posibilidad de utilizar pantallas con conexión SPI de mayor tamaño, que no ocupan los pines GPIO, y tienen superficie táctil multipunto y capacitiva en lugar de resistivas.
+
+\subsection{Interfaz}
+
+\begin{enumerate}
+    \renewcommand{\theenumi}{R.I.\arabic{enumi}}
+    \renewcommand{\theenumii}{\theenumi.\arabic{enumii}}
+    \renewcommand{\theenumiii}{\theenumii.\arabic{enumiii}}
+    \item Como usuario se quiere que la interfaz de usuario por defecto se muestre apaisada y no en vertical.
+    \item Como usuario se quiere que el fondo de la interfaz sea de color azul.
+    \item Como usuario se especifica que se quiere una fuente clara y legible.
+    \label{ri3}
+    \item Como usuario se desea que el tamaño de la fuente mínimo sea 11 y el máximo 20.
+    \label{ri4}
+    \item Como usuario se desea que el color de la fuente del texto sea blanco con un borde fino negro.
+    \label{ri5}
+    \item Como usuario se requiere que todas las pantallas tengan en el margen superior un marco a modo de barra de menú.
+    \item Como usuario se pretende que en dicho marco se muestre en la zona central la hora de sistema y la fecha.
+    \item Como usuario se quiere que en el marco superior en la esquina derecha se muestre el estado actual de carga de la batería.
+    \begin{enumerate}
+        \item Este estado actual debe mostrar gráficamente si se está cargando o descargando.
+        \item Se tendrá en cuenta la posibilidad de mostrar porcentualmente la carga actual de la batería.
+    \end{enumerate}
+    \item Como usuario se especifica que en el borde superior izquierdo deberá haber disponible un botón de retroceso.
+    \item Como usuario se quiere que este botón de retroceso tenga forma de flecha.
+    \item Como usuario se pretende que este botón esté relleno de color blanco.
+    \item Como usuario se especifica que el botón de retroceso únicamente será funcional en pantallas que no sean la principal y mientras no se esté realizando una medición de latencias.
+    \item Como usuario se desea que todos los botones sean rectangulares con los bordes redondeados.
+    \item Como usuario se quiere que el color de la fuente dentro de todos los campos de texto y botones rectangulares sea amarilla.
+    \item Como usuario se especifica que el botón de iniciar medición tendrá forma de botón reproducir.
+    \item Como usuario se desea que el botón de iniciar medición sea de color verde con la flecha interior en blanco.
+    \item Como usuario se requiere que este botón esté situado en la zona inferior izquierda de la pantalla de mediciones.
+    \item Como usuario se especifica que el botón para iniciar la medición, una vez iniciada ésta, se convertirá en el botón de pausa.
+    \item Como usuario se desea que el botón de pausa esté representado por dos barras verticales con el interior relleno en blanco.
+    \item Como usuario se quiere que a la derecha del botón de iniciar mediciones se encuentre uno para detener mediciones.
+    \item Como usuario se especifica que este tendrá será de color rojo con el cuadrado de stop interior en blanco.
+    \item Como usuario se requiere que exista un contador de duración de la medición en algún punto de la pantalla.
+    \item Como usuario se precisa el cumplimiento 
+    \item Como usuario se especifica que la interfaz del medidor de latencias cumplirá con el estandar WCAG 2.0 level AA \cite{wcag}.
+    \item Como usuario se especifica que la interfaz del medidor de latencias cumplirá con el estandar WCAG 2.1 \cite{wcag}..
+    \item Como usuario se especifica que la interfaz del medidor de latencias cumplirá con el estandar WCAG level AAA \cite{wcag}..
+\end{enumerate}
+
+\subsection{No funcionales}
+
+\begin{enumerate}
+    \renewcommand{\theenumi}{R.N.F.\arabic{enumi}}
+    \renewcommand{\theenumii}{\theenumi.\arabic{enumii}}
+    \renewcommand{\theenumiii}{\theenumii.\arabic{enumiii}}
+    \item El sistema ha de ser fácil de operar, con formas y colores contrastados que permitan la legibilidad de las fuentes en todo momento, incluidas aquellas personas con problemas de visión como daltonismo, astigmatismo o presbicia.
+    \label{rnf1}
+    \item El sistema de medición de latencias ha de arrancar automáticamente una vez iniciado el dispositivo y ha de ser el único software que sea posible operar desde el mismo.
+    \item El sistema de medición de latencias tiene que poder operar con solvencia con un máximo de 512MB de memoria RAM.
+    \item El led utilizado en el sistema de medición de latencias debe ser capaz de ofrecer luminancia suficiente para ser fácilmente detectado en un ambiente de iluminación artificial media y controlada.
+    \label{rnf4}
+    \item El sistema de medición de latencias no estará concebido para realizar mediciones de campo en un entorno abierto de alta luminancia natural, sino en un laboratorio en condiciones controladas.
+    \label{rnf5}
+    \item El sistema de medición de latencias en su versión de desarrollo actual, no garantiza su correcto funcionamiento para mediciones de otro tipo de cámaras que no sean de TV. Se incluyen en este grupo, cámaras de visión nocturna, y térmicas.
+    \label{rnf6}
+    \item El sistema de medición de latencias necesitará en su versión actual de un soporte, o adhesivo, no incluidos, para la sujeción y fijación tanto del diodo led a la lente de la cámara, como del sensor fotolumínico al monitor.
+    \item La batería del sistema medidor de latencias tendrá una duración estimada de al menos dos horas.
+    \item La capacidad de memoria del medidor de latencias permitirá almacenar cientos de miles de mediciones sin ningún compromiso de capacidad.
+    \item El SOC de la placa integrada en el medidor de latencias llevará incorporado un disipador de calor pasivo de cara a minimizar problemas derivados de un uso extensivo del mismo o su utilización en entornos con temperaturas extremas $(\geq \text{40ºC})$.
+\end{enumerate}
+
+\section{Análisis del sistema}
+
+\subsection{Casos de uso}
+
+% Esto es magia negra para crear listas de objetos en una tabla
+\newcommand{\tabitem}{~~\llap{\textbullet}~~}
+% Y esto para listas enumeradas
+\newcounter{rownumbers}
+\newcommand\rownumber{E.\stepcounter{rownumbers}\arabic{rownumbers}.}
+
+\newcounter{steps}
+\newcommand\step{\stepcounter{steps}\arabic{steps}.}
+
+\newcounter{substeps}
+\newcommand\substep{\arabic{steps}.\stepcounter{substeps}\arabic{substeps}.}
+
+\begin{longtable}{|l|p{10cm}|}
+\caption{C.U.1 Realizar medición} \\
+\hline
+C.U.1                     & Realizar medición\\ \hline \label{cu1}
+Versión                   & 1.0 \\ \hline
+Dependencias              & \tabitem \hyperref[rnf4]{R.N.F.4} \\ 
+                          & \tabitem \hyperref[rnf5]{R.N.F.5} \\
+                          & \tabitem \hyperref[rnf6]{R.N.F.6} \\\hline
+Precondición              & El medidor de latencias deberá tener memoria \\ 
+                          & suficiente para guardar la medición.\\ \hline
+Descripción               & El sistema deberá comportarse como se describe \\ 
+                          & en el siguiente caso de uso cuando \textit{el usuario del} \\ 
+                          & \textit{medidor de latencias solicite realizar una medición}.\\ \hline
+Secuencia normal          & \step El usuario solicita al sistema comenzar el proceso \\ 
+de pasos                  & de medición de latencias de una cámara. \\
+                          & \step El sistema pasa a la pantalla de realización de mediciones. \\
+                          & \step El usuario elige la duración de la medición. \\
+                          & \step El sistema guarda la duración de la medición. \\
+                          & \step El usuario comienza la medición. \label{ex1} \\
+                          & \step El sistema comienza a mostrar datos de las mediciones \\ 
+                          & que va tomando. \\
+                          & \substep El usuario puede variar el tiempo entre mediciones \\
+                          & durante la medición. \\
+                          & \substep El sistema cambiará el tiempo entre impulsos \\ 
+                          & durante la medición. \\
+                          & \step El tiempo configurado de la medición concluye. \\
+                          & \step El sistema termina la medición, deja de mostrar \\
+                          & datos y solicita un nombre para guardar la medición realizada. \label{paso8} \\ 
+                          & \step El usuario introduce un nombre para la medición y pulsa guardar. \label{ex2} \\
+                          & \step El sistema guarda la medición en el registro \\
+                          & y sigue mostrando los datos de la medición tomada. \\ \hline
+Postcondición             & El usuario puede ver los resultados finales de la \\
+                          & medición y el sistema ha registrado la medición. \\ \hline
+Excepciones               & \tabitem \hyperref[ex1]{Paso 4}. Si el usuario pulsa el botón de detener medición. \\
+                          & \hspace{0.5cm} \rownumber El sistema continua en el \hyperref[paso8]{paso 8}. \\
+                          & \tabitem \hyperref[ex2]{Paso 9}. El sistema no tiene memoria suficiente para \\ 
+                          & almacenar la medición. \\
+                          & \hspace{0.5cm} \rownumber El sistema avisa al usuario de que no \\ 
+                          & tiene suficiente espacio de almacenamiento y \\ 
+                          & recomienda borrar mediciones del registro o ampliar \\
+                          & el almacenamiento. \\ \hline
+Comentarios               & El número máximo de mediciones a guardar dependerá \\
+                          & del almacenamiento disponible en la tarjeta sd y de \\
+                          & la longitud de las mísmas. El tiempo máximo de una \\
+                          & medición será de 60 minutos. \\ \hline
+
+\end{longtable}
+
+\setcounter{rownumbers}{0}
+\setcounter{steps}{0}
+\setcounter{substeps}{0}
+
+\begin{table}[H]
+\caption{C.U.2 Consultar ayuda}
+\begin{tabular}{|l|l|}
+\hline
+C.U.2                     & Consultar ayuda\\ \hline \label{cu2}
+Versión                   & 1.0 \\ \hline
+Dependencias              & \tabitem \hyperref[rnf1]{R.N.F.1} \\\hline
+Precondición              & El medidor de latencias deberá tener memoria \\ 
+                          & suficiente para guardar la medición.\\ \hline
+Descripción               & El sistema tendrá una copia interna \\
+                          & del manual de usuario para cuando el \\ 
+                          & usuario no sepa como continuar.\\ \hline
+Secuencia normal          & \step El usuario solicita al sistema \\
+de pasos                  & consultar la ayuda del sistema. \\
+                          & \step El sistema cambia a la pantalla de ayuda. \\
+                          & \step El usuario elige ayuda sobre como realizar mediciones. \label{step3} \\
+                          & \step El sistema muestra la sección del \\ 
+                          & manual de usuario referente a la \\
+                          & realización de mediciones. \\ \hline
+Postcondición             & El sistema muestra las instrucciones de como \\
+                          & operar con cada apartado del medidor de latencias. \\ \hline
+Excepciones               & \tabitem \hyperref[step3]{Paso 3}. Si el usuario elige otro apartado \\
+                          & sobre el que consultar la ayuda. \\
+                          & \rownumber El sistema muestra la sección del manual \\
+                          & referente a la información que se quiera consultar. \\ \hline
+Comentarios               & El sistema incluirá una copia en texto del manual \\
+                          & de usuario dentro de la sección ayuda. \\ \hline
+\end{tabular}
+\end{table}
+
+\setcounter{rownumbers}{0}
+\setcounter{steps}{0}
+\setcounter{substeps}{0}
+
+\begin{table}[H]
+\caption{C.U.3 Configurar idioma}
+\begin{tabular}{|l|l|}
+\hline
+C.U.3                     & Configurar idioma \\ \hline \label{cu3}
+Versión                   & 1.0 \\ \hline
+Dependencias              & \tabitem \hyperref[rf14]{R.F.14} \\
+                          & \tabitem \hyperref[rf15]{R.F.15} \\
+                          & \tabitem \hyperref[rf16]{R.F.16} \\\hline
+Precondición              & El sistema inicia por primera vez en español. \\ \hline
+Descripción               & El sistema permitirá el cambio del \\
+                          & idioma en que se muestran los textos \\
+                          & en pantalla por uno de los incluidos. \\ \hline
+Secuencia normal          & \step El usuario entra en la configuración. \\
+                          & \step El sistema muestra las opciones \\
+                          & de configuración.\label{p2} \\
+                          & \step El usuario selecciona la \\
+                          & opción de cambio de idioma. \\
+                          & \step El sistema muestra los idiomas \\
+                          & disponibles. \label{p4} \\
+                          & \step El usuario selecciona el \\
+                          & idioma inglés y aplica los cambios. \label{p5} \\
+                          & \step El sistema cambia el idioma \\
+                          & de todos los textos a inglés. \\ \hline
+Postcondición             & Los textos de todo el sistema quedan \\
+                          & cambiados a inglés.\\ \hline
+Excepciones               & \tabitem \hyperref[p5]{Paso 5}. Si el usuario elige otro idioma \\ 
+                          & y aplica los cambios. \\
+                          & \rownumber El sistema cambia el idioma \\
+                          & de todos los textos al del idioma \\
+                          & seleccionado. \\
+                          & \tabitem \hyperref[p2]{Paso 2} - \hyperref[p4]{Paso 4}. Si el usuario pulsa el \\ 
+                          & botón de retroceso: \\
+                          & \rownumber Podrá ir retrocediendo pantallas \\
+                          & una a una hasta llegar a la \\ 
+                          & pantalla de inicio. \\ \hline
+Comentarios               & Se tendrán disponible en el sistemas \\
+                          & los lenguajes español, inglés y polaco. \\ \hline
+\end{tabular}
+\end{table}
+
+\setcounter{rownumbers}{0}
+\setcounter{steps}{0}
+\setcounter{substeps}{0}
+
+\begin{table}[H]
+\caption{C.U.4 Activar modo daltónicos}
+\begin{tabular}{|l|l|}
+\hline
+C.U.4                     & Activar modo daltónicos \\ \hline \label{cu4}
+Versión                   & 1.0 \\ \hline
+Dependencias              & \tabitem \hyperref[rf1412]{R.F.14.1.1} \\\hline
+Precondición              & El sistema incluye un modo de corrección \\ 
+                          & de color para facilitar su manejo a \\
+                          & personas con daltonismo. \\ \hline
+Descripción               & El sistema permitirá el cambio del \\
+                          & idioma en que se muestran los textos \\
+                          & en pantalla por uno de los incluidos. \\ \hline
+Secuencia normal          & \step El usuario entra en la configuración. \\
+                          & \step El sistema muestra las opciones \\
+                          & de configuración. \label{pa2} \\
+                          & \step El usuario selecciona las \\
+                          & opciones de accesibilidad. \\
+                          & \step El sistema muestra las opciones \\ 
+                          & disponibles. \label{pa4} \\
+                          & \step El usuario selecciona modo daltónicos \\
+                          & y aplica los cambios. \label{pa5} \\
+                          & \step El sistema aplica el modo daltónicos \\
+                          & a todas las pantallas. \\ \hline
+Postcondición             & El modo daltónicos es aplicado \\
+                          & correctamente a todas las pantallas \\ 
+                          & del sistema. \\ \hline
+Excepciones               & \tabitem \hyperref[pa2]{Paso 2} - \hyperref[pa4]{Paso 4}. Si el usuario pulsa el \\
+                          & botón de retroceso: \\
+                          & \rownumber Podrá ir retrocediendo pantallas \\ 
+                          & una a una hasta llegar a la pantalla de \\ 
+                          & inicio. \\
+                          & \tabitem \hyperref[pa5]{Paso 5}. El sistema ya se encuentra en \\ 
+                          & modo daltónicos. \\
+                          & \rownumber El usuario no podrá volver a \\
+                          & seleccionar la opción y termina \\
+                          & el caso de uso.\\ \hline
+Comentarios               & El modo daltónicos es aconsejado \\
+                          & únicamente para personas que padezcan \\ 
+                          & esta anomalía visual. Se realiza una \\ 
+                          & supervisión médica en el desarrollo de \\ 
+                          & este modo por el especialista \\
+                          & Dr. Juan Miguel Girón Úbeda para su \\
+                          & correcto funcionamiento. \\ \hline
+\end{tabular}
+\end{table}
+
+\setcounter{rownumbers}{0}
+\setcounter{steps}{0}
+\setcounter{substeps}{0}        
+            
+\begin{table}[H]
+\caption{C.U.5 Aumentar tamaño de la fuente}
+\begin{tabular}{|l|l|}
+\hline
+C.U.5                     & Aumentar tamaño de la fuente \\ \hline \label{cu5}
+Versión                   & 1.0 \\ \hline
+Dependencias              & \tabitem \hyperref[rf1411]{R.F.14.1.1} \\
+                          & \tabitem \hyperref[ri3]{R.I.3} \\
+                          & \tabitem \hyperref[ri4]{R.I.4} \\
+                          & \tabitem \hyperref[ri5]{R.I.5} \\ \hline
+Precondición              & \\ \hline
+Descripción               & El sistema proporciona un mecanismo \\
+                          & de aumento del tamaño de la fuente del \\ 
+                          & texto de cara a facilitar la lectura \\
+                          & de los mísmos a personas con problemas de \\
+                          & visión. \\ \hline
+Secuencia normal          & \step El usuario entra en la configuración. \\
+                          & \step El sistema muestra las opciones de configuración. \\
+                            \label{pas2}
+                          & \step El usuario selecciona las opciones \\
+                          & de accesibilidad. \\
+                          & \step El sistema muestra las opciones disponibles. \\
+                            \label{pas4}
+                          & \step El usuario aumenta el selector de tamaño \\ 
+                          & al número deseado, y aplica los cambios. \label{pas5} \\
+                          & \step El sistema aplica el tamaño seleccionado \\ 
+                          & por el usuario a todos los textos del sistema.\\ \hline
+Postcondición             & Se aplica el aumento del tamaño de la \\
+                          & fuente a los textos del sistema. \\ \hline
+Excepciones               & \tabitem \hyperref[pas2]{Paso 2} - \hyperref[pas4]{Paso 4}. Si                              el usuario pulsa \\
+                          & el botón de retroceso: \\
+                          & \rownumber Podrá ir retrocediendo pantallas \\ 
+                          & una a una hasta llegar a la pantalla de \\
+                          & inicio. \\
+                          & \tabitem \hyperref[pas5]{Paso 5}. La fuente está en su máximo tamaño. \\
+                          & \rownumber El selector no permite aumentar \\
+                          & más el tamaño de la fuente y el caso de \\
+                          & uso termina. \\ \hline
+Comentarios               & Se podrán optar por fuentes de tamaño entre \\
+                          & 8 y 20. Los campos donde el aumento de la \\
+                          & fuente no sea posible dentro de la escala \\
+                          & seleccionada, serán escalados acordemente a \\ 
+                          & sus posibilidades de visualización. \\ \hline
+\end{tabular}
+\end{table}  
+
+\setcounter{rownumbers}{0}
+\setcounter{steps}{0}
+\setcounter{substeps}{0}  
+
+\begin{table}[H]
+\caption{C.U.6 Consultar medición del registro}
+\begin{tabular}{|l|l|}
+\hline
+C.U.6                     & Consultar medición del registro \\ \hline \label{cu6}
+Versión                   & 1.0 \\ \hline
+Dependencias              & \tabitem \hyperref[rf73]{R.F.7.3} \\
+                          & \tabitem \hyperref[rf28]{R.F.28} \\
+                          & \tabitem \hyperref[rf29]{R.F.29} \\
+                          & \tabitem \hyperref[rf30]{R.F.30} \\
+                          & \tabitem \hyperref[rf34]{R.F.34} \\
+                          & \tabitem \hyperref[rf35]{R.F.35} \\\hline
+Precondición              & \\ \hline
+Descripción               & Se describle la secuencia de pasos necesaria \\
+                          & para consultar los datos de una medición \\
+                          & previamente realizada y guardada en \ref{cu1}.\\ \hline
+Secuencia normal          & \step El usuario selecciona la opción registro. \\
+                          & \step El sistema abre el registro de mediciones. \\
+                          \label{paso2}
+                          & \step El usuario selecciona la medición \\
+                          & que quiere consultar y la abre. \\
+                          & \step El sistema carga los datos de la medición \\
+                          & y los muestra en la pantalla.\\ \hline
+Postcondición             & El usuario puede consultar los datos de la \\
+                          & medición realizada correctamente. \\ \hline
+Excepciones               &  \tabitem \hyperref[paso2]{Paso 2}. Si el usuario pulsa el botón                           \\ 
+                          & de retroceso: \\
+                          & \rownumber Podrá retroceder a la pantalla de inicio. \\
+                          & \tabitem \hyperref[paso2]{Paso 2}. El registro de mediciones se \\ 
+                          & encuentra vacío. \\
+                          & \rownumber El sistema informa al usuario que el \\ 
+                          & registro se encuentra vacío. \\
+                          & \rownumber El usuario acepta la información de alerta. \\
+                          & \rownumber El sistema vuelve a la pantalla de inicio \\ 
+                          & y termina el caso de uso.\\ \hline
+Comentarios               & En el caso que de las mediciones no quepan \\
+                          & en una única pantalla se dividirán en varias \\
+                          & pantallas navegables. \\ \hline
+\end{tabular}
+\end{table}
+
+\setcounter{rownumbers}{0}
+\setcounter{steps}{0}
+\setcounter{substeps}{0}  
+
+\begin{longtable}{|l|l|}
+\caption{C.U.7 Borrar medición del registro} \\
+\hline
+C.U.7                     & Borrar medición del registro \\ \hline \label{cu7}
+Versión                   & 1.0 \\ \hline
+Dependencias              & \tabitem \hyperref[rf73]{R.F.7.3} \\
+                          & \tabitem \hyperref[rf28]{R.F.28} \\
+                          & \tabitem \hyperref[rf29]{R.F.29} \\
+                          & \tabitem \hyperref[rf30]{R.F.30} \\
+                          & \tabitem \hyperref[rf34]{R.F.34} \\
+                          & \tabitem \hyperref[rf35]{R.F.35} \\
+                          & \tabitem Include \hyperref[cu6]{C.U.6} \\ \hline
+Precondición              & \\ \hline
+Descripción               & Se explican a continuación los pasos a \\
+                          & seguir si se quiere eliminar una medición \\
+                          & del registro de mediciones.\\ \hline
+Secuencia normal          & \tabitem El usuario selecciona la opción registro. \\
+                          & \tabitem El sistema abre el registro de mediciones. \\
+                          \label{pasito2}
+                          & \tabitem El usuario selecciona la medición que \\
+                          & quiere borrar y pulsa en borrar. \\
+                          & \tabitem El sistema pide confirmación de que \\
+                          & se quiere borrar la medición seleccionada. \\
+                          & \tabitem El usuario confirma que quiere borrar \\
+                          & la medición seleccionada. \\ \label{paso5}
+                          & \tabitem El sistema elimina la medición y \\
+                          & recarga la pantalla del registro.\\ \hline
+Postcondición             & La medición es eliminada correctamente del \\
+                          & registro de mediciones.\\ \hline
+Excepciones               & \tabitem \hyperref[pasito2]{Paso 2}. Si el usuario pulsa el \\                            & botón de retroceso: \\
+                          & \tabitem Podrá retroceder a la pantalla de inicio. \\
+                          & \tabitem \hyperref[paso5]{Paso 5}. Si el usuario cancela el \\
+                          & borrado: \\
+                          & \rownumber El sistema cerrará la confirmación \\
+                          & de borrado y mostrará el registro con la \\
+                          & medición seleccionada. \\
+                          & \tabitem \hyperref[paso2]{Paso 2}. El registro de mediciones \\
+                          & se encuentra vacío. \\
+                          & \rownumber El sistema informa al usuario que el \\
+                          & registro se encuentra vacío. \\
+                          & \rownumber El usuario acepta la información de alerta. \\
+                          & \rownumber El sistema vuelve a la pantalla de inicio \\
+                          & y termina el caso de uso. \\ \hline
+Comentarios               & Se podrá borrar también la medición una \\
+                          & vez consultados los datos de ésta desde la \\
+                          & pantalla final de \ref{cu6}. \\ \hline
+\end{longtable}
+    
+\setcounter{rownumbers}{0}
+\setcounter{steps}{0}
+\setcounter{substeps}{0} 
+
+\begin{table}[H]
+\caption{C.U.8 Consultar ayuda}
+\begin{tabular}{|l|l|}
+\hline
+C.U.8                     & Consultar ayuda \\ \hline \label{cu8}
+Versión                   & 1.0 \\ \hline
+Dependencias              & \tabitem \hyperref[rnf1]{R.N.F.1} \\
+                          & \tabitem Extends \hyperref[cu1]{C.U.1}. \\
+                          & \tabitem Extends \hyperref[cu3]{C.U.3}. \\
+                          & \tabitem Extends \hyperref[cu4]{C.U.4}. \\
+                          & \tabitem Extends \hyperref[cu5]{C.U.5}. \\
+                          & \tabitem Extends \hyperref[cu6]{C.U.6}. \\
+                          & \tabitem Extends \hyperref[cu7]{C.U.7}. \\ \hline
+Precondición              & \\ \hline
+Descripción               & Se explican a continuación las posibles \\
+                          & formas de solicitar ayuda. \\ \hline
+Secuencia normal          & \tabitem El usuario hace click en el botón de ayuda. \\
+                          & \tabitem El sistema muestra la ayuda integrada. \\ \hline
+Postcondición             & La ayuda se muestra correctamente. \\ \hline
+Excepciones               & \tabitem \hyperref[pasito2]{Paso 2}. Si el usuario pulsa el \\                            & botón de retroceso: \\
+                          & \tabitem Podrá retroceder a la pantalla de inicio. \\
+                          & \tabitem \hyperref[paso5]{Paso 5}. Si el usuario cancela el \\
+                          & borrado: \\
+                          & \rownumber El sistema cerrará la confirmación \\
+                          & de borrado y mostrará el registro con la \\
+                          & medición seleccionada. \\
+                          & \tabitem \hyperref[paso2]{Paso 2}. El registro de mediciones \\
+                          & se encuentra vacío. \\
+                          & \rownumber El sistema informa al usuario que el \\
+                          & registro se encuentra vacío. \\
+                          & \rownumber El usuario acepta la información de alerta. \\
+                          & \rownumber El sistema vuelve a la pantalla de inicio \\
+                          & y termina el caso de uso. \\ \hline
+Comentarios               & La ayuda superpone una pantalla sobre la actual \\
+                          & mostrando información útil para manejar los \\
+                          & distintos elementos que aparezcan en la \\
+                          & pantalla.\\ \hline
+\end{tabular}
+\end{table}
+
+\setcounter{rownumbers}{0}
+\setcounter{steps}{0}
+\setcounter{substeps}{0} 
+
+\begin{table}[H]
+\caption{C.U.9 Reducir brillo de pantalla}
+\begin{tabular}{|l|l|}
+\hline
+C.U.9                     & Reducir brillo de pantalla \\ \hline \label{cu9}
+Versión                   & 1.0 \\ \hline
+Dependencias              & \tabitem \hyperref[rf38]{R.F.38} \\ \hline
+Precondición              & \\ \hline
+Descripción               & El sistema reduce el brillo de pantalla \\
+                          & cuando no está siendo utilizado. \\ \hline
+Secuencia normal          & \tabitem Pasan 5 minutos sin ninguna interacción \\ 
+                          & con el sistema. \\
+                          & \tabitem El sistema reduce al mínimo el brillo \\
+                          & de la pantalla. \\ \hline
+Postcondición             & El brillo de la pantalla se reduce al mínimo. \\ \hline
+Excepciones               & \tabitem Pasos 1 y 2. Si el usuario toca la pantalla. \\
+                          & \rownumber El sistema interrumpe la ejecución del \\
+                          & caso de uso. \\
+                          & \rownumber El sistema reinicia el caso de uso.\\ \hline
+Comentarios               & \\ \hline
+\end{tabular}
+\end{table}
+
+\setcounter{rownumbers}{0}
+\setcounter{steps}{0}
+\setcounter{substeps}{0}
+
+\begin{table}[H]
+\caption{C.U.10 Apagado automático del dispositivo}
+\begin{tabular}{|l|l|}
+\hline
+C.U.10                     & Apagado automático del dispositivo \\ \hline \label{cu10}
+Versión                   & 1.0 \\ \hline
+Dependencias              & \tabitem \hyperref[rf37]{R.F.37} \\ \hline
+Precondición              & \\ \hline
+Descripción               & El sistema se apaga automáticamente cuando \\
+                          & no está siendo utilizado. \\ \hline
+Secuencia normal          & \tabitem Pasan 30 minutos sin ninguna interacción \\
+                          & con el sistema. \\
+                          & \tabitem El sistema se apaga automáticamente.\\ \hline
+Postcondición             & El sistema queda apagado completamente hasta. \\ \hline
+Excepciones               & \tabitem Pasos 1 y 2. Si el usuario toca la pantallla. \\
+                          & \rownumber El sistema interrumpe la ejecución del \\ 
+                          & caso de uso. \\
+                          & \rownumber El sistema reinicia el caso de uso.\\ \hline
+Comentarios               & \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{longtable}{|l|l|}
+\caption{C.U.11 Calibrar medidor} \\
+\hline
+C.U.11                    & Calibrar medidor\\ \hline \label{cu11}
+Versión                   & 1.0 \\ \hline
+Dependencias              & \tabitem \hyperref[rf39]{R.N.F.39} \\\hline
+Precondición              & \\ \hline
+Descripción               & El sistema tomará unas medidas de prueba y estimará un \\
+                          & promedio de la cantidad de luz ambiental que existe.\\ \hline
+Secuencia normal          & \step El usuario solicita al sistema comenzar el proceso \\ 
+de pasos                  & de medición de latencias de una cámara. \\
+                          & \step El sistema pasa a la pantalla de realización de mediciones. \\
+                          & \step El usuario pulsa el botón calibrar sensor. \\
+                          & \step El sistema calibrar el sensor durante 20 segundos \\
+                          & y solicita al usuario aceptar el calibrado. \\
+                          & \step El usuario acepta la calibración. \\
+                          & \step El sistema muestra los datos de la calibración. \\ \hline
+Postcondición             & El usuario puede ver los resultados de la \\
+                          & de la calibración en la pantalla de mediciones. \\ \hline
+Excepciones               & \tabitem \hyperref[ex1]{Paso 4}. Si el usuario pulsa el botón de retroceso. \\
+                          & \hspace{0.5cm} \rownumber El sistema vuelve a la pantalla de mediciones. \\ \hline
+Comentarios               & Se recomienda no realizar mediciones en ambientes\\ 
+                          & de excesiva iluminación \\ \hline
+\end{longtable}
+
+
+\subsection{Diagramas de casos de uso}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.65]{Figures/Use_cases_diagram.png}
+    \caption{Casos de uso relacionados con el usuario.}
+    \label{fig:User_use_cases_diagram}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.75]{Figures/Use_cases_diagram_time.png}
+    \caption{Casos de uso relacionados con el tiempo.}
+    \label{fig:User_use_cases_diagram_time}
+\end{figure}
+
+\subsection{Modelo conceptual de datos del dominio}
+
+
+
+%\subsection{Diagramas de secuencia}
+\subsection{Análisis económico y costes del proyecto}
+
+Se desglosará en este apartado el coste estimado que tendrá la realización completa del sistema medidor de latencias para sistemas de videovigilancia críticos, desarrollado tal y como se indica en el curso de este documento. Para ello se tomará como referencia el coste por hora de un ingeniero informático de una administración pública, en este caso, de la Junta de Andalucía \cite{informatico_junta}, el cual realizará su trabajo de forma remota desde su hogar.
+
+Se ha seleccionado para el desarrollo del proyecto del medidor de latencias el salario bruto medio estipulado de un Adjunto de servicios informáticos de la secretaría general técnica del estado \cite{secretaria_tecnica_gob}, perteneciente al area de Tecnología de la información y telecomunicaciones, con al menos, 3 años de experiencia, que está estipulado en el BOJA \cite{boja} entre 0 - 52263\euro.
+
+De cara a no tocar los extremos, se tomará como muestra un salario bruto realista de 40000\euro brutos anuales, dividiendo estos en jornadas de 7 horas diarias y 35 horas semanales \cite{boja}.
+Se estima que para la completa realización del trabajo, partiendo de la nada, se necesitarán unas 360h's de trabajo, a razón de unos 105h's mensuales, dando lugar esto a 3 meses de salario completo y un cuarto mes al 78,5\%.
+
+El salario mensual completo bruto, en este caso asciende 3333,34\euro siendo el coste de los tres meses completos 10000,2\euro y el del cuarto mes, al 78,5\% de 2666,67€. En total, la suma del coste de contratación para un único informático que desarrollase el proyecto, en concepto de mano de obra bruto se establece en: 12616,68\euro.
+
+Se tendrás que añadir a este coste en mano de obra, los gastos necesarios en materiales, considerando que se parte de cero, serán necesario un ordenador actual sin requerimientos de hardware excesivos, ya que el proyecto no lo requiere. Se enumeran los elementos a continuación:
+
+\begin{enumerate}
+    \item Ordenador.
+    \item Teclado.
+    \item Dos pantallas.
+    \item Ratón.
+\end{enumerate}
+
+Se puede obtener un lote completo de calidad media y actual con todos los elementos enumerados por un coste aproximado inferior a 1200\euro. % Podría adjuntar presupuesto real
+
+Se necesitará además una conexión de red suficiente de velocidad media para permitir la carga y descarga de ficheros así como la manutención del contacto y la búsqueda de recursos en la red. Se tasa en 20€ netos mensuales la obtención de una línea de fibra óptica regular para el desempeño del trabajo, estimándose así un coste de 80€ netos para toda la duración del proyecto.
+
+Se requerirá además un mobiliario acorde para alojar todo el equipo necesario durante la realización del trabajo y el desarrollo del proyecto, consistente en:
+
+\begin{itemize}
+    \item Una silla de trabajo ergonómica y con ajustes de altura y reclinación.
+    \item Una mesa escritorio suficientemente amplia para albergar todo el material informático utilizado durante el trabajo a la vez.
+\end{itemize}
+
+Estos materiales tendrán un coste inferior estimado de 200€.
+
+Se desglosarán a continuación los costes materiales de los componentes hardware del sistema medidor de latencias:
+
+\begin{enumerate}
+    \item Raspberry Pi 3 Model B. Coste: 41,95€
+    \item Pantalla oficial Raspberry Pi 7" multitactil capacitiva. Coste: 72,95€.
+    \item Dos Sensores fotoresistivo LDR GL-5528. Coste: 0,5€
+    \item Sensor fotoresistivo LDR LM-393. Coste: 2,40€.
+    \item Luxometro BH-1750. Coste: 3,04€.
+    \item Cables dupont, 40 líneas 100 cm's hembra-hembra. Coste: 12,25€
+    \item Dos diodos LED 3mm precableados (3v~6v) con terminales Dupont en colores blanco y verde. Coste: 2,30€
+    \item Disipadores de calor para Raspberry Pi 3. Coste: 2,15€.
+    \item Pi Sugar 3+. Coste: 49,95€.
+    \item Doce tornillos. Coste: 0,75€.
+    \item Sensor de luz Opt101. Coste: 5€.
+\end{enumerate}
+
+El coste de todos estos materiales supone un total de: 177,49€. A lo que hay que añadir el coste de impresión en 3D de la carcasa y su correspondiente filamento PLA, pero que en este caso serán proporcionados por un tercero sin coste alguno.
+
+En último lugar, es necesario cubrir el coste de la factura eléctrica durante la jornada de trabajo. En este punto se toma como referencia la factura regulada por el gobierno \cite{tarifa_regulada}. Se realizará una subvención estándar de 30€/mes como concepto del gasto producido por los equipos informáticos durante la jornada de trabajo diaria. En total durante la duración estimada del proyecto: 120€.
+
+Se suman las cifras de todos los gastos parciales desglosados en el transcurso del apartado y se obtiene un coste aproximado total de: 14327,18€.
+
+\section{Diseño de la interfaz de usuario}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.5]{Figures/Mockup_Start_screen.png}
+    \caption{Pantalla de inicio.}
+    \label{fig:start_screen}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.5]{Figures/Mockup_settings_screen.png}
+    \caption{Pantalla de ajustes.}
+    \label{fig:settings_screen}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.5]{Figures/Mockup_Help_screen.png}
+    \caption{Pantalla de ayuda.}
+    \label{fig:help_screen}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.5]{Figures/Mockup_Registry_screen.png}
+    \caption{Pantalla de registro de mediciones.}
+    \label{fig:registry_screen}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.5]{Figures/Mockup_TakeMeasure_screen.png}
+    \caption{Pantalla de toma de mediciones.}
+    \label{fig:take_measure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.5]{Figures/Mockup_DisplayMeasure_screen.png}
+    \caption{Pantalla de muestra de mediciones.}
+    \label{fig:display_measure}
+\end{figure}
+
+\section{Fabricación y ensamblaje}
+
+Se explican a continuación los pasos a seguir para la construcción del prototipo de medidor de latencias para sistemas de videovigilancia críticos que nos ocupa.
+
+En primer lugar, se instalan los disipadores de calor en la placa Raspberry Pi 3 Model B. Tanto por la cara frontal como en la posterior. Son adhesivos, así que no es necesario aplicar ningún producto aparte.
+
+Se ha de imprimir una carcasa en 3D para este proyecto y así poder alojar todo el contenido electrónico. Para ello se ha elegido un modelo de Thingiverse \cite{thingiverse}. En concreto se ha utilizado una adaptación propia de un modelo creado y publicado en la plataforma.
+
+Ya se tendría la base de la carcasa preparada para anclar en ella la Raspberry Pi y todos los cables necesarios. A continuación se muestra un esquema de como van colocados y que función tienen cada uno de los pines GPIO de la placa Rasberry Pi 3 model B cortesía de \cite{pinoutxyz}. Ver fig: \ref{fig:pinout_scheme}. De ahora en adelante se hará referencia a los pines en este documento por su posición real sobre la placa y no por su nomenclatura GPIO.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.35]{Figures/raspberry-pi-pinout.png}
+    \caption{Esquema de pines Raspberry Pi}
+    \label{fig:pinout_scheme}
+\end{figure}
+
+En primer lugar, se procede a la preparación de la pantalla. Se le quitan los separadores que unen la pcb a la pantalla per se y se atornilla la pantalla completa a la parte superior de la carcasa impresa previamente en 3D.
+
+El siguiente paso es, instalar y cablear la placa controladora de la batería, en el espacio destinado para ello, realizar su cableado e instalar la batería sobre esta.
+
+Se realiza en el siguiente paso la instalación del led que se hará directamente sobre la RPI.
+
+A continuación se cablea el sensor de luz. Para ello será necesario conectar un conversor de señal analógico digital a los pines SDA y SCL, que nos permitirá comunicación mediante I2C\cite{i2c} con el sensor y posteriormente este al conversor.La mejor forma de anclarlo a la carcasa será utilizando un trozo de cinta de doble cara.
+
+En ll siguiente paso, en la esquina libre restante de la carcasa, se instalará la batería Pi Sugar+ con el interruptor de encendido del dispositivo.
+
+Se deberán conectar todos los cables en su debido lugar. 
+Se han utilizado el conector LSI flexible y los pines 25 (masa) de la RPI y el pin de salida de voltaje a 5v de la batería para la pantalla. 
+Para la alimentación se han utilizado los pines: 2 de la RPI (5v) conectado a la salida de 5v de la batería, 6 de la RPI (masa) con la masa de la batería, el pin 11 de la RPI con el SDAT de la batería y el 13 de la RPI con el SCLK de la batería. 
+Con el led se han utilizado los pines 14 y 16 (masa) de la RPI. 
+Para poder obtener información analógica del sensor de luminosidad se utilizará el conversor analógico digital que irá conectado a los pines 4(5V), 3 (SDA), 5 (SCL), 9 (masa), 20 (masa) con los pines VDD, SDA, SCL, masa y ADDR del conversor respectivamente.
+Por último los pines para el sensor de luminosidad son: 4 de la RPI con VDD del sensor. A0 del conversor analógico digital con OUT del sensor, que debe estar puenteado con el 1M. -V y COM del sensor deben ir conectados al pin 7 de la RPI.
+Se puede cerrar la carcasa con los cuatro tornillos restantes. Se facilita ahora el esquema de cableado final. Ver figura:\ref{fig:wiring_pi}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.25]{Figures/Wiring_Pi_sensor.png}
+    \caption{Cableado completo.}
+    \label{fig:wiring_pi}
+\end{figure}
+
+Para finalizar la instalación se instalara la tarjeta micro sd con el software previamente cargado en su ranura correspondiente.
+
+* Para el prototipo se ha fabricado una nueva versión de la carcasa utilizando como molde la original a mano modificada anteriormente, y complementada con los componentes que a posteriori se instalarán en ella para la correcta medición de los espacios necesarios para los puertos de carga y la instalación del controlador de las baterías.
+
+\section{Implementación}
+
+\section{Pruebas y validación}
+
+\chapter{Resumen}
+
+\chapter{Conclusiones y trabajo futuro}
+
+\section{Conclusiones}
+
+\section{Trabajo futuro}
+
+\chapter{Agradecimientos}
+
+Son muchas las personas que han contribuido tanto con aportaciones físicas, como con ideas a la realización de este proyecto de Medición de latencias para sistemas de videovigilancia críticos y es por ello que quiero dedicar estas líneas del documento para una mención y muestra de gratitud.
+
+En primer lugar, a Arturo Hernandez Rico, mi jefe de proyectos en GTD Defense \& Security, por la idea de llevar a término este aparato y una serie de alternativas ofrecidas. A continuación agradezco al Dr. Andrés Yañez Escolano de la Escuela Superior de Ingeniería del Campus de Puerto Real, el prestamo de una placa Raspberry Pi 3 Model B junto con una tarjeta de memoria durante la crisis de los semiconductores acaecida en los últimos meses, la cual ha convertido en una auténtica odisea y a precios desorbitados conseguir una pieza de hardware como la mencionada anteriormente para poder comenzar con el proyecto. Agradecer también a mi tutor Dr. Gabriel Guerrero Contreras por todos los buenos consejos, recomendaciones y disponibilidad facilitadas durante este ejercicio. 
+Aunque sin participación directa, me gustaría agradecer a mi familia y amigos por los ánimos proporcionados para acabar el proyecto.
+
+En último lugar, y aunque no les conozca en persona, quiero agradecer a Jim, miembro del foro de Raspberry Pi, toda su asistencia a la hora de ayudarme a conseguir una compilación cruzada para el proyecto alineada con mis deseos, y a todos esos programadores de bibliotecas de funciones anónimos en muchos casos de los que he podido tomar parte de su altruista trabajo para incorporar a este proyecto. A todos vosotros, sinceramente, gracias.
+
+\appendix
+
+\chapter{Manual de instalación}
+
+\chapter{Manual de usuario}
+
+\chapter{Manual del desarrollador}
+
+\bibliographystyle{splncs03}
+{\sloppy
+\bibliography{referencias}
+}
+
+\end{document}
