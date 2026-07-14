@@ -7,7 +7,9 @@ CONFIG += c++17
 
 # --- Directory layout ---
 INCLUDEPATH += Headers
+INCLUDEPATH += Libs/QCustomPlot/Headers
 DEPENDPATH += Headers
+DEPENDPATH += Libs/QCustomPlot/Headers
 
 # --- Platform-specific configuration ---
 
@@ -39,10 +41,10 @@ SOURCES += \
     Sources/dialog.cpp \
     Sources/jsonoperator.cpp \
     Sources/main.cpp \
-    Sources/qcustomplot.cpp \
     Sources/renamepopup.cpp \
     Sources/sensoroperator.cpp \
-    Sources/startscreen.cpp
+    Sources/startscreen.cpp \
+    Libs/QCustomPlot/Sources/qcustomplot.cpp
 
 HEADERS += \
     Headers/dataModel.hpp \
@@ -50,10 +52,10 @@ HEADERS += \
     Headers/extensionfiledelegate.h \
     Headers/jsonoperator.h \
     Headers/pigpio_stub.h \
-    Headers/qcustomplot.h \
     Headers/renamepopup.h \
     Headers/sensoroperator.h \
-    Headers/startscreen.h
+    Headers/startscreen.h \
+    Libs/QCustomPlot/Headers/qcustomplot.h
 
 FORMS += \
     Forms/dialog.ui \
