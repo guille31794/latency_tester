@@ -1,8 +1,79 @@
-# Build directories (Qt Creator out-of-source builds)
-build-LatencyTester-*/
+# ==============================================================================
+# Latency Tester - Unified .gitignore
+# ==============================================================================
 
-# LaTeX auxiliary and generated files
-# (Solo se necesitan para generar el PDF: .tex, .bib, .bst, .sty, Documents/, Figures/)
+# --- OS generated ---
+.DS_Store
+Thumbs.db
+.directory
+*~
+
+# --- Editor / IDE ---
+*.autosave
+.#*
+*.*#
+*.flc
+.*.swp
+*.pro.user*
+.qtcreator/
+
+# --- C++ build artifacts ---
+*.o
+*.obj
+*.a
+*.so
+*.so.*
+*.dll
+*.exe
+*.core
+*.moc
+*.prl
+*.app
+*.res
+*.rc
+*.debug
+*_pch.h.cpp
+*_resource.rc
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+Makefile*
+/.qmake.cache
+/.qmake.stash
+
+# --- Qt translations (generated) ---
+*.qm
+
+# --- Visual Studio ---
+*.ib_pdb_index
+*.idb
+*.ilk
+*.pdb
+*.sln
+*.suo
+*.vcproj
+*vcproj.*.*.user
+*.ncb
+*.sdf
+*.opensdf
+*.vcxproj
+*vcxproj.*
+
+# --- MinGW ---
+*.Debug
+*.Release
+
+# --- Python ---
+*.pyc
+
+# --- Vim ---
+tags
+
+# --- Qt Creator build directories ---
+build-LatencyTester-*/
+LatencyTester/build/
+
+# --- LaTeX auxiliary and generated files ---
 Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/*.aux
 Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/*.bbl
 Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/*.blg
@@ -13,7 +84,6 @@ Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/*.log
 Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/*.lot
 Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/*.toc
 Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/*.out
-Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/document.pdf
 Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/*.synctex.gz
 Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/*.nav
 Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/*.snm
@@ -32,6 +102,8 @@ Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/*.acr
 Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/*.alg
 Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/*.xdy
 Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/.qm/
+Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/document.pdf
 
-# Context/tracking file (local use only)
+# --- Local context/tracking file ---
 Latency_tester.md
+output.txt
