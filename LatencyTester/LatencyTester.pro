@@ -1,9 +1,13 @@
 # LatencyTester - Qt Project File
 # Supports local (Desktop) and cross-compilation (Raspberry Pi ARM) builds.
 
-QT += core gui widgets printsupport
+QT += core gui widgets printsupport virtualkeyboard
 
 CONFIG += c++17
+
+# --- Directory layout ---
+INCLUDEPATH += Headers
+DEPENDPATH += Headers
 
 # --- Platform-specific configuration ---
 
@@ -32,39 +36,41 @@ DEFINES += QT_NO_CONSTEXPR_METAOBJECT_DATA
 # --- Sources ---
 
 SOURCES += \
-    dialog.cpp \
-    jsonoperator.cpp \
-    main.cpp \
-    qcustomplot.cpp \
-    renamepopup.cpp \
-    sensoroperator.cpp \
-    startscreen.cpp
+    Sources/dialog.cpp \
+    Sources/jsonoperator.cpp \
+    Sources/main.cpp \
+    Sources/qcustomplot.cpp \
+    Sources/renamepopup.cpp \
+    Sources/sensoroperator.cpp \
+    Sources/startscreen.cpp
 
 HEADERS += \
-    dataModel.hpp \
-    dialog.h \
-    extensionfiledelegate.h \
-    jsonoperator.h \
-    pigpio_stub.h \
-    qcustomplot.h \
-    renamepopup.h \
-    sensoroperator.h \
-    startscreen.h
+    Headers/dataModel.hpp \
+    Headers/dialog.h \
+    Headers/extensionfiledelegate.h \
+    Headers/jsonoperator.h \
+    Headers/pigpio_stub.h \
+    Headers/qcustomplot.h \
+    Headers/renamepopup.h \
+    Headers/sensoroperator.h \
+    Headers/startscreen.h
 
 FORMS += \
-    dialog.ui \
-    renamepopup.ui \
-    startscreen.ui
+    Forms/dialog.ui \
+    Forms/renamepopup.ui \
+    Forms/startscreen.ui
 
 # --- Translations ---
 # Qt 6: lrelease + embed_translations generates and embeds .qm automatically from .ts files.
-# No .qrc needed for translations when using embed_translations.
-
-TRANSLATIONS += \
-    LatencyTester_en_EN.ts
+# lrelease is invoked via a custom target to keep .ts files out of "Sources" in Qt Creator.
 
 CONFIG += lrelease
 CONFIG += embed_translations
 
+TRANSLATIONS += \
+    Translations/LatencyTester_en_EN.ts \
+    Translations/LatencyTester_pl_PL.ts
+
 DISTFILES += \
-    LatencyTester_pl_PL.ts
+    Translations/LatencyTester_en_EN.ts \
+    Translations/LatencyTester_pl_PL.ts
