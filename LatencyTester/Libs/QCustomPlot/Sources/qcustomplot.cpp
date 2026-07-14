@@ -5758,6 +5758,7 @@ QPointF QCPLabelPainterPrivate::getAnchorPos(const QPointF &tickPos)
         case asBottomRight: return tickPos+QPointF(-mPadding*M_SQRT1_2, -mPadding*M_SQRT1_2);
         case asBottomLeft:  return tickPos+QPointF(mPadding*M_SQRT1_2, -mPadding*M_SQRT1_2);
       }
+      [[fallthrough]];
     }
     case amSkewedUpright:
     case amSkewedRotated:
@@ -6718,10 +6719,12 @@ QString QCPAxisTickerDateTime::getTickLabel(double tick, const QLocale &locale, 
 # if QT_VERSION >= QT_VERSION_CHECK(5, 2, 0)
   if (mDateTimeSpec == Qt::TimeZone)
     return locale.toString(keyToDateTime(tick).toTimeZone(mTimeZone), mDateTimeFormat);
+  else if (mDateTimeSpec == Qt::UTC)
+    return locale.toString(keyToDateTime(tick).toTimeZone(QTimeZone::utc()), mDateTimeFormat);
   else
-    return locale.toString(keyToDateTime(tick).toTimeSpec(mDateTimeSpec), mDateTimeFormat);
+    return locale.toString(keyToDateTime(tick).toTimeZone(QTimeZone::systemTimeZone()), mDateTimeFormat);
 # else
-  return locale.toString(keyToDateTime(tick).toTimeSpec(mDateTimeSpec), mDateTimeFormat);
+  return locale.toString(keyToDateTime(tick).toTimeZone(QTimeZone::systemTimeZone()), mDateTimeFormat);
 # endif
 }
 
@@ -6824,7 +6827,10 @@ double QCPAxisTickerDateTime::dateTimeToKey(const QDate &date, Qt::TimeSpec time
 # elif QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
   return QDateTime(date, QTime(0, 0), timeSpec).toMSecsSinceEpoch()/1000.0;
 # else
-  return date.startOfDay(timeSpec).toMSecsSinceEpoch()/1000.0;
+  if (timeSpec == Qt::UTC)
+    return date.startOfDay(QTimeZone::utc()).toMSecsSinceEpoch()/1000.0;
+  else
+    return date.startOfDay(QTimeZone::systemTimeZone()).toMSecsSinceEpoch()/1000.0;
 # endif
 }
 /* end of 'src/axis/axistickerdatetime.cpp' */
@@ -20600,7 +20606,9 @@ void QCPColorScaleAxisRectPrivate::draw(QCPPainter *painter)
     mirrorVert = mParentColorScale->mColorAxis.data()->rangeReversed() && (mParentColorScale->type() == QCPAxis::atLeft || mParentColorScale->type() == QCPAxis::atRight);
   }
   
-  painter->drawImage(rect().adjusted(0, -1, 0, -1), mGradientImage.mirrored(mirrorHorz, mirrorVert));
+  painter->drawImage(rect().adjusted(0, -1, 0, -1), mGradientImage.flipped(
+    (mirrorHorz ? Qt::Horizontal : Qt::Orientations{}) |
+    (mirrorVert ? Qt::Vertical : Qt::Orientations{})));
   QCPAxisRect::draw(painter);
 }
 
@@ -26624,7 +26632,9 @@ void QCPColorMap::updateLegendIcon(Qt::TransformationMode transformMode, const Q
   {
     bool mirrorX = (keyAxis()->orientation() == Qt::Horizontal ? keyAxis() : valueAxis())->rangeReversed();
     bool mirrorY = (valueAxis()->orientation() == Qt::Vertical ? valueAxis() : keyAxis())->rangeReversed();
-    mLegendIcon = QPixmap::fromImage(mMapImage.mirrored(mirrorX, mirrorY)).scaled(thumbSize, Qt::KeepAspectRatio, transformMode);
+    mLegendIcon = QPixmap::fromImage(mMapImage.flipped(
+      (mirrorX ? Qt::Horizontal : Qt::Orientations{}) |
+      (mirrorY ? Qt::Vertical : Qt::Orientations{}))).scaled(thumbSize, Qt::KeepAspectRatio, transformMode);
   }
 }
 
@@ -26852,7 +26862,9 @@ void QCPColorMap::draw(QCPPainter *painter)
                                   coordsToPixels(mMapData->keyRange().upper, mMapData->valueRange().upper)).normalized();
     localPainter->setClipRect(tightClipRect, Qt::IntersectClip);
   }
-  localPainter->drawImage(imageRect, mMapImage.mirrored(mirrorX, mirrorY));
+  localPainter->drawImage(imageRect, mMapImage.flipped(
+    (mirrorX ? Qt::Horizontal : Qt::Orientations{}) |
+    (mirrorY ? Qt::Vertical : Qt::Orientations{})));
   if (mTightBoundary)
     localPainter->setClipRegion(clipBackup);
   localPainter->setRenderHint(QPainter::SmoothPixmapTransform, smoothBackup);
@@ -30277,7 +30289,9 @@ void QCPItemPixmap::updateScaledPixmap(QRect finalRect, bool flipHorz, bool flip
     {
       mScaledPixmap = mPixmap.scaled(finalRect.size()*devicePixelRatio, mAspectRatioMode, mTransformationMode);
       if (flipHorz || flipVert)
-        mScaledPixmap = QPixmap::fromImage(mScaledPixmap.toImage().mirrored(flipHorz, flipVert));
+        mScaledPixmap = QPixmap::fromImage(mScaledPixmap.toImage().flipped(
+          (flipHorz ? Qt::Horizontal : Qt::Orientations{}) |
+          (flipVert ? Qt::Vertical : Qt::Orientations{})));
 #ifdef QCP_DEVICEPIXELRATIO_SUPPORTED
       mScaledPixmap.setDevicePixelRatio(devicePixelRatio);
 #endif
