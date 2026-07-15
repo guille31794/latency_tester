@@ -26,7 +26,7 @@ contains(QMAKE_HOST.arch, arm.*) | contains(QT_ARCH, arm.*) | contains(QMAKE_PLA
 } else {
     message("Building for Desktop (local development)")
     # No pigpio/ads1115 linkage - using stub headers
-    HEADERS += Libs/rpi_ads1115/ads1115rpi_stub.h
+    HEADERS += Headers/ads1115rpi_stub.h
 }
 
 # --- MinGW big-obj fix (qcustomplot generates too many sections in debug) ---
