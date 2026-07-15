@@ -8,6 +8,7 @@ CONFIG += c++17
 # --- Directory layout ---
 INCLUDEPATH += Headers
 INCLUDEPATH += Libs/QCustomPlot/Headers
+INCLUDEPATH += Libs/rpi_ads1115
 DEPENDPATH += Headers
 DEPENDPATH += Libs/QCustomPlot/Headers
 
@@ -17,12 +18,15 @@ DEPENDPATH += Libs/QCustomPlot/Headers
 contains(QMAKE_HOST.arch, arm.*) | contains(QT_ARCH, arm.*) | contains(QMAKE_PLATFORM, linux-rasp-pi*) {
     message("Building for Raspberry Pi (ARM)")
     DEFINES += RASPBERRY_PI
-    LIBS += -L/usr/local/lib -lpigpio -lrt
+    LIBS += -L/usr/local/lib -lpigpio -lrt -lgpiod
+    SOURCES += Libs/rpi_ads1115/ads1115rpi.cpp
+    HEADERS += Libs/rpi_ads1115/ads1115rpi.h
     target.path = /home/pi/$${TARGET}/bin
     INSTALLS += target
 } else {
     message("Building for Desktop (local development)")
-    # No pigpio linkage needed - using stub header
+    # No pigpio/ads1115 linkage - using stub headers
+    HEADERS += Libs/rpi_ads1115/ads1115rpi_stub.h
 }
 
 # --- MinGW big-obj fix (qcustomplot generates too many sections in debug) ---
@@ -47,6 +51,7 @@ SOURCES += \
     Libs/QCustomPlot/Sources/qcustomplot.cpp
 
 HEADERS += \
+    Headers/ads1115.h \
     Headers/dataModel.hpp \
     Headers/dialog.h \
     Headers/extensionfiledelegate.h \
