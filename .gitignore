@@ -104,6 +104,7 @@ Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/*.xdy
 Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/.qm/
 Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/document.pdf
 
-# --- Local context/tracking file ---
+# --- Local context/tracking files ---
 Latency_tester.md
+toolchain_setup.md
 output.txt

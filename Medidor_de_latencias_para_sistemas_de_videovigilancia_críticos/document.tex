@@ -156,7 +156,7 @@ Se contextualiza este concepto, en el hecho que se conoce como revolución digit
 Este proyecto pretende dar respuesta a si un sistema de videovigilancia es o no de tiempo real.
 Consistirá en el desarrollo de un sistema de medición de latencias para sistemas de videovigilancia, que incluye un dispositivo de medición de bajo coste y alta efectividad, equipado con un software capaz de suplir las necesidades del personal técnico encargado de realizar dichas mediciones. 
  
-Así mismo, se realizará una descripción de toda la metodología aplicada al realizar las mediciones, una completo análisis de todo el transfondo tecnológico del hardware utilizado durante el proyecto y se proporcionará al menos un par de prototipos del sistema que obtienen resultados fiables.
+Así mismo, se realizará una descripción de toda la metodología aplicada al realizar las mediciones, un completo análisis de todo el transfondo tecnológico del hardware utilizado durante el proyecto y se documentará el desarrollo e instalación del software que constituye el sistema de medición.
 
 % \section*{Listados}
 
@@ -213,20 +213,23 @@ Respecto a la medición de latencias en sistemas de visión nocturna, se debe te
 
 \section{Objetivos}
 
-El objetivo de este proyecto no es otro que el desarrollo de un producto hardware y otro software, unidos los cuales compongan un medidor de latencias para sistemas de videovigilancia críticos, que sea funcional, sencillo de utilizar y barato de producir. Para lograr dicho objetivo se acometerán los siguientes puntos:
+El objetivo de este proyecto es el desarrollo del software embebido que controlará un medidor de latencias para sistemas de videovigilancia críticos, así como su despliegue e instalación en el dispositivo hardware de destino. El producto final deberá ser funcional, sencillo de utilizar y operar sobre una plataforma hardware de bajo coste. Para lograr dicho objetivo se acometerán los siguientes puntos:
 
 \begin{itemize}
     \item Describir las pautas y comportamientos que tiene un sistema de videovigilancia crítico.
     \item Estudiar como afectan los distintos componentes de un sistema de videovigilancia a su latencia.
     \item Establecer el proceso a seguir a la hora de medir distintos sistemas de videovigilancia con distintas características.
-    \item Desarrollar un producto que sea capaz de medir las latencias de un sistema de videovigilancia y determinar si puede clasificarse como crítico .
-    \item Realizar un estudio con diversidad de sistemas videográficos, tanto de índole doméstica como profesional en el cuál se puedan observar los resultados del proyecto y que cabida tiene este producto en el mercado actual.
+    \item Desarrollar el software capaz de coordinar los componentes del equipo de medición, calcular las latencias de un sistema de videovigilancia y representarlas gráficamente a través de una interfaz de usuario.
+    \item Desplegar e instalar el software desarrollado en el dispositivo hardware de destino, verificando su correcto funcionamiento.
 \end{itemize}
 
 \section{Alcance}
 
-Se dará por concluido el proyecto, cuando se tenga desarrollado el producto medidor de latencias, con un funcionamiento eficaz y adecuado, y además haya sido testado en diversas situaciones y con diferentes equipos de videovigilancia o videográficos, siguiendo el proceso previamente redactado y teniendo en cuenta como pueden afectar los distintos componentes de estos equipos al resultado de las mediciones.
-Respecto a los dispositivos de visión nocturna se han mostrado de forma introductoria y no serán cubiertos en primera instancia por el alcance de este proyecto.
+El alcance de este proyecto se centra en el desarrollo, despliegue e instalación del software embebido del medidor de latencias. El producto hardware (placa, sensores, LED, batería, carcasa) será formalmente descrito y esquematizado en este documento, pero su diseño electrónico y fabricación física quedan fuera del alcance del mismo.
+
+Se dará por concluido el proyecto cuando se tenga desarrollado el software del medidor de latencias con un funcionamiento eficaz y adecuado, instalado y desplegado correctamente sobre la plataforma hardware de destino, y además haya sido testado en diversas situaciones.
+
+Respecto a los dispositivos de videograficos, se han mostrado de forma introductoria y no serán cubiertos en primera instancia por el alcance de este proyecto.
 
 \section{Glosario}
 
@@ -580,8 +583,8 @@ Se ha organizado el desarrollo del proyecto en fases bien diferenciadas que son 
     \item \textcolor{RoyalPurple}{Fase de redacción introductoria}: comienzo del documento científico del proyecto.
     \item \textcolor{BrickRed}{Fase de background tecnológico del proyecto}: redacción de todo el transfondo tecnológico del proyecto. Una vez sentada la base, se mantendrá abierto para ir añadiendo información según se precise.
     \item \textcolor{Yellow}{Fase de descripción general del proyecto y análisis de funcionalidad}: especifica como operará exactamente el producto, que herramientas hardware y software se utilizarán en su desarrollo y a quién estará dirigido el mismo.
-    \item \textcolor{RedViolet}{Fase de desarrollo del proyecto}: implementación del proyecto software utilizando las herramientas de la fase anterior. Incluye el ensamblaje del producto hardware.
-    \item \textcolor{Turquoise}{Fase de pruebas y ensayos del producto}: tests y pruebas del producto en entornos reales lo más significativos posibles.
+    \item \textcolor{RedViolet}{Fase de desarrollo del proyecto}: implementación del proyecto software utilizando las herramientas de la fase anterior.
+    \item \textcolor{Turquoise}{Fase de pruebas y validación del software}: tests funcionales del software sobre la plataforma de destino, verificando el correcto funcionamiento de la medición, la interfaz y el despliegue.
     \item \textcolor{Cyan}{Fase de documentación del proyecto}: redacción de manual de usuario y conclusiones del proyecto.
 \end{enumerate}
 
@@ -679,9 +682,14 @@ Se llevará a cabo el desarrollo e implementación del software del equipo de me
     \item Lenguaje de programación C++ \cite{c++}. En su estándar 2020, utilizando su compilador GNU g++, en su versión 11. Será el lenguaje elegido por preferencia personal del autor, y al ser un lenguaje más cercano al entorno hardware que a menudo proporciona un rendimiento de ejecución superior en todas las aplicaciones.
     \item Biblioteca de funciones standard de C++.
     \item Biblioteca de funciones boost \cite{boost}. En su versión 1.77, que proporcionan un extra de funcionalidad sobre la biblioteca standard de C++, permitiendo aprovechar desarrollos de algoritmos ya implementados y probados en lugar de desarrollarlos de cero para este proyecto.
-    \item Qt framework \cite{qt}. En su versión 5.15 LTS, el cuál servirá para el desarrollo de la interfaz de usuario del equipo de medición y ayudar a elevar el nivel de la implementación gracias a la simplificación que provee para tareas que de otro modo serían muy tediosas.
-    \item Se utilizarán algunas bibliotecas de funciones externas extraídas de internet para facilitar el desarrollo de ciertas funcionalidades. Algunas de ellas serán: QtCustomPlot \cite{qtcustomplot}, para graficar los resultados de las mediciones, y PiGpio \cite{pigpio} para facilitar el acceso a los pines GPIO de la Raspberry Pi.
+    \item Qt framework \cite{qt}. En su versión 6, el cuál servirá para el desarrollo de la interfaz de usuario del equipo de medición y ayudar a elevar el nivel de la implementación gracias a la simplificación que provee para tareas que de otro modo serían muy tediosas. Incluye además el módulo Qt Virtual Keyboard para entrada táctil sin dependencias de teclados virtuales externos.
+    \item Sistema de construcción qmake, incluido con Qt, que genera los ficheros Makefile a partir del archivo de proyecto (.pro) y gestiona automáticamente las dependencias, la invocación del preprocesador de meta-objetos (MOC), la compilación de formularios (.ui) y la generación de traducciones (.qm).
+    \item GNU Make, herramienta de automatización de compilación que ejecuta los Makefile generados por qmake, resolviendo el grafo de dependencias entre ficheros fuente y objetos, y paralelizando la compilación cuando es posible.
+    \item ARM GNU Toolchain (anteriormente Linaro), cadena de herramientas de compilación cruzada que permite generar binarios ejecutables para arquitectura ARM v8 (Raspberry Pi) desde un ordenador de desarrollo x86-64. Incluye los compiladores \texttt{aarch64-linux-gnu-gcc} y \texttt{aarch64-linux-gnu-g++}, el enlazador y las utilidades binarias asociadas.
+    \item Se utilizarán algunas bibliotecas de funciones externas extraídas de internet para facilitar el desarrollo de ciertas funcionalidades. Algunas de ellas serán: QCustomPlot \cite{qtcustomplot}, para graficar los resultados de las mediciones, PiGpio \cite{pigpio} para facilitar el acceso a los pines GPIO de la Raspberry Pi, y rpi\_ads1115 para la lectura analógica del fotosensor a través del conversor analógico-digital ADS1115 mediante I2C.
 \end{itemize}
+
+Respecto a la gestión de dependencias externas, se ha optado por la utilización de submódulos de Git para incorporar al repositorio del proyecto aquellas bibliotecas de terceros que se mantienen en repositorios externos. En concreto, la biblioteca rpi\_ads1115 se gestiona como un submódulo Git que referencia el repositorio original de su autor. Este enfoque permite mantener un vínculo directo con la fuente original, facilitar las actualizaciones futuras de la dependencia y mantener separado el código propio del código de terceros. La biblioteca QCustomPlot, por su parte, se incluye directamente en el repositorio al haber sido parcheada para garantizar su compatibilidad con Qt 6.
 
 Tras la comparativa técnica realizada en \ref{hardware}, a continuación se mostrará otra tabla comparativa que, al final, acabará desembocando la conclusión de porqué se ha elegido la Raspberry Pi Model 3B en lugar del Arduino Uno u otras posibles alternativas. Ver tabla \ref{tab:hardware2}.
 
@@ -749,7 +757,7 @@ Se utilizarán estas herramientas ajustando sus parámetros para ser compatibles
 A estas herramientas habrá que añadir una base de trabajo en forma de sistema operativo, que para el caso, será Raspbian, versión Lite ahora llamada Raspi OS, distribución linux basada en Debian, para Raspberry Pi y que por antonomasia, es referente en buen funcionamiento y estabilidad. Este sistema irá personalizado para ofrecer una experiencia únicamente centrada en la medición de latencias.
 Sobre Raspi Os se ejecutará un script a la inicialización del sistema que será el encargado de lanzar la aplicación automáticamente.
 
-Se desarrollará todo el proyecto sobre el IDE QtCreator versión 5.15.2, el cual da soporte a todos los elementos de programación anteriormente mencionados, con gran capacidad de abstracción, y en un entorno gráfico amigable. Además provee de herramientas de trabajo compatibles con sistemas embebidos que facilitarán la tarea de generar versiones del software para un dispositivo no X86-64 como es la Raspberry Pi.
+Se desarrollará todo el proyecto sobre el IDE Qt Creator versión 16, el cual da soporte a todos los elementos de programación anteriormente mencionados, con gran capacidad de abstracción, y en un entorno gráfico amigable. Además provee de herramientas de trabajo compatibles con sistemas embebidos que facilitarán la tarea de generar versiones del software para un dispositivo no X86-64 como es la Raspberry Pi.
 
 De cara al control de versiones, se propone la utilización de un repositorio privado durante el desarrollo del producto, alojado en Github y controlado con Git y Qt Creator.
 
@@ -765,7 +773,7 @@ Una consideración muy a tener en cuenta durante el análisis de la placa a util
 \chapter{Desarrollo del proyecto}
 
 El medidor de latencias para sistemas de videovigilancia, es un dispositivo, que de manera sencilla, a través de la emisión y captación de un impulso lumínico, realiza los cálculos necesarios para averiguar el tiempo existente que necesita un dispositivo de vídeo desde que capta una imagen hasta que la proyecta en un monitor.
-Se detallarán en este capítulo, las fases de su ciclo comercial, como funciona, que características y apariencia tendrán su sistema software, que problemas es capaz de resolver, como está programado y se facilitarán también algunas pruebas de campo reales con las que poder demostrar su eficacia.
+Se detallarán en este capítulo, las fases de su ciclo comercial, como funciona, que características y apariencia tendrán su sistema software, que problemas es capaz de resolver y como está programado.
 
 \section{Modelo de ciclo de vida}
 
