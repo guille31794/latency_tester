@@ -2,6 +2,7 @@
 #define SENSOROPERATOR_H
 
 #include "dataModel.hpp"
+#include "ads1115.h"
 
 /**
  * @brief c like high level library to operate rpi gpio.
@@ -12,6 +13,8 @@
 #else
 #include "pigpio_stub.h"
 #endif
+
+#include <atomic>
 
 /**
  * @brief The SensorOperator class controls the logic behind the process of taking measures
@@ -43,7 +46,8 @@ public:
     void takeMeasure(Measures& registry);
 
     /**
-     * @brief calibrateSensor calibrates the sensor to adapt it to environmental conditions
+     * @brief calibrateSensor calibrates the sensor to adapt it to environmental conditions.
+     * Takes ambient light readings and establishes a baseline reference value.
      */
     void calibrateSensor();
 
@@ -63,18 +67,18 @@ private:
     void switchOffLed();
 
     /**
-     * @brief switchOnSensor allows the sensor to start reading.
+     * @brief switchOnSensor starts the ADS1115 data acquisition.
      */
     void switchOnSensor();
 
     /**
-     * @brief switchOffSensor switches off the sensor.
+     * @brief switchOffSensor stops the ADS1115 data acquisition.
      */
     void switchOffSensor();
 
     /**
-     * @brief readFromSensor reads a light value from sensor.
-     * @return value read from sensor.
+     * @brief readFromSensor reads the latest light value from the ADS1115.
+     * @return voltage reading in millivolts.
      */
     int readFromSensor();
 
@@ -84,9 +88,13 @@ private:
      * @return the mean of all latencies.
      */
     double meanLatency(QVector<double>& lantencies);
+
     bool mStopMeasure;
     bool mTakingMeasure;
     quint32 mSensorReferenceCalibration;
+
+    ADS1115rpi mAdc;
+    std::atomic<float> mLastSensorReading{0.0f};
 };
 
 #endif // SENSOROPERATOR_H
