@@ -210,7 +210,7 @@ void StartScreen::on_DurationSlider_valueChanged(int value)
 
 void StartScreen::on_CalibrateButton_released()
 {
-
+    mSensorOperator.calibrateSensor();
 }
 
 void StartScreen::changedName(const QString& name)
@@ -402,7 +402,7 @@ void StartScreen::setFontSize()
     if(mNextSettings.fontSize != mCurrentSettings.fontSize)
     {
         QFont font;
-        for(auto widget : mWidgets)
+        for(auto widget : std::as_const(mWidgets))
         {
             font = widget->font();
             font.setPointSize(mNextSettings.fontSize);
@@ -456,7 +456,7 @@ void StartScreen::setDaltonicMode()
     {
         ui->startWidget->setStyleSheet(mColorMap.value(mNextSettings.daltonicMode).widgets);
 
-        for(auto widget : mWidgets)
+        for(auto widget : std::as_const(mWidgets))
         {
             if(widget->accessibleName() == BACKBUTTONSTR)
             {
