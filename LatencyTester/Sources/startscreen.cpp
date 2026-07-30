@@ -1,6 +1,7 @@
 #include "startscreen.h"
 #include "ui_startscreen.h"
 #include "extensionfiledelegate.h"
+#include <QApplication>
 #include <QList>
 #include <QStyle>
 #include <QCommonStyle>
@@ -28,7 +29,8 @@ StartScreen::StartScreen(QWidget *parent)
       mCurrentScreen{MenuScreen::START_SCREEN},
       mRenameWindow{new RenamePopUp{this}},
       mDialog{new Dialog{this}},
-      mBackTimer{new QTimer{this}}
+      mBackTimer{new QTimer{this}},
+      mMeasure{}
 {
     init();
 }
@@ -208,9 +210,29 @@ void StartScreen::on_DurationSlider_valueChanged(int value)
     mMeasure.duration = value;
 }
 
-void StartScreen::on_CalibrateButton_released()
+void StartScreen::on_calibrateButton_released()
 {
+    // Disable all interactive widgets during calibration (blocking operation)
+    ui->startMeasureButton->setEnabled(false);
+    ui->stopMeasureButton->setEnabled(false);
+    ui->DurationSlider->setEnabled(false);
+    ui->TimeFactorSlider->setEnabled(false);
+    ui->calibrateButton->setEnabled(false);
+    ui->backButton->setEnabled(false);
+
+    // Force UI repaint before blocking
+    QApplication::processEvents();
+
+    // Perform calibration (blocks with LED blink feedback)
     mSensorOperator.calibrateSensor();
+
+    // Re-enable all widgets
+    ui->startMeasureButton->setEnabled(true);
+    ui->stopMeasureButton->setEnabled(true);
+    ui->DurationSlider->setEnabled(true);
+    ui->TimeFactorSlider->setEnabled(true);
+    ui->calibrateButton->setEnabled(true);
+    ui->backButton->setEnabled(true);
 }
 
 void StartScreen::changedName(const QString& name)

@@ -1,4 +1,5 @@
 #include "renamepopup.h"
+#include "startscreen.h"
 #include "ui_renamepopup.h"
 
 RenamePopUp::RenamePopUp(QWidget *parent) :

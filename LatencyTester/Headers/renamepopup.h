@@ -1,7 +1,6 @@
 #ifndef RENAMEPOPUP_H
 #define RENAMEPOPUP_H
 
-#include "startscreen.h"
 #include <QDialog>
 #include <QAbstractButton>
 #include <QPointer>

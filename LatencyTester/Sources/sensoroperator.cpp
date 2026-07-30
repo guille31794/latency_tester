@@ -68,35 +68,65 @@ void SensorOperator::takeMeasure(Measures &registry)
 
 void SensorOperator::calibrateSensor()
 {
-    // Start the sensor, take readings for a short period, and compute the baseline
+    // Start the sensor acquisition
     switchOnSensor();
 
-    // Allow the sensor to stabilize (collect samples for ~2 seconds)
-    QTime calibrationEnd = QTime::currentTime().addSecs(2);
+    // Blink LED at 1-second intervals during calibration (indicates "calibrating")
+    // Only collect ambient readings when LED is OFF (baseline reference)
     float sum = 0.0f;
     int count = 0;
+    constexpr int calibrationCycles = 4;
+    constexpr int halfPeriodMs = 500;
 
-    while (QTime::currentTime() < calibrationEnd)
+    for (int i = 0; i < calibrationCycles; ++i)
     {
-        float reading = mLastSensorReading.load();
-        if (reading > 0.0f)
+        // LED ON phase (visual feedback only, no readings taken)
+        switchOnLed();
+        QTime blinkEnd = QTime::currentTime().addMSecs(halfPeriodMs);
+        while (QTime::currentTime() < blinkEnd) {}
+
+        // LED OFF phase (collect ambient light readings for calibration)
+        switchOffLed();
+        QTime offEnd = QTime::currentTime().addMSecs(halfPeriodMs);
+        while (QTime::currentTime() < offEnd)
         {
-            sum += reading;
-            ++count;
+            float reading = mLastSensorReading.load();
+            if (reading > 0.0f)
+            {
+                sum += reading;
+                ++count;
+            }
         }
     }
 
     switchOffSensor();
 
+    // Compute baseline from ambient readings
     if (count > 0)
     {
-        // Store calibration as millivolts (baseline ambient light level)
         mSensorReferenceCalibration = static_cast<quint32>((sum / count) * 1000.0f);
-        qDebug() << "Calibración completada. Referencia:" << mSensorReferenceCalibration << "mV";
+        qDebug() << "Calibración completada. Referencia:" << mSensorReferenceCalibration << "mV"
+                 << "(" << count << "muestras)";
     }
     else
     {
         qDebug() << "Calibración fallida: no se recibieron lecturas del sensor.";
+    }
+
+    // Signal calibration complete with quick blink
+    quickBlink();
+}
+
+void SensorOperator::quickBlink(int blinks, int intervalMs)
+{
+    for (int i = 0; i < blinks; ++i)
+    {
+        switchOnLed();
+        QTime onEnd = QTime::currentTime().addMSecs(intervalMs);
+        while (QTime::currentTime() < onEnd) {}
+        switchOffLed();
+        QTime offEnd = QTime::currentTime().addMSecs(intervalMs);
+        while (QTime::currentTime() < offEnd) {}
     }
 }
 

@@ -87,6 +87,13 @@ private:
      * @param latencies latencies to compute the mean.
      * @return the mean of all latencies.
      */
+    /**
+     * @brief quickBlink emits a fast LED blink sequence to signal an event to the user.
+     * @param blinks number of blinks (default 3).
+     * @param intervalMs on/off time per blink in milliseconds (default 100).
+     */
+    void quickBlink(int blinks = 3, int intervalMs = 100);
+
     double meanLatency(QVector<double>& lantencies);
 
     bool mStopMeasure;
