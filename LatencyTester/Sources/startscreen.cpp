@@ -9,6 +9,8 @@
 #include <QFileSystemModel>
 #include <QDebug>
 #include <QTimer>
+#include <QtConcurrent/QtConcurrent>
+#include <QFutureWatcher>
 
 const QString BACKBUTTONSTR{"Back_Button"};
 const QString MEASURES{"/Measures"};
@@ -106,6 +108,12 @@ void StartScreen::on_fontSizeSlider_valueChanged(int value)
 void StartScreen::on_daltonicCheckbox_stateChanged(int arg1)
 {
     mNextSettings.daltonicMode = arg1;
+    ui->settingsButtonBox->setEnabled(true);
+}
+
+void StartScreen::on_darkModeCheckbox_stateChanged(int arg1)
+{
+    mNextSettings.darkMode = arg1;
     ui->settingsButtonBox->setEnabled(true);
 }
 
@@ -212,7 +220,7 @@ void StartScreen::on_DurationSlider_valueChanged(int value)
 
 void StartScreen::on_calibrateButton_released()
 {
-    // Disable all interactive widgets during calibration (blocking operation)
+    // Disable all interactive widgets during calibration
     ui->startMeasureButton->setEnabled(false);
     ui->stopMeasureButton->setEnabled(false);
     ui->DurationSlider->setEnabled(false);
@@ -220,19 +228,26 @@ void StartScreen::on_calibrateButton_released()
     ui->calibrateButton->setEnabled(false);
     ui->backButton->setEnabled(false);
 
-    // Force UI repaint before blocking
-    QApplication::processEvents();
+    // Start non-blocking visual feedback (flashing calibrate button)
+    flashWidget(ui->calibrateButton, {QColor(Qt::yellow), QColor(Qt::darkYellow)}, 5000, 500);
 
-    // Perform calibration (blocks with LED blink feedback)
-    mSensorOperator.calibrateSensor();
+    // Run calibration in background thread
+    auto future = QtConcurrent::run([this]() {
+        mSensorOperator.calibrateSensor();
+    });
 
-    // Re-enable all widgets
-    ui->startMeasureButton->setEnabled(true);
-    ui->stopMeasureButton->setEnabled(true);
-    ui->DurationSlider->setEnabled(true);
-    ui->TimeFactorSlider->setEnabled(true);
-    ui->calibrateButton->setEnabled(true);
-    ui->backButton->setEnabled(true);
+    // Watch for completion and re-enable UI
+    auto* watcher = new QFutureWatcher<void>(this);
+    connect(watcher, &QFutureWatcher<void>::finished, this, [this, watcher]() {
+        ui->startMeasureButton->setEnabled(true);
+        ui->stopMeasureButton->setEnabled(true);
+        ui->DurationSlider->setEnabled(true);
+        ui->TimeFactorSlider->setEnabled(true);
+        ui->calibrateButton->setEnabled(true);
+        ui->backButton->setEnabled(true);
+        watcher->deleteLater();
+    });
+    watcher->setFuture(future);
 }
 
 void StartScreen::changedName(const QString& name)
@@ -300,6 +315,42 @@ void StartScreen::plotMeasure()
     ui->plotMeasures->replot();
 }
 
+void StartScreen::flashWidget(QWidget* widget, const QList<QColor>& colors, int durationMs, int intervalMs)
+{
+    if (!widget || colors.isEmpty())
+    {
+        return;
+    }
+
+    // Store original style for restoration
+    QString* originalStyle = new QString(widget->styleSheet());
+    int* colorIndex = new int(0);
+
+    QTimer* flashTimer = new QTimer(this);
+    QTimer* stopTimer = new QTimer(this);
+
+    // Cycle through colors at intervalMs
+    connect(flashTimer, &QTimer::timeout, this, [=]() {
+        const QColor& color = colors[*colorIndex % colors.size()];
+        widget->setStyleSheet(QStringLiteral("background-color: %1;").arg(color.name()));
+        ++(*colorIndex);
+    });
+
+    // Stop flashing after durationMs
+    connect(stopTimer, &QTimer::timeout, this, [=]() {
+        flashTimer->stop();
+        widget->setStyleSheet(*originalStyle);
+        flashTimer->deleteLater();
+        stopTimer->deleteLater();
+        delete originalStyle;
+        delete colorIndex;
+    });
+
+    flashTimer->start(intervalMs);
+    stopTimer->setSingleShot(true);
+    stopTimer->start(durationMs);
+}
+
 void StartScreen::init()
 {
     widgetsMapInit();
@@ -313,6 +364,43 @@ void StartScreen::init()
 void StartScreen::widgetsMapInit()
 {
     ui->setupUi(this);
+
+    // Global button and slider styling for contrast and consistency
+    this->setStyleSheet(
+        "QPushButton {"
+        "  border: 2px solid rgba(255, 255, 255, 180);"
+        "  border-radius: 8px;"
+        "  padding: 6px 16px;"
+        "  font-weight: bold;"
+        "  color: white;"
+        "  background-color: rgba(0, 120, 180, 200);"
+        "}"
+        "QPushButton:hover {"
+        "  background-color: rgba(0, 150, 220, 220);"
+        "  border-color: rgba(255, 255, 255, 240);"
+        "}"
+        "QPushButton:pressed {"
+        "  background-color: rgba(0, 90, 140, 240);"
+        "}"
+        "QPushButton:disabled {"
+        "  background-color: rgba(100, 100, 100, 150);"
+        "  border-color: rgba(150, 150, 150, 100);"
+        "  color: rgba(200, 200, 200, 150);"
+        "}"
+        "QSlider::groove:horizontal {"
+        "  border: 1px solid rgb(160, 160, 180);"
+        "  height: 8px;"
+        "  background: rgb(200, 210, 230);"
+        "  border-radius: 4px;"
+        "}"
+        "QSlider::handle:horizontal {"
+        "  background: rgb(0, 140, 200);"
+        "  border: 1px solid rgb(0, 110, 170);"
+        "  width: 18px;"
+        "  margin: -6px 0;"
+        "  border-radius: 9px;"
+        "}"
+    );
 
     QCommonStyle style;
     ui->backButton->setIcon(style.standardIcon(QStyle::SP_ArrowBack));
@@ -492,6 +580,99 @@ void StartScreen::setDaltonicMode()
     }
 }
 
+void StartScreen::setDarkMode()
+{
+    if(mNextSettings.darkMode != mCurrentSettings.darkMode)
+    {
+        if(mNextSettings.darkMode)
+        {
+            // Dark/night mode: comprehensive styling for all widgets
+            this->setStyleSheet(
+                "* { background-color: rgb(35, 35, 50); color: rgb(210, 210, 220); }"
+                "QPushButton {"
+                "  border: 2px solid rgba(180, 180, 200, 150);"
+                "  border-radius: 8px;"
+                "  padding: 6px 16px;"
+                "  font-weight: bold;"
+                "  color: white;"
+                "  background-color: rgba(40, 80, 120, 220);"
+                "}"
+                "QPushButton:hover { background-color: rgba(50, 100, 150, 230); }"
+                "QPushButton:pressed { background-color: rgba(30, 60, 90, 240); }"
+                "QPushButton:disabled {"
+                "  background-color: rgba(60, 60, 60, 150);"
+                "  color: rgba(150, 150, 150, 150);"
+                "}"
+                "QSlider::groove:horizontal {"
+                "  border: 1px solid rgb(80, 80, 100);"
+                "  height: 8px;"
+                "  background: rgb(60, 60, 80);"
+                "  border-radius: 4px;"
+                "}"
+                "QSlider::handle:horizontal {"
+                "  background: rgb(100, 160, 220);"
+                "  border: 1px solid rgb(70, 130, 190);"
+                "  width: 18px;"
+                "  margin: -6px 0;"
+                "  border-radius: 9px;"
+                "}"
+                "QComboBox {"
+                "  background-color: rgb(50, 50, 65);"
+                "  border: 1px solid rgb(80, 80, 100);"
+                "  border-radius: 4px;"
+                "  padding: 4px;"
+                "  color: rgb(210, 210, 220);"
+                "}"
+                "QComboBox::drop-down { border: none; }"
+                "QComboBox QAbstractItemView { background-color: rgb(50, 50, 65); color: rgb(210, 210, 220); }"
+                "QCheckBox { spacing: 8px; }"
+                "QCheckBox::indicator { width: 18px; height: 18px; }"
+                "QCheckBox::indicator:unchecked { border: 2px solid rgb(120, 120, 140); border-radius: 3px; background: rgb(50, 50, 65); }"
+                "QCheckBox::indicator:checked { border: 2px solid rgb(100, 160, 220); border-radius: 3px; background: rgb(100, 160, 220); }"
+                "QGroupBox { border: 1px solid rgb(80, 80, 100); border-radius: 6px; margin-top: 8px; }"
+                "QGroupBox::title { color: rgb(180, 180, 200); }"
+                "QTreeView { background-color: rgb(40, 40, 55); color: rgb(200, 200, 210); border: 1px solid rgb(70, 70, 90); }"
+                "QLabel { background-color: transparent; }"
+            );
+        }
+        else
+        {
+            // Restore default light theme with full reset
+            this->setStyleSheet(
+                "* { background-color: none; color: none; }"
+                "QPushButton {"
+                "  border: 2px solid rgba(255, 255, 255, 180);"
+                "  border-radius: 8px;"
+                "  padding: 6px 16px;"
+                "  font-weight: bold;"
+                "  color: white;"
+                "  background-color: rgba(0, 120, 180, 200);"
+                "}"
+                "QPushButton:hover { background-color: rgba(0, 150, 220, 220); border-color: rgba(255, 255, 255, 240); }"
+                "QPushButton:pressed { background-color: rgba(0, 90, 140, 240); }"
+                "QPushButton:disabled {"
+                "  background-color: rgba(100, 100, 100, 150);"
+                "  border-color: rgba(150, 150, 150, 100);"
+                "  color: rgba(200, 200, 200, 150);"
+                "}"
+                "QSlider::groove:horizontal {"
+                "  border: 1px solid rgb(160, 160, 180);"
+                "  height: 8px;"
+                "  background: rgb(200, 210, 230);"
+                "  border-radius: 4px;"
+                "}"
+                "QSlider::handle:horizontal {"
+                "  background: rgb(0, 140, 200);"
+                "  border: 1px solid rgb(0, 110, 170);"
+                "  width: 18px;"
+                "  margin: -6px 0;"
+                "  border-radius: 9px;"
+                "}"
+            );
+        }
+    }
+}
+
 void StartScreen::loadSettings()
 {
     QSettings settings{"TFG Guillermo Giron Garcia", "Latency Tester"};
@@ -516,6 +697,8 @@ void StartScreen::loadSettings()
         mNextSettings.daltonicMode = settings.value("DaltonicMode").value<bool>();
     }
 
+    mNextSettings.darkMode = settings.value("DarkMode").value<bool>();
+
     Colors daltonicColors;
     Colors colors;
 
@@ -532,6 +715,11 @@ void StartScreen::loadSettings()
         ui->daltonicCheckbox->setCheckState(Qt::CheckState::Checked);
     }
 
+    if(mNextSettings.darkMode)
+    {
+        ui->darkModeCheckbox->setCheckState(Qt::CheckState::Checked);
+    }
+
     setSettings();
 }
 
@@ -541,6 +729,7 @@ void StartScreen::saveSettings()
     settings.setValue("Language", static_cast<quint8>(mCurrentSettings.language));
     settings.setValue("FontSize", mCurrentSettings.fontSize);
     settings.setValue("DaltonicMode", mCurrentSettings.daltonicMode);
+    settings.setValue("DarkMode", mCurrentSettings.darkMode);
 }
 
 void StartScreen::setSettings()
@@ -548,6 +737,7 @@ void StartScreen::setSettings()
     setTranslation();
     setFontSize();
     setDaltonicMode();
+    setDarkMode();
     mCurrentSettings = mNextSettings;
 }
 

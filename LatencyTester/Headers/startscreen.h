@@ -14,6 +14,7 @@
 #include <QItemSelectionModel>
 #include <QString>
 #include <QPalette>
+#include <QColor>
 #include <QTranslator>
 
 QT_BEGIN_NAMESPACE
@@ -56,6 +57,7 @@ private slots:
     void on_fontSizeSlider_valueChanged(int value);
     void on_languagesComboBox_currentIndexChanged(int index);
     void on_daltonicCheckbox_stateChanged(int arg1);
+    void on_darkModeCheckbox_stateChanged(int arg1);
     void on_settingsButtonBox_clicked(QAbstractButton *button);
 
     void on_checkRegistryEntryButton_released();
@@ -105,6 +107,10 @@ private:
     */
     void setDaltonicMode();
     /**
+     * @brief Activate or deactivate dark/night mode for low-light environments
+     */
+    void setDarkMode();
+    /**
      * @brief load initial configuration
      */
     void loadSettings();
@@ -129,6 +135,15 @@ private:
      * @brief draws a registry measure at screen
      */
     void plotMeasure();
+    /**
+     * @brief flashWidget makes a widget blink through a list of colors for visual feedback.
+     * Useful during blocking operations (calibration, measurement) to indicate activity.
+     * @param widget the widget to flash (typically a QPushButton)
+     * @param colors list of colors to cycle through
+     * @param durationMs total duration of the flashing in milliseconds
+     * @param intervalMs time between color changes in milliseconds (default 250)
+     */
+    void flashWidget(QWidget* widget, const QList<QColor>& colors, int durationMs, int intervalMs = 250);
 
     Ui::StartScreen *ui;
     MenuScreen mCurrentScreen;

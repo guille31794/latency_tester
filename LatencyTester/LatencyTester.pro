@@ -1,7 +1,7 @@
 # LatencyTester - Qt Project File
 # Supports local (Desktop) and cross-compilation (Raspberry Pi ARM) builds.
 
-QT += core gui widgets printsupport virtualkeyboard
+QT += core gui widgets printsupport concurrent virtualkeyboard
 
 CONFIG += c++17
 

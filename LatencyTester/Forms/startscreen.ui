@@ -341,6 +341,13 @@ Todos los derechos reservados.</string>
        </widget>
       </item>
       <item alignment="Qt::AlignHCenter">
+       <widget class="QCheckBox" name="darkModeCheckbox">
+        <property name="text">
+         <string>Modo nocturno</string>
+        </property>
+       </widget>
+      </item>
+      <item alignment="Qt::AlignHCenter">
        <widget class="QDialogButtonBox" name="settingsButtonBox">
         <property name="standardButtons">
          <set>QDialogButtonBox::NoButton</set>
@@ -916,10 +923,10 @@ color: rgb(0, 0, 0);</string>
     <widget class="QPushButton" name="calibrateButton">
      <property name="geometry">
       <rect>
-       <x>370</x>
+       <x>340</x>
        <y>320</y>
-       <width>80</width>
-       <height>25</height>
+       <width>120</width>
+       <height>35</height>
       </rect>
      </property>
      <property name="text">
@@ -929,14 +936,14 @@ color: rgb(0, 0, 0);</string>
     <widget class="QPushButton" name="startMeasureButton">
      <property name="geometry">
       <rect>
-       <x>370</x>
+       <x>340</x>
        <y>380</y>
-       <width>80</width>
-       <height>25</height>
+       <width>120</width>
+       <height>35</height>
       </rect>
      </property>
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -948,10 +955,10 @@ color: rgb(0, 0, 0);</string>
     <widget class="QPushButton" name="stopMeasureButton">
      <property name="geometry">
       <rect>
-       <x>370</x>
+       <x>340</x>
        <y>440</y>
-       <width>80</width>
-       <height>25</height>
+       <width>120</width>
+       <height>35</height>
       </rect>
      </property>
      <property name="text">
