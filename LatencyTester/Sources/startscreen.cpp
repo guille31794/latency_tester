@@ -195,7 +195,33 @@ void StartScreen::backToStartScreen()
 
 void StartScreen::on_startMeasureButton_released()
 {
-    mSensorOperator.takeMeasure(mMeasure);
+    // Clear previous measurement data
+    mMeasure.lantencies.clear();
+    mMeasure.meanLatency = 0;
+    mMeasure.date = QDateTime::currentDateTime();
+
+    // Disable interactive widgets, keep stop button enabled for interruption
+    setMeasureWidgetsEnabled(false);
+    ui->stopMeasureButton->setEnabled(true);
+
+    // Start non-blocking visual feedback (flashing start button)
+    int estimatedDurationMs = mMeasure.duration + 1000;
+    flashWidget(ui->startMeasureButton, {QColor(Qt::green), QColor(Qt::darkGreen)}, estimatedDurationMs, 500);
+
+    // Run measurement in background thread
+    auto future = QtConcurrent::run([this]() {
+        mSensorOperator.takeMeasure(mMeasure);
+    });
+
+    // Watch for completion: re-enable UI and plot results
+    auto* watcher = new QFutureWatcher<void>(this);
+    connect(watcher, &QFutureWatcher<void>::finished, this, [this, watcher]() {
+        setMeasureWidgetsEnabled(true);
+        ui->stopMeasureButton->setEnabled(false);
+        plotMeasure();
+        watcher->deleteLater();
+    });
+    watcher->setFuture(future);
 }
 
 void StartScreen::on_stopMeasureButton_released()
@@ -215,18 +241,13 @@ void StartScreen::on_TimeFactorSlider_valueChanged(int value)
 
 void StartScreen::on_DurationSlider_valueChanged(int value)
 {
-    mMeasure.duration = value;
+    mMeasure.duration = value * 1000; // Slider in seconds, stored in ms
 }
 
 void StartScreen::on_calibrateButton_released()
 {
     // Disable all interactive widgets during calibration
-    ui->startMeasureButton->setEnabled(false);
-    ui->stopMeasureButton->setEnabled(false);
-    ui->DurationSlider->setEnabled(false);
-    ui->TimeFactorSlider->setEnabled(false);
-    ui->calibrateButton->setEnabled(false);
-    ui->backButton->setEnabled(false);
+    setMeasureWidgetsEnabled(false);
 
     // Start non-blocking visual feedback (flashing calibrate button)
     flashWidget(ui->calibrateButton, {QColor(Qt::yellow), QColor(Qt::darkYellow)}, 5000, 500);
@@ -239,12 +260,7 @@ void StartScreen::on_calibrateButton_released()
     // Watch for completion and re-enable UI
     auto* watcher = new QFutureWatcher<void>(this);
     connect(watcher, &QFutureWatcher<void>::finished, this, [this, watcher]() {
-        ui->startMeasureButton->setEnabled(true);
-        ui->stopMeasureButton->setEnabled(true);
-        ui->DurationSlider->setEnabled(true);
-        ui->TimeFactorSlider->setEnabled(true);
-        ui->calibrateButton->setEnabled(true);
-        ui->backButton->setEnabled(true);
+        setMeasureWidgetsEnabled(true);
         watcher->deleteLater();
     });
     watcher->setFuture(future);
@@ -349,6 +365,15 @@ void StartScreen::flashWidget(QWidget* widget, const QList<QColor>& colors, int 
     flashTimer->start(intervalMs);
     stopTimer->setSingleShot(true);
     stopTimer->start(durationMs);
+}
+
+void StartScreen::setMeasureWidgetsEnabled(bool enabled)
+{
+    ui->startMeasureButton->setEnabled(enabled);
+    ui->DurationSlider->setEnabled(enabled);
+    ui->TimeFactorSlider->setEnabled(enabled);
+    ui->calibrateButton->setEnabled(enabled);
+    ui->backButton->setEnabled(enabled);
 }
 
 void StartScreen::init()

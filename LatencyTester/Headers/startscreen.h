@@ -144,6 +144,12 @@ private:
      * @param intervalMs time between color changes in milliseconds (default 250)
      */
     void flashWidget(QWidget* widget, const QList<QColor>& colors, int durationMs, int intervalMs = 250);
+    /**
+     * @brief setMeasureWidgetsEnabled enables or disables all interactive widgets
+     * in the measurement screen. Used during blocking operations.
+     * @param enabled true to enable, false to disable
+     */
+    void setMeasureWidgetsEnabled(bool enabled);
 
     Ui::StartScreen *ui;
     MenuScreen mCurrentScreen;

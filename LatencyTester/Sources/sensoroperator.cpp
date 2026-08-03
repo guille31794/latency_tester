@@ -32,38 +32,85 @@ bool SensorOperator::isTakingMeasure() const
 
 void SensorOperator::takeMeasure(Measures &registry)
 {
-    quint32 numberOfMeasuresToTake = registry.duration / registry.timeFactor;
+    // Guard against invalid parameters
+    if (registry.timeFactor <= 0 || registry.duration <= 0)
+    {
+        qDebug() << "takeMeasure: parámetros inválidos (timeFactor:" << registry.timeFactor
+                 << ", duration:" << registry.duration << ")";
+        return;
+    }
+
+    quint32 numberOfMeasuresToTake = static_cast<quint32>(registry.duration / registry.timeFactor);
+    if (numberOfMeasuresToTake == 0)
+    {
+        numberOfMeasuresToTake = 1;
+    }
     mTakingMeasure = true;
     mStopMeasure = false;
-    QTime startTime;
-    int measureTime{0};
-    int measuredValue{0};
+
+    // Detection threshold: calibration baseline + 20%
+    const int detectionThreshold = static_cast<int>(mSensorReferenceCalibration +
+                                                     mSensorReferenceCalibration * 0.2);
+    // Timeout per measurement to avoid infinite loops (5 seconds max)
+    constexpr int measureTimeoutMs = 5000;
 
     switchOnSensor();
 
-    for(quint32 measure = 0; measure < numberOfMeasuresToTake; ++measure)
+    for (quint32 measure = 0; measure < numberOfMeasuresToTake; ++measure)
     {
-        if(mStopMeasure)
+        if (mStopMeasure)
         {
             break;
         }
 
-        startTime = QTime::currentTime();
+        // Ensure LED is off and sensor settled before starting
+        switchOffLed();
+        QTime settleEnd = QTime::currentTime().addMSecs(50);
+        while (QTime::currentTime() < settleEnd) {}
+
+        // Record start time and turn on LED (stimulus)
+        QTime startTime = QTime::currentTime();
         switchOnLed();
 
-        do
+        // Wait until sensor detects light above threshold (or timeout)
+        int measuredValue = 0;
+        bool detected = false;
+        while (!detected && startTime.msecsTo(QTime::currentTime()) < measureTimeoutMs)
         {
             measuredValue = readFromSensor();
-        } while(measuredValue < static_cast<int>(mSensorReferenceCalibration + mSensorReferenceCalibration * 0.2));
+            if (measuredValue >= detectionThreshold)
+            {
+                detected = true;
+            }
+        }
 
-        measureTime = startTime.msecsTo(QTime::currentTime());
+        int measureTime = startTime.msecsTo(QTime::currentTime());
         switchOffLed();
-        registry.lantencies.append(measureTime);
+
+        if (detected)
+        {
+            registry.lantencies.append(measureTime);
+        }
+        else
+        {
+            // Timeout: register as -1 to indicate failed measurement
+            registry.lantencies.append(-1);
+        }
+
+        // Wait for the configured interval before next measurement
+        if (measure < numberOfMeasuresToTake - 1 && !mStopMeasure)
+        {
+            QTime intervalEnd = QTime::currentTime().addMSecs(registry.timeFactor);
+            while (QTime::currentTime() < intervalEnd && !mStopMeasure) {}
+        }
     }
 
     switchOffSensor();
     mTakingMeasure = false;
     registry.meanLatency = meanLatency(registry.lantencies);
+
+    // Signal measurement complete with quick blink
+    quickBlink();
 }
 
 void SensorOperator::calibrateSensor()
@@ -167,13 +214,17 @@ int SensorOperator::readFromSensor()
 
 double SensorOperator::meanLatency(QVector<double>& lantencies)
 {
-    double mean{0.0};
+    double sum{0.0};
+    int validCount{0};
 
-    for(int latency : lantencies)
+    for (double latency : lantencies)
     {
-        mean += latency;
+        if (latency >= 0) // Ignore failed measurements (-1)
+        {
+            sum += latency;
+            ++validCount;
+        }
     }
 
-    mean /= lantencies.size();
-    return mean;
+    return validCount > 0 ? sum / validCount : 0.0;
 }
