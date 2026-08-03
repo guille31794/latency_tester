@@ -89,6 +89,7 @@
 \usepackage{tikz}
 \usetikzlibrary{shapes, arrows.meta, positioning, calc}
 \usepackage{amssymb}
+\usepackage{pgfgantt}
 
 \AtBeginDocument{
    \renewcommand{\tablename}{Tabla}
@@ -597,7 +598,55 @@ Se pone a disposición del lector un calendario en forma de diagrama de Gantt co
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale = 0.44, angle = 270]{Figures/diagrama_gantt.png}
+    \resizebox{\textwidth}{!}{%
+    \begin{ganttchart}[
+        hgrid,
+        vgrid={*{3}{draw=gray!30}},
+        x unit=0.7cm,
+        y unit chart=0.55cm,
+        title height=1,
+        bar height=0.6,
+        title label font=\tiny,
+        bar label font=\tiny,
+        group label font=\tiny\bfseries,
+        milestone label font=\tiny
+    ]{1}{18}
+    
+    % Title: months from Jan 2025 to Jun 2026
+    \gantttitle{2025}{12}
+    \gantttitle{2026}{6} \\
+    \gantttitlelist{1,...,12}{1}
+    \gantttitlelist{1,...,6}{1} \\
+    
+    % Phase 1: Reunión de información (Jan-Feb 2025)
+    \ganttbar[bar/.append style={fill=OliveGreen}]{1. Reunión de información}{1}{2} \\
+    
+    % Phase 2: Acopio de materiales (Feb-Mar 2025)
+    \ganttbar[bar/.append style={fill=Gray}]{2. Acopio de materiales}{2}{3} \\
+    
+    % Phase 3: Prototipado (Mar-May 2025)
+    \ganttbar[bar/.append style={fill=Blue}]{3. Prototipado de idea}{3}{5} \\
+    
+    % Phase 4: Redacción introductoria (Apr-Jun 2025)
+    \ganttbar[bar/.append style={fill=RoyalPurple}]{4. Redacción introductoria}{4}{6} \\
+    
+    % Phase 5: Background tecnológico (May-Sep 2025)
+    \ganttbar[bar/.append style={fill=BrickRed}]{5. Background tecnológico}{5}{9} \\
+    
+    % Phase 6: Descripción y análisis (Jul-Oct 2025)
+    \ganttbar[bar/.append style={fill=Yellow}]{6. Descripción general y análisis}{7}{10} \\
+    
+    % Phase 7: Desarrollo software (Sep 2025 - Feb 2026)
+    \ganttbar[bar/.append style={fill=RedViolet}]{7. Desarrollo del proyecto}{9}{14} \\
+    
+    % Phase 8: Pruebas y validación (Jan-Apr 2026)
+    \ganttbar[bar/.append style={fill=Turquoise}]{8. Pruebas y validación}{13}{16} \\
+    
+    % Phase 9: Documentación (Mar-Jun 2026)
+    \ganttbar[bar/.append style={fill=Cyan}]{9. Documentación del proyecto}{15}{18}
+    
+    \end{ganttchart}%
+    }
     \caption{Calendario del proyecto.}
     \label{fig:calendar}
 \end{figure}
@@ -844,6 +893,8 @@ En cuanto al producto software, se seguirá un modelo de ciclo de vida tradicion
                 \label{rf1411}
                 \item Modo daltónicos.
                 \label{rf1412}
+                \item Modo noche.
+                \label{rf1413}
             \end{enumerate}
         \item El idioma de los textos entre:
         \label{rf14}
