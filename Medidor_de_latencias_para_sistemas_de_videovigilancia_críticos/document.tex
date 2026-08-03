@@ -86,6 +86,9 @@
 
 \usepackage{hyphenat}
 \usepackage{verbatim}
+\usepackage{tikz}
+\usetikzlibrary{shapes, arrows.meta, positioning, calc}
+\usepackage{amssymb}
 
 \AtBeginDocument{
    \renewcommand{\tablename}{Tabla}
@@ -1433,25 +1436,78 @@ Comentarios               & \\ \hline
 \caption{C.U.11 Calibrar medidor} \\
 \hline
 C.U.11                    & Calibrar medidor\\ \hline \label{cu11}
-Versión                   & 1.0 \\ \hline
+Versión                   & 2.0 \\ \hline
 Dependencias              & \tabitem \hyperref[rf39]{R.N.F.39} \\\hline
-Precondición              & \\ \hline
-Descripción               & El sistema tomará unas medidas de prueba y estimará un \\
-                          & promedio de la cantidad de luz ambiental que existe.\\ \hline
-Secuencia normal          & \step El usuario solicita al sistema comenzar el proceso \\ 
-de pasos                  & de medición de latencias de una cámara. \\
-                          & \step El sistema pasa a la pantalla de realización de mediciones. \\
-                          & \step El usuario pulsa el botón calibrar sensor. \\
-                          & \step El sistema calibrar el sensor durante 20 segundos \\
-                          & y solicita al usuario aceptar el calibrado. \\
-                          & \step El usuario acepta la calibración. \\
-                          & \step El sistema muestra los datos de la calibración. \\ \hline
-Postcondición             & El usuario puede ver los resultados de la \\
-                          & de la calibración en la pantalla de mediciones. \\ \hline
-Excepciones               & \tabitem \hyperref[ex1]{Paso 4}. Si el usuario pulsa el botón de retroceso. \\
-                          & \hspace{0.5cm} \rownumber El sistema vuelve a la pantalla de mediciones. \\ \hline
-Comentarios               & Se recomienda no realizar mediciones en ambientes\\ 
-                          & de excesiva iluminación \\ \hline
+Precondición              & El usuario se encuentra en la pantalla de mediciones. \\ \hline
+Descripción               & El sistema tomará medidas de la luz ambiental y \\
+                          & calculará un promedio como referencia de calibración. \\
+                          & Durante el proceso se proporcionará feedback visual \\
+                          & al usuario mediante el LED y la interfaz.\\ \hline
+Secuencia normal          & \step El usuario pulsa el botón calibrar sensor. \\
+de pasos                  & \step El sistema desactiva todos los botones y \\
+                          & controles de la pantalla de mediciones. \\
+                          & \step El botón de calibrado comienza a parpadear \\
+                          & alternando colores como indicador visual. \\
+                          & \step El LED del dispositivo parpadea a intervalos \\
+                          & de un segundo (500ms encendido, 500ms apagado). \\
+                          & \step Durante las fases con el LED apagado, el sistema \\
+                          & recoge lecturas del sensor para calcular la luz ambiental. \\
+                          & \step Tras 4 ciclos de parpadeo, el sistema calcula la \\
+                          & media de las lecturas como valor de referencia. \\
+                          & \step El LED emite un parpadeo rápido (3 destellos) \\
+                          & para señalizar que la calibración ha finalizado. \\
+                          & \step El sistema reactiva todos los botones y \\
+                          & controles de la pantalla. \\ \hline
+Postcondición             & El sensor queda calibrado con un valor de referencia \\
+                          & de luz ambiental en milivoltios. La interfaz vuelve \\
+                          & a su estado funcional normal. \\ \hline
+Excepciones               & \tabitem Paso 5. Si no se reciben lecturas del sensor. \\
+                          & \hspace{0.5cm} \rownumber El sistema muestra un mensaje \\
+                          & de calibración fallida por ausencia de datos. \\
+                          & \hspace{0.5cm} \rownumber Se reactivan los controles. \\ \hline
+Comentarios               & Se recomienda no realizar calibraciones en ambientes \\
+                          & de excesiva iluminación. La calibración dura aprox. \\
+                          & 4-5 segundos. El parpadeo del botón y del LED actúan \\
+                          & como feedback visual para el usuario durante la espera. \\ \hline
+\end{longtable}
+
+\setcounter{rownumbers}{0}
+\setcounter{steps}{0}
+\setcounter{substeps}{0}
+
+\begin{longtable}{|l|l|}
+\caption{C.U.12 Activar modo nocturno} \\
+\hline
+C.U.12                    & Activar modo nocturno\\ \hline \label{cu12}
+Versión                   & 1.0 \\ \hline
+Dependencias              & \tabitem \hyperref[rf15]{R.F.15} \\\hline
+Precondición              & El sistema se encuentra en la pantalla de ajustes. \\ \hline
+Descripción               & El sistema permitirá activar un modo nocturno \\
+                          & que oscurece el fondo y adapta los colores de la \\
+                          & interfaz para su uso cómodo en entornos de baja \\
+                          & luminosidad.\\ \hline
+Secuencia normal          & \step El usuario entra en la configuración. \\
+de pasos                  & \step El sistema muestra las opciones de configuración. \\
+                          & \step El usuario activa la casilla ``Modo nocturno''. \\
+                          & \step El usuario aplica los cambios. \\
+                          & \step El sistema cambia el fondo de la interfaz a un \\
+                          & tono oscuro (rgb 35, 35, 50), adapta los colores del \\
+                          & texto a tonos claros, ajusta los sliders, checkboxes, \\
+                          & comboboxes y demás controles para mantener la \\
+                          & legibilidad en condiciones de poca luz. \\
+                          & \step La configuración se guarda para próximos inicios. \\ \hline
+Postcondición             & La interfaz completa se muestra en modo oscuro. \\
+                          & Los botones mantienen su estilo con ligeras \\
+                          & variaciones de color para adaptarse al nuevo fondo. \\ \hline
+Excepciones               & \tabitem Paso 3. Si el usuario desactiva la casilla \\
+                          & y aplica los cambios: \\
+                          & \hspace{0.5cm} \rownumber El sistema restaura el aspecto \\
+                          & claro por defecto de la interfaz. \\ \hline
+Comentarios               & El modo nocturno es aconsejado para su utilización \\
+                          & en entornos con escasa iluminación artificial o \\
+                          & durante mediciones nocturnas. No afecta a la \\
+                          & funcionalidad del dispositivo, solo a la \\
+                          & presentación visual de la interfaz. \\ \hline
 \end{longtable}
 
 
@@ -1459,14 +1515,88 @@ Comentarios               & Se recomienda no realizar mediciones en ambientes\\
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale = 0.65]{Figures/Use_cases_diagram.png}
+    \resizebox{\textwidth}{!}{%
+    \begin{tikzpicture}[
+        usecase/.style={ellipse, draw, minimum width=2.8cm, minimum height=1.4cm, align=center, font=\small},
+        actor/.style={circle, fill=black, minimum size=6pt, inner sep=0pt},
+        extends/.style={-{Stealth[length=2.5mm]}, dashed},
+        includes/.style={-{Stealth[length=2.5mm]}, dashed},
+        assoc/.style={-},
+        system/.style={draw=blue!60, rounded corners=8pt, inner sep=12pt, fill=blue!3}
+    ]
+    
+    % System boundary
+    \node[system, minimum width=12cm, minimum height=13cm] (sys) {};
+    \node[anchor=north east, font=\bfseries\small] at (sys.north east) {Sistema medidor de latencias};
+    
+    % Actor
+    \node[actor, label={[font=\small]below:Usuario}] (user) at (-6.5, -2.5) {};
+    
+    % Use cases - left column (more compact spacing)
+    \node[usecase] (uc1) at (-1.5, 1.2) {Realizar\\medición};
+    \node[usecase] (uc3) at (-1.5, -0.4) {Configurar\\idioma};
+    \node[usecase] (uc4) at (-1.5, -2.0) {Activar modo\\daltónicos};
+    \node[usecase] (uc12) at (-1.5, -3.6) {Activar modo\\nocturno};
+    \node[usecase] (uc5) at (-1.5, -5.2) {Aumentar tamaño\\de la fuente};
+    \node[usecase] (uc6) at (-1.5, -6.8) {Consultar\\medición};
+    \node[usecase] (uc2) at (-1.5, -8.4) {Consultar manual\\de usuario};
+    
+    % Use cases - right column
+    \node[usecase] (uc11) at (3.5, 1.2) {Calibrar\\sensor};
+    \node[usecase] (uc8) at (3.5, -2.0) {Consultar\\ayuda};
+    \node[usecase] (uc7) at (3.5, -6.8) {Borrar\\medición};
+    
+    % Actor associations
+    \draw[assoc] (user) -- (uc1);
+    \draw[assoc] (user) -- (uc3);
+    \draw[assoc] (user) -- (uc4);
+    \draw[assoc] (user) -- (uc12);
+    \draw[assoc] (user) -- (uc5);
+    \draw[assoc] (user) -- (uc6);
+    \draw[assoc] (user) -- (uc2);
+    
+    % Extends relationships
+    \draw[extends] (uc1) -- node[above, font=\tiny, sloped] {$\ll$extends$\gg$} (uc11);
+    \draw[extends] (uc1) -- node[above, font=\tiny, sloped] {$\ll$extends$\gg$} (uc8);
+    \draw[extends] (uc3) -- node[above, font=\tiny, sloped] {$\ll$extends$\gg$} (uc8);
+    \draw[extends] (uc4) -- node[above, font=\tiny, sloped] {$\ll$extends$\gg$} (uc8);
+    \draw[extends] (uc12) -- node[above, font=\tiny, sloped] {$\ll$extends$\gg$} (uc8);
+    \draw[extends] (uc5) -- node[above, font=\tiny, sloped] {$\ll$extends$\gg$} (uc8);
+    
+    % Include relationship
+    \draw[includes] (uc6) -- node[below, font=\tiny] {$\ll$include$\gg$} (uc7);
+    
+    \end{tikzpicture}%
+    }
     \caption{Casos de uso relacionados con el usuario.}
     \label{fig:User_use_cases_diagram}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale = 0.75]{Figures/Use_cases_diagram_time.png}
+    \begin{tikzpicture}[
+        usecase/.style={ellipse, draw, minimum width=3cm, minimum height=1.6cm, align=center, font=\small},
+        actor/.style={circle, fill=black, minimum size=6pt, inner sep=0pt},
+        assoc/.style={-},
+        system/.style={draw=blue!60, rounded corners=8pt, inner sep=12pt, fill=blue!3}
+    ]
+    
+    % System boundary
+    \node[system, minimum width=7cm, minimum height=7cm] (sys) {};
+    \node[anchor=north east, font=\bfseries\small] at (sys.north east) {Sistema medidor de latencias};
+    
+    % Actor
+    \node[actor, label={[font=\small]below:Tiempo}] (time) at (-5, 0) {};
+    
+    % Use cases
+    \node[usecase] (uc9) at (0, 1.5) {Reducir brillo\\de la pantalla};
+    \node[usecase] (uc10) at (0, -1.5) {Apagar\\dispositivo};
+    
+    % Associations
+    \draw[assoc] (time) -- (uc9);
+    \draw[assoc] (time) -- (uc10);
+    
+    \end{tikzpicture}
     \caption{Casos de uso relacionados con el tiempo.}
     \label{fig:User_use_cases_diagram_time}
 \end{figure}
@@ -1535,42 +1665,205 @@ Se suman las cifras de todos los gastos parciales desglosados en el transcurso d
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale = 0.5]{Figures/Mockup_Start_screen.png}
+    \begin{tikzpicture}[
+        screen/.style={draw=black, rounded corners=4pt, fill=blue!15, minimum width=10cm, minimum height=6.5cm},
+        topbar/.style={draw=black, fill=blue!30, minimum width=10cm, minimum height=0.6cm, anchor=north},
+        btn/.style={draw=black, rounded corners=3pt, fill=blue!25, minimum width=4cm, minimum height=0.6cm, font=\scriptsize},
+        backbtn/.style={draw=black, rounded corners=2pt, fill=yellow!60, minimum width=0.6cm, minimum height=0.4cm, font=\tiny}
+    ]
+    \node[screen] (scr) at (0,0) {};
+    \node[topbar] at (scr.north) {};
+    \node[backbtn] at (-4.2, 2.9) {$\leftarrow$};
+    \node[font=\tiny] at (0, 2.9) {12:00 15/07/2026};
+    \node[font=\tiny] at (3.8, 2.9) {$\square$ 85\,\%};
+    
+    \node[btn] at (0, 1.5) {Comenzar medición};
+    \node[btn] at (0, 0.5) {Historial de mediciones};
+    \node[btn] at (0, -0.5) {Ajustes};
+    \node[btn] at (0, -1.5) {Ayuda};
+    \end{tikzpicture}
     \caption{Pantalla de inicio.}
     \label{fig:start_screen}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale = 0.5]{Figures/Mockup_settings_screen.png}
+    \begin{tikzpicture}[
+        screen/.style={draw=black, rounded corners=4pt, fill=blue!15, minimum width=10cm, minimum height=6.5cm},
+        topbar/.style={draw=black, fill=blue!30, minimum width=10cm, minimum height=0.6cm, anchor=north},
+        btn/.style={draw=black, rounded corners=3pt, fill=blue!25, minimum width=3.5cm, minimum height=0.5cm, font=\scriptsize},
+        slider/.style={draw=gray, fill=gray!30, minimum width=4cm, minimum height=0.15cm, rounded corners=2pt},
+        handle/.style={circle, draw=black, fill=blue!50, minimum size=0.3cm, inner sep=0pt},
+        chk/.style={draw=black, minimum size=0.3cm, inner sep=0pt},
+        lbl/.style={font=\scriptsize, anchor=west},
+        backbtn/.style={draw=black, rounded corners=2pt, fill=yellow!60, minimum width=0.6cm, minimum height=0.4cm, font=\tiny}
+    ]
+    
+    % Screen background
+    \node[screen] (scr) at (0,0) {};
+    
+    % Top bar
+    \node[topbar] at (scr.north) {};
+    \node[backbtn] at (-4.2, 2.9) {$\leftarrow$};
+    \node[font=\tiny] at (0, 2.9) {12:00 15/07/2026};
+    \node[font=\tiny] at (3.8, 2.9) {$\square$ 85\,\%};
+    
+    % Title
+    \node[font=\small\bfseries] at (0, 2.2) {Ajustes};
+    
+    % Language selector
+    \node[lbl] at (-4, 1.5) {Idioma:};
+    \node[draw=black, rounded corners=2pt, fill=white, minimum width=3cm, minimum height=0.4cm, font=\scriptsize] at (1, 1.5) {Español $\blacktriangledown$};
+    
+    % Font size slider
+    \node[lbl] at (-4, 0.7) {Tamaño fuente:};
+    \node[slider] (fslider) at (1, 0.7) {};
+    \node[handle] at (0.5, 0.7) {};
+    \node[font=\tiny] at (3.5, 0.7) {10};
+    
+    % Daltonic mode checkbox
+    \node[chk, fill=white] (daltchk) at (-3.5, -0.1) {};
+    \node[lbl] at (-3.1, -0.1) {Modo daltónicos};
+    
+    % Night mode checkbox
+    \node[chk, fill=white] (nightchk) at (-3.5, -0.7) {};
+    \node[lbl] at (-3.1, -0.7) {Modo nocturno};
+    
+    % Apply / Cancel buttons
+    \node[btn] at (-1.5, -2.2) {Aplicar};
+    \node[btn] at (1.5, -2.2) {Cancelar};
+    
+    \end{tikzpicture}
     \caption{Pantalla de ajustes.}
     \label{fig:settings_screen}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale = 0.5]{Figures/Mockup_Help_screen.png}
+    \begin{tikzpicture}[
+        screen/.style={draw=black, rounded corners=4pt, fill=blue!15, minimum width=10cm, minimum height=6.5cm},
+        topbar/.style={draw=black, fill=blue!30, minimum width=10cm, minimum height=0.6cm, anchor=north},
+        backbtn/.style={draw=black, rounded corners=2pt, fill=yellow!60, minimum width=0.6cm, minimum height=0.4cm, font=\tiny}
+    ]
+    \node[screen] (scr) at (0,0) {};
+    \node[topbar] at (scr.north) {};
+    \node[backbtn] at (-4.2, 2.9) {$\leftarrow$};
+    \node[font=\tiny] at (0, 2.9) {12:00 15/07/2026};
+    \node[font=\tiny] at (3.8, 2.9) {$\square$ 85\,\%};
+    
+    \node[font=\small\bfseries] at (0, 2.0) {Ayuda};
+    \node[draw=black, rounded corners=2pt, fill=white, minimum width=8cm, minimum height=4cm, align=left, font=\tiny, anchor=north] at (0, 1.5) {
+        Manual de usuario del medidor de latencias.\\[4pt]
+        1. Calibre el sensor antes de medir.\\
+        2. Pulse ``Comenzar'' para iniciar medición.\\
+        3. El LED parpadeará durante la calibración.\\
+        4. Los resultados se muestran en gráfica.\\
+        5. Guarde la medición al finalizar.
+    };
+    \end{tikzpicture}
     \caption{Pantalla de ayuda.}
     \label{fig:help_screen}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale = 0.5]{Figures/Mockup_Registry_screen.png}
+    \begin{tikzpicture}[
+        screen/.style={draw=black, rounded corners=4pt, fill=blue!15, minimum width=10cm, minimum height=6.5cm},
+        topbar/.style={draw=black, fill=blue!30, minimum width=10cm, minimum height=0.6cm, anchor=north},
+        btn/.style={draw=black, rounded corners=3pt, fill=blue!25, minimum width=2cm, minimum height=0.45cm, font=\tiny},
+        entry/.style={draw=gray, fill=white, minimum width=5cm, minimum height=0.4cm, font=\tiny, anchor=west},
+        backbtn/.style={draw=black, rounded corners=2pt, fill=yellow!60, minimum width=0.6cm, minimum height=0.4cm, font=\tiny}
+    ]
+    \node[screen] (scr) at (0,0) {};
+    \node[topbar] at (scr.north) {};
+    \node[backbtn] at (-4.2, 2.9) {$\leftarrow$};
+    \node[font=\tiny] at (0, 2.9) {12:00 15/07/2026};
+    \node[font=\tiny] at (3.8, 2.9) {$\square$ 85\,\%};
+    
+    \node[font=\small\bfseries] at (0, 2.0) {Registro de mediciones};
+    
+    % List entries
+    \node[entry] at (-2.5, 1.2) {Prueba\_laboratorio\_01};
+    \node[entry] at (-2.5, 0.6) {Medicion\_campo\_02};
+    \node[entry] at (-2.5, 0.0) {Test\_nocturno\_03};
+    
+    % Buttons
+    \node[btn] at (3.5, 1.2) {Consultar};
+    \node[btn] at (3.5, 0.3) {Borrar};
+    \node[btn] at (3.5, -0.6) {Renombrar};
+    \end{tikzpicture}
     \caption{Pantalla de registro de mediciones.}
     \label{fig:registry_screen}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale = 0.5]{Figures/Mockup_TakeMeasure_screen.png}
+    \begin{tikzpicture}[
+        screen/.style={draw=black, rounded corners=4pt, fill=blue!15, minimum width=10cm, minimum height=6.5cm},
+        topbar/.style={draw=black, fill=blue!30, minimum width=10cm, minimum height=0.6cm, anchor=north},
+        btn/.style={draw=black, rounded corners=3pt, fill=blue!25, minimum width=2.2cm, minimum height=0.5cm, font=\tiny},
+        slider/.style={draw=gray, fill=gray!30, minimum width=3cm, minimum height=0.12cm, rounded corners=2pt},
+        handle/.style={circle, draw=black, fill=blue!50, minimum size=0.25cm, inner sep=0pt},
+        plotarea/.style={draw=black, fill=white, minimum width=5.5cm, minimum height=3.5cm},
+        backbtn/.style={draw=black, rounded corners=2pt, fill=yellow!60, minimum width=0.6cm, minimum height=0.4cm, font=\tiny},
+        lbl/.style={font=\tiny, anchor=west}
+    ]
+    \node[screen] (scr) at (0,0) {};
+    \node[topbar] at (scr.north) {};
+    \node[backbtn] at (-4.2, 2.9) {$\leftarrow$};
+    \node[font=\tiny] at (0, 2.9) {12:00 15/07/2026};
+    \node[font=\tiny] at (3.8, 2.9) {$\square$ 85\,\%};
+    
+    % Plot area
+    \node[plotarea] at (-1.5, 0.2) {};
+    \node[font=\tiny, rotate=90] at (-4.5, 0.2) {Latencias (ms)};
+    \node[font=\tiny] at (-1.5, -2.0) {Timeline (s)};
+    
+    % Sliders on the right
+    \node[lbl] at (2.5, 1.8) {Intervalo:};
+    \node[slider] at (3.5, 1.4) {};
+    \node[handle] at (3.2, 1.4) {};
+    \node[lbl] at (2.5, 0.6) {Duración:};
+    \node[slider] at (3.5, 0.2) {};
+    \node[handle] at (3.8, 0.2) {};
+    
+    % Buttons
+    \node[btn] at (3.5, -1.0) {Calibrar};
+    \node[btn] at (3.5, -1.8) {Comenzar};
+    \node[btn] at (3.5, -2.6) {Detener};
+    \end{tikzpicture}
     \caption{Pantalla de toma de mediciones.}
     \label{fig:take_measure}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale = 0.5]{Figures/Mockup_DisplayMeasure_screen.png}
+    \begin{tikzpicture}[
+        screen/.style={draw=black, rounded corners=4pt, fill=blue!15, minimum width=10cm, minimum height=6.5cm},
+        topbar/.style={draw=black, fill=blue!30, minimum width=10cm, minimum height=0.6cm, anchor=north},
+        plotarea/.style={draw=black, fill=white, minimum width=8cm, minimum height=4cm},
+        backbtn/.style={draw=black, rounded corners=2pt, fill=yellow!60, minimum width=0.6cm, minimum height=0.4cm, font=\tiny},
+        lbl/.style={font=\tiny}
+    ]
+    \node[screen] (scr) at (0,0) {};
+    \node[topbar] at (scr.north) {};
+    \node[backbtn] at (-4.2, 2.9) {$\leftarrow$};
+    \node[font=\tiny] at (0, 2.9) {12:00 15/07/2026};
+    \node[font=\tiny] at (3.8, 2.9) {$\square$ 85\,\%};
+    
+    \node[font=\small\bfseries] at (0, 2.0) {Resultados};
+    
+    % Plot area with sample data indication
+    \node[plotarea] (plot) at (0, -0.3) {};
+    \node[font=\tiny, rotate=90] at (-4.3, -0.3) {Latencias (ms)};
+    \node[font=\tiny] at (0, -2.6) {Timeline (s)};
+    
+    % Sample graph line
+    \draw[blue!60, thick] (-3.5, -0.8) -- (-2.5, -0.2) -- (-1.5, -0.6) -- (-0.5, -0.1) -- (0.5, -0.5) -- (1.5, -0.3) -- (2.5, -0.7) -- (3.5, -0.4);
+    
+    % Mean label
+    \node[lbl] at (3.5, 1.5) {Media: 45 ms};
+    \end{tikzpicture}
     \caption{Pantalla de muestra de mediciones.}
     \label{fig:display_measure}
 \end{figure}
