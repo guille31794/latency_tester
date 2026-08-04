@@ -114,6 +114,11 @@ All rights reserved.</translation>
         <translation>Daltonic mode</translation>
     </message>
     <message>
+        <location filename="startscreen.ui" line="346"/>
+        <source>Modo nocturno</source>
+        <translation>Night mode</translation>
+    </message>
+    <message>
         <location filename="startscreen.ui" line="430"/>
         <source>Comprobar</source>
         <translation>Check</translation>

@@ -114,6 +114,11 @@ Wszelkie prawa zastrzeżone.</translation>
         <translation>Tryb dla daltonistów</translation>
     </message>
     <message>
+        <location filename="startscreen.ui" line="346"/>
+        <source>Modo nocturno</source>
+        <translation>Tryb nocny</translation>
+    </message>
+    <message>
         <location filename="startscreen.ui" line="430"/>
         <source>Comprobar</source>
         <translation>Sprawdź</translation>
