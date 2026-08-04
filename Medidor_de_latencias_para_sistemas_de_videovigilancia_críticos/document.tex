@@ -946,6 +946,8 @@ En cuanto al producto software, se seguirá un modelo de ciclo de vida tradicion
     \label{rf38}
     \item Como usuario se requiere que la calibración del medidor de latencias se ajuste al entorno en el que se realice la medición.
     \label{rf39}
+    \item Como usuario se especifica que el modo nocturno y el modo daltónicos son funcionalidades ortogonales e independientes, pudiendo estar ambos activos simultáneamente. En caso de activarse ambos, el modo daltónicos tendrá prioridad sobre los colores de los botones y widgets, mientras que el modo nocturno mantendrá el fondo oscuro de la interfaz.
+    \label{rf40}
 \end{enumerate}
 
 \subsection{Requisitos del hardware}
@@ -1016,6 +1018,7 @@ Este medidor de latencia se utilizará un modelo más común de Raspberry, la Ra
     \item Como usuario se requiere que existan sliders para configurar el intervalo entre mediciones y la duración total antes de iniciar la medición.
     \item Como usuario se especifica que la interfaz del medidor de latencias cumplirá con el estándar WCAG 2.0 level AA \cite{wcag}.
     \item Como usuario se especifica que la interfaz del medidor de latencias cumplirá con el estándar WCAG 2.1 \cite{wcag}.
+    \item Como usuario se especifica que al activar simultáneamente el modo nocturno y el modo daltónicos, la interfaz presentará el fondo oscuro del modo nocturno junto con los colores de alto contraste del modo daltónicos en los botones y widgets interactivos. Los controles como sliders, checkboxes y comboboxes mantendrán la apariencia del modo nocturno, mientras que los botones de acción y el botón de retroceso adoptarán los colores del modo daltónicos.
 \end{enumerate}
 
 \subsection{No funcionales}

@@ -488,43 +488,6 @@ void StartScreen::widgetsMapInit()
 {
     ui->setupUi(this);
 
-    // Global button and slider styling for contrast and consistency
-    this->setStyleSheet(
-        "QPushButton {"
-        "  border: 2px solid rgba(255, 255, 255, 180);"
-        "  border-radius: 8px;"
-        "  padding: 6px 16px;"
-        "  font-weight: bold;"
-        "  color: white;"
-        "  background-color: rgba(0, 120, 180, 200);"
-        "}"
-        "QPushButton:hover {"
-        "  background-color: rgba(0, 150, 220, 220);"
-        "  border-color: rgba(255, 255, 255, 240);"
-        "}"
-        "QPushButton:pressed {"
-        "  background-color: rgba(0, 90, 140, 240);"
-        "}"
-        "QPushButton:disabled {"
-        "  background-color: rgba(100, 100, 100, 150);"
-        "  border-color: rgba(150, 150, 150, 100);"
-        "  color: rgba(200, 200, 200, 150);"
-        "}"
-        "QSlider::groove:horizontal {"
-        "  border: 1px solid rgb(160, 160, 180);"
-        "  height: 8px;"
-        "  background: rgb(200, 210, 230);"
-        "  border-radius: 4px;"
-        "}"
-        "QSlider::handle:horizontal {"
-        "  background: rgb(0, 140, 200);"
-        "  border: 1px solid rgb(0, 110, 170);"
-        "  width: 18px;"
-        "  margin: -6px 0;"
-        "  border-radius: 9px;"
-        "}"
-    );
-
     QCommonStyle style;
     ui->backButton->setIcon(style.standardIcon(QStyle::SP_ArrowBack));
     ui->backButton->setAccessibleName(BACKBUTTONSTR);
@@ -555,6 +518,7 @@ void StartScreen::widgetsMapInit()
                 {MenuScreen::SETTINGS_SCREEN, ui->fontSizeSlider},
                 {MenuScreen::SETTINGS_SCREEN, ui->settingsButtonBox},
                 {MenuScreen::SETTINGS_SCREEN, ui->daltonicCheckbox},
+                {MenuScreen::SETTINGS_SCREEN, ui->darkModeCheckbox},
                 {MenuScreen::MEASURES_REGISTRY_SCREEN, ui->registryFrame},
                 {MenuScreen::MEASURES_REGISTRY_SCREEN, ui->registryButtonsBox},
                 {MenuScreen::MEASURES_REGISTRY_SCREEN, ui->renameRegistryEntryButton},
@@ -685,115 +649,38 @@ void StartScreen::setTranslation()
 
 void StartScreen::setDaltonicMode()
 {
-    if(mNextSettings.daltonicMode != mCurrentSettings.daltonicMode)
+    // Always re-apply daltonic colors when active (dark mode may have overwritten them)
+    if (mNextSettings.daltonicMode)
     {
-        ui->startWidget->setStyleSheet(mColorMap.value(mNextSettings.daltonicMode).widgets);
+        ui->startWidget->setStyleSheet(mColorMap.value(true).widgets);
 
-        for(auto widget : std::as_const(mWidgets))
+        for (auto widget : std::as_const(mWidgets))
         {
-            if(widget->accessibleName() == BACKBUTTONSTR)
+            if (widget->accessibleName() == BACKBUTTONSTR)
             {
-                widget->setStyleSheet(mColorMap.value(mNextSettings.daltonicMode).backButton);
+                widget->setStyleSheet(mColorMap.value(true).backButton);
             }
             else
             {
-                widget->setStyleSheet(mColorMap.value(mNextSettings.daltonicMode).widgets);
+                widget->setStyleSheet(mColorMap.value(true).widgets);
             }
+        }
+    }
+    else if (mNextSettings.daltonicMode != mCurrentSettings.daltonicMode)
+    {
+        // Daltonic was just deactivated: clear per-widget styles so global stylesheet takes over
+        ui->startWidget->setStyleSheet("");
+
+        for (auto widget : std::as_const(mWidgets))
+        {
+            widget->setStyleSheet("");
         }
     }
 }
 
 void StartScreen::setDarkMode()
 {
-    if(mNextSettings.darkMode != mCurrentSettings.darkMode)
-    {
-        if(mNextSettings.darkMode)
-        {
-            // Dark/night mode: comprehensive styling for all widgets
-            this->setStyleSheet(
-                "* { background-color: rgb(35, 35, 50); color: rgb(210, 210, 220); }"
-                "QPushButton {"
-                "  border: 2px solid rgba(180, 180, 200, 150);"
-                "  border-radius: 8px;"
-                "  padding: 6px 16px;"
-                "  font-weight: bold;"
-                "  color: white;"
-                "  background-color: rgba(40, 80, 120, 220);"
-                "}"
-                "QPushButton:hover { background-color: rgba(50, 100, 150, 230); }"
-                "QPushButton:pressed { background-color: rgba(30, 60, 90, 240); }"
-                "QPushButton:disabled {"
-                "  background-color: rgba(60, 60, 60, 150);"
-                "  color: rgba(150, 150, 150, 150);"
-                "}"
-                "QSlider::groove:horizontal {"
-                "  border: 1px solid rgb(80, 80, 100);"
-                "  height: 8px;"
-                "  background: rgb(60, 60, 80);"
-                "  border-radius: 4px;"
-                "}"
-                "QSlider::handle:horizontal {"
-                "  background: rgb(100, 160, 220);"
-                "  border: 1px solid rgb(70, 130, 190);"
-                "  width: 18px;"
-                "  margin: -6px 0;"
-                "  border-radius: 9px;"
-                "}"
-                "QComboBox {"
-                "  background-color: rgb(50, 50, 65);"
-                "  border: 1px solid rgb(80, 80, 100);"
-                "  border-radius: 4px;"
-                "  padding: 4px;"
-                "  color: rgb(210, 210, 220);"
-                "}"
-                "QComboBox::drop-down { border: none; }"
-                "QComboBox QAbstractItemView { background-color: rgb(50, 50, 65); color: rgb(210, 210, 220); }"
-                "QCheckBox { spacing: 8px; }"
-                "QCheckBox::indicator { width: 18px; height: 18px; }"
-                "QCheckBox::indicator:unchecked { border: 2px solid rgb(120, 120, 140); border-radius: 3px; background: rgb(50, 50, 65); }"
-                "QCheckBox::indicator:checked { border: 2px solid rgb(100, 160, 220); border-radius: 3px; background: rgb(100, 160, 220); }"
-                "QGroupBox { border: 1px solid rgb(80, 80, 100); border-radius: 6px; margin-top: 8px; }"
-                "QGroupBox::title { color: rgb(180, 180, 200); }"
-                "QTreeView { background-color: rgb(40, 40, 55); color: rgb(200, 200, 210); border: 1px solid rgb(70, 70, 90); }"
-                "QLabel { background-color: transparent; }"
-            );
-        }
-        else
-        {
-            // Restore default light theme with full reset
-            this->setStyleSheet(
-                "* { background-color: none; color: none; }"
-                "QPushButton {"
-                "  border: 2px solid rgba(255, 255, 255, 180);"
-                "  border-radius: 8px;"
-                "  padding: 6px 16px;"
-                "  font-weight: bold;"
-                "  color: white;"
-                "  background-color: rgba(0, 120, 180, 200);"
-                "}"
-                "QPushButton:hover { background-color: rgba(0, 150, 220, 220); border-color: rgba(255, 255, 255, 240); }"
-                "QPushButton:pressed { background-color: rgba(0, 90, 140, 240); }"
-                "QPushButton:disabled {"
-                "  background-color: rgba(100, 100, 100, 150);"
-                "  border-color: rgba(150, 150, 150, 100);"
-                "  color: rgba(200, 200, 200, 150);"
-                "}"
-                "QSlider::groove:horizontal {"
-                "  border: 1px solid rgb(160, 160, 180);"
-                "  height: 8px;"
-                "  background: rgb(200, 210, 230);"
-                "  border-radius: 4px;"
-                "}"
-                "QSlider::handle:horizontal {"
-                "  background: rgb(0, 140, 200);"
-                "  border: 1px solid rgb(0, 110, 170);"
-                "  width: 18px;"
-                "  margin: -6px 0;"
-                "  border-radius: 9px;"
-                "}"
-            );
-        }
-    }
+    this->setStyleSheet(mThemeStylesheets.value(mNextSettings.darkMode));
 }
 
 void StartScreen::loadSettings()
@@ -833,6 +720,86 @@ void StartScreen::loadSettings()
     colors.widgets = "background-color: rgb(0, 180, 216)";
     mColorMap.insert(false, colors);
 
+    // Theme stylesheets: light and dark
+    mThemeStylesheets.insert(false,
+        "QPushButton {"
+        "  border: 2px solid rgba(255, 255, 255, 180);"
+        "  border-radius: 8px;"
+        "  padding: 6px 16px;"
+        "  font-weight: bold;"
+        "  color: white;"
+        "  background-color: rgba(0, 120, 180, 200);"
+        "}"
+        "QPushButton:hover { background-color: rgba(0, 150, 220, 220); border-color: rgba(255, 255, 255, 240); }"
+        "QPushButton:pressed { background-color: rgba(0, 90, 140, 240); }"
+        "QPushButton:disabled {"
+        "  background-color: rgba(100, 100, 100, 150);"
+        "  border-color: rgba(150, 150, 150, 100);"
+        "  color: rgba(200, 200, 200, 150);"
+        "}"
+        "QSlider::groove:horizontal {"
+        "  border: 1px solid rgb(160, 160, 180);"
+        "  height: 8px;"
+        "  background: rgb(200, 210, 230);"
+        "  border-radius: 4px;"
+        "}"
+        "QSlider::handle:horizontal {"
+        "  background: rgb(0, 140, 200);"
+        "  border: 1px solid rgb(0, 110, 170);"
+        "  width: 18px;"
+        "  margin: -6px 0;"
+        "  border-radius: 9px;"
+        "}"
+    );
+
+    mThemeStylesheets.insert(true,
+        "* { background-color: rgb(35, 35, 50); color: rgb(210, 210, 220); }"
+        "QPushButton {"
+        "  border: 2px solid rgba(180, 180, 200, 150);"
+        "  border-radius: 8px;"
+        "  padding: 6px 16px;"
+        "  font-weight: bold;"
+        "  color: white;"
+        "  background-color: rgba(40, 80, 120, 220);"
+        "}"
+        "QPushButton:hover { background-color: rgba(50, 100, 150, 230); }"
+        "QPushButton:pressed { background-color: rgba(30, 60, 90, 240); }"
+        "QPushButton:disabled {"
+        "  background-color: rgba(60, 60, 60, 150);"
+        "  color: rgba(150, 150, 150, 150);"
+        "}"
+        "QSlider::groove:horizontal {"
+        "  border: 1px solid rgb(80, 80, 100);"
+        "  height: 8px;"
+        "  background: rgb(60, 60, 80);"
+        "  border-radius: 4px;"
+        "}"
+        "QSlider::handle:horizontal {"
+        "  background: rgb(100, 160, 220);"
+        "  border: 1px solid rgb(70, 130, 190);"
+        "  width: 18px;"
+        "  margin: -6px 0;"
+        "  border-radius: 9px;"
+        "}"
+        "QComboBox {"
+        "  background-color: rgb(50, 50, 65);"
+        "  border: 1px solid rgb(80, 80, 100);"
+        "  border-radius: 4px;"
+        "  padding: 4px;"
+        "  color: rgb(210, 210, 220);"
+        "}"
+        "QComboBox::drop-down { border: none; }"
+        "QComboBox QAbstractItemView { background-color: rgb(50, 50, 65); color: rgb(210, 210, 220); }"
+        "QCheckBox { spacing: 8px; }"
+        "QCheckBox::indicator { width: 18px; height: 18px; }"
+        "QCheckBox::indicator:unchecked { border: 2px solid rgb(120, 120, 140); border-radius: 3px; background: rgb(50, 50, 65); }"
+        "QCheckBox::indicator:checked { border: 2px solid rgb(100, 160, 220); border-radius: 3px; background: rgb(100, 160, 220); }"
+        "QGroupBox { border: 1px solid rgb(80, 80, 100); border-radius: 6px; margin-top: 8px; }"
+        "QGroupBox::title { color: rgb(180, 180, 200); }"
+        "QTreeView { background-color: rgb(40, 40, 55); color: rgb(200, 200, 210); border: 1px solid rgb(70, 70, 90); }"
+        "QLabel { background-color: transparent; }"
+    );
+
     if(mNextSettings.daltonicMode)
     {
         ui->daltonicCheckbox->setCheckState(Qt::CheckState::Checked);
@@ -858,9 +825,9 @@ void StartScreen::saveSettings()
 void StartScreen::setSettings()
 {
     setTranslation();
-    setFontSize();
-    setDaltonicMode();
-    setDarkMode();
+    setDarkMode();       // Apply dark mode first (base theme)
+    setFontSize();       // Font size after theme (theme may reset inherited fonts)
+    setDaltonicMode();   // Daltonic overrides widget colors on top
     mCurrentSettings = mNextSettings;
 }
 

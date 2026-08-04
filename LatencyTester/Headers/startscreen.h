@@ -166,6 +166,7 @@ private:
     GeneralConfigSettings mCurrentSettings;
     QPointer<RenamePopUp> mRenameWindow;
     QMap<bool, Colors> mColorMap;
+    QMap<bool, QString> mThemeStylesheets; // false=light, true=dark
     JsonOperator mJsonOperator;
     QPointer<Dialog> mDialog;
     QPointer<QTimer> mBackTimer;
