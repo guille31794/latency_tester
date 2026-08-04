@@ -961,6 +961,9 @@ color: rgb(0, 0, 0);</string>
        <height>35</height>
       </rect>
      </property>
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="text">
       <string>Detener</string>
      </property>

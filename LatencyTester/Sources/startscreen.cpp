@@ -241,7 +241,14 @@ void StartScreen::on_startMeasureButton_released()
 
 void StartScreen::on_stopMeasureButton_released()
 {
+    // Signal the sensor operator to stop any ongoing operation
     mSensorOperator.stopMeasure();
+
+    // Stop any ongoing flash and restore UI immediately
+    mFlashOnFinished = nullptr;
+    stopFlash();
+    setMeasureWidgetsEnabled(true);
+    ui->stopMeasureButton->setEnabled(false);
 }
 
 void StartScreen::on_startMeasuringButton_released()
@@ -261,8 +268,9 @@ void StartScreen::on_DurationSlider_valueChanged(int value)
 
 void StartScreen::on_calibrateButton_released()
 {
-    // Step 1: Disable UI
+    // Step 1: Disable UI, keep stop enabled
     setMeasureWidgetsEnabled(false);
+    ui->stopMeasureButton->setEnabled(true);
 
     // Step 2: Start indefinite flash on calibrate button (durationMs = 0)
     flashWidget(ui->calibrateButton, {QColor(Qt::yellow), QColor(Qt::darkYellow)}, 0, 500);

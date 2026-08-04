@@ -118,6 +118,9 @@ bool SensorOperator::takeMeasure(Measures &registry)
 
 bool SensorOperator::calibrateSensor()
 {
+    // Reset stop flag at the start of each operation
+    mStopMeasure = false;
+
     // Start the sensor acquisition
     switchOnSensor();
 
@@ -130,15 +133,19 @@ bool SensorOperator::calibrateSensor()
 
     for (int i = 0; i < calibrationCycles; ++i)
     {
+        if (mStopMeasure) break;
+
         // LED ON phase (visual feedback only, no readings taken)
         switchOnLed();
         QTime blinkEnd = QTime::currentTime().addMSecs(halfPeriodMs);
-        while (QTime::currentTime() < blinkEnd) {}
+        while (QTime::currentTime() < blinkEnd && !mStopMeasure) {}
+
+        if (mStopMeasure) { switchOffLed(); break; }
 
         // LED OFF phase (collect ambient light readings for calibration)
         switchOffLed();
         QTime offEnd = QTime::currentTime().addMSecs(halfPeriodMs);
-        while (QTime::currentTime() < offEnd)
+        while (QTime::currentTime() < offEnd && !mStopMeasure)
         {
             float reading = mLastSensorReading.load();
             if (reading > 0.0f)
@@ -150,6 +157,14 @@ bool SensorOperator::calibrateSensor()
     }
 
     switchOffSensor();
+
+    // If stopped, return failure
+    if (mStopMeasure)
+    {
+        qDebug() << "Calibración interrumpida por el usuario.";
+        quickBlink();
+        return false;
+    }
 
     // Compute baseline from ambient readings
     bool success = false;

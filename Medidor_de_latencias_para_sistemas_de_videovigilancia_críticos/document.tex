@@ -989,12 +989,12 @@ Este medidor de latencia se utilizará un modelo más común de Raspberry, la Ra
     \renewcommand{\theenumii}{\theenumi.\arabic{enumii}}
     \renewcommand{\theenumiii}{\theenumii.\arabic{enumiii}}
     \item Como usuario se quiere que la interfaz de usuario por defecto se muestre apaisada y no en vertical.
-    \item Como usuario se quiere que el fondo de la interfaz sea de color azul.
-    \item Como usuario se especifica que se quiere una fuente clara y legible.
+    \item Como usuario se quiere que la interfaz disponga de un modo claro (por defecto) y un modo nocturno activable desde ajustes.
+    \item Como usuario se especifica que se quiere una fuente clara y legible con buen contraste sobre el fondo.
     \label{ri3}
     \item Como usuario se desea que el tamaño de la fuente mínimo sea 11 y el máximo 20.
     \label{ri4}
-    \item Como usuario se desea que el color de la fuente del texto sea blanco con un borde fino negro.
+    \item Como usuario se desea que la fuente del texto sea de color blanco y peso bold en los botones para garantizar la legibilidad.
     \label{ri5}
     \item Como usuario se requiere que todas las pantallas tengan en el margen superior un marco a modo de barra de menú.
     \item Como usuario se pretende que en dicho marco se muestre en la zona central la hora de sistema y la fecha.
@@ -1005,22 +1005,17 @@ Este medidor de latencia se utilizará un modelo más común de Raspberry, la Ra
     \end{enumerate}
     \item Como usuario se especifica que en el borde superior izquierdo deberá haber disponible un botón de retroceso.
     \item Como usuario se quiere que este botón de retroceso tenga forma de flecha.
-    \item Como usuario se pretende que este botón esté relleno de color blanco.
-    \item Como usuario se especifica que el botón de retroceso únicamente será funcional en pantallas que no sean la principal y mientras no se esté realizando una medición de latencias.
-    \item Como usuario se desea que todos los botones sean rectangulares con los bordes redondeados.
-    \item Como usuario se quiere que el color de la fuente dentro de todos los campos de texto y botones rectangulares sea amarilla.
-    \item Como usuario se especifica que el botón de iniciar medición tendrá forma de botón reproducir.
-    \item Como usuario se desea que el botón de iniciar medición sea de color verde con la flecha interior en blanco.
-    \item Como usuario se requiere que este botón esté situado en la zona inferior izquierda de la pantalla de mediciones.
-    \item Como usuario se especifica que el botón para iniciar la medición, una vez iniciada ésta, se convertirá en el botón de pausa.
-    \item Como usuario se desea que el botón de pausa esté representado por dos barras verticales con el interior relleno en blanco.
-    \item Como usuario se quiere que a la derecha del botón de iniciar mediciones se encuentre uno para detener mediciones.
-    \item Como usuario se especifica que este tendrá será de color rojo con el cuadrado de stop interior en blanco.
-    \item Como usuario se requiere que exista un contador de duración de la medición en algún punto de la pantalla.
-    \item Como usuario se precisa el cumplimiento 
-    \item Como usuario se especifica que la interfaz del medidor de latencias cumplirá con el estandar WCAG 2.0 level AA \cite{wcag}.
-    \item Como usuario se especifica que la interfaz del medidor de latencias cumplirá con el estandar WCAG 2.1 \cite{wcag}..
-    \item Como usuario se especifica que la interfaz del medidor de latencias cumplirá con el estandar WCAG level AAA \cite{wcag}..
+    \item Como usuario se especifica que el botón de retroceso únicamente será funcional en pantallas que no sean la principal y mientras no se esté realizando una medición o calibración.
+    \item Como usuario se desea que todos los botones sean rectangulares con los bordes redondeados y un fondo semi-transparente distinguible del fondo de la pantalla.
+    \item Como usuario se especifica que los botones de la pantalla de mediciones (Calibrar, Comenzar, Detener) deberán tener un tamaño suficiente para ser legibles y operables en pantalla táctil.
+    \item Como usuario se requiere que el botón ``Comenzar'' esté situado en la zona derecha de la pantalla de mediciones, debajo del botón ``Calibrar''.
+    \item Como usuario se quiere que el botón ``Detener'' se encuentre debajo de ``Comenzar'' y permanezca desactivado por defecto hasta que se inicie una calibración o medición.
+    \item Como usuario se especifica que durante una calibración o medición en curso, todos los controles de la pantalla de mediciones se desactivarán excepto el botón ``Detener''.
+    \item Como usuario se desea que durante una operación en curso, el botón correspondiente parpadee alternando colores como indicador de actividad.
+    \item Como usuario se requiere que al finalizar una operación con éxito, el botón parpadee brevemente en verde, y en rojo si hubo un error.
+    \item Como usuario se requiere que existan sliders para configurar el intervalo entre mediciones y la duración total antes de iniciar la medición.
+    \item Como usuario se especifica que la interfaz del medidor de latencias cumplirá con el estándar WCAG 2.0 level AA \cite{wcag}.
+    \item Como usuario se especifica que la interfaz del medidor de latencias cumplirá con el estándar WCAG 2.1 \cite{wcag}.
 \end{enumerate}
 
 \subsection{No funcionales}
