@@ -102,6 +102,7 @@ void StartScreen::on_languagesComboBox_currentIndexChanged(int index)
 void StartScreen::on_fontSizeSlider_valueChanged(int value)
 {
     mNextSettings.fontSize = value;
+    ui->fontSizeLabel->setText(QStringLiteral("Tamaño de la fuente: %1 pt").arg(value));
     ui->settingsButtonBox->setEnabled(true);
 }
 
@@ -127,6 +128,9 @@ void StartScreen::on_settingsButtonBox_clicked(QAbstractButton *button)
     {
         ui->languagesComboBox->setCurrentIndex(static_cast<int>(mCurrentSettings.language));
         ui->fontSizeSlider->setValue(mCurrentSettings.fontSize);
+        ui->daltonicCheckbox->setChecked(mCurrentSettings.daltonicMode);
+        ui->darkModeCheckbox->setChecked(mCurrentSettings.darkMode);
+        mNextSettings = mCurrentSettings;
         ui->settingsButtonBox->setEnabled(false);
     }
 }
@@ -259,11 +263,13 @@ void StartScreen::on_startMeasuringButton_released()
 void StartScreen::on_TimeFactorSlider_valueChanged(int value)
 {
     mMeasure.timeFactor = value;
+    ui->timeFactorLabel->setText(QStringLiteral("Intérvalo entre mediciones: %1 ms").arg(value));
 }
 
 void StartScreen::on_DurationSlider_valueChanged(int value)
 {
     mMeasure.duration = value * 1000; // Slider in seconds, stored in ms
+    ui->DurationLabel->setText(QStringLiteral("Duración: %1 s").arg(value));
 }
 
 void StartScreen::on_calibrateButton_released()
@@ -492,6 +498,11 @@ void StartScreen::widgetsMapInit()
     ui->backButton->setIcon(style.standardIcon(QStyle::SP_ArrowBack));
     ui->backButton->setAccessibleName(BACKBUTTONSTR);
 
+    // Initialize slider labels with current values and units
+    ui->fontSizeLabel->setText(QStringLiteral("Tamaño de la fuente: %1 pt").arg(ui->fontSizeSlider->value()));
+    ui->timeFactorLabel->setText(QStringLiteral("Intérvalo entre mediciones: %1 ms").arg(ui->TimeFactorSlider->value()));
+    ui->DurationLabel->setText(QStringLiteral("Duración: %1 s").arg(ui->DurationSlider->value()));
+
     QAbstractButton* applyButton{new QPushButton(tr("Aplicar"), ui->settingsButtonBox)};
     QAbstractButton* cancelButton{new QPushButton(tr("Cancelar"), ui->settingsButtonBox)};
 
@@ -543,7 +554,6 @@ void StartScreen::widgetsMapInit()
                 {MenuScreen::START_MEASURE_SCREEN, ui->DurationSlider},
                 {MenuScreen::START_MEASURE_SCREEN, ui->TimeFactorSlider},
                 {MenuScreen::START_MEASURE_SCREEN, ui->startMeasureButton},
-                {MenuScreen::START_MEASURE_SCREEN, ui->stopMeasureButton},
                 {MenuScreen::START_MEASURE_SCREEN, ui->plotMeasures},
                 {MenuScreen::START_MEASURE_SCREEN, ui->calibrateButton}
                };
@@ -828,6 +838,13 @@ void StartScreen::setSettings()
     setDarkMode();       // Apply dark mode first (base theme)
     setFontSize();       // Font size after theme (theme may reset inherited fonts)
     setDaltonicMode();   // Daltonic overrides widget colors on top
+
+    // Ensure stop button stays disabled unless an operation is in progress
+    if (!mSensorOperator.isTakingMeasure())
+    {
+        ui->stopMeasureButton->setEnabled(false);
+    }
+
     mCurrentSettings = mNextSettings;
 }
 
