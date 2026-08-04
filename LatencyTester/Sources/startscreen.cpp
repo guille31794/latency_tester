@@ -294,21 +294,54 @@ void StartScreen::closeEvent(QCloseEvent *event)
 
 void StartScreen::plotMeasure()
 {
-    QVector<double> x_axis{};
-    x_axis.insert(0, 0.0);
-
-    for(int index = 1; index < mMeasure.lantencies.size(); ++index)
+    // Guard: don't plot if there's no valid data
+    if (mMeasure.lantencies.isEmpty())
     {
-        x_axis.insert(index, x_axis[index-1] + (mMeasure.timeFactor / 1000.0));
+        return;
     }
 
-    ui->plotMeasures->removeGraph(0);
+    // Filter out failed measurements (-1) and zero values for plotting
+    QVector<double> validLatencies;
+    QVector<double> x_axis;
+    double timeStep = mMeasure.timeFactor / 1000.0;
+
+    for (int i = 0; i < mMeasure.lantencies.size(); ++i)
+    {
+        if (mMeasure.lantencies[i] > 0) // Only positive latencies are valid
+        {
+            validLatencies.append(mMeasure.lantencies[i]);
+            x_axis.append(i * timeStep);
+        }
+    }
+
+    // Guard: need at least one valid point to plot
+    if (validLatencies.isEmpty())
+    {
+        return;
+    }
+
+    // Ensure graph exists
+    if (ui->plotMeasures->graphCount() > 0)
+    {
+        ui->plotMeasures->removeGraph(0);
+    }
     ui->plotMeasures->addGraph();
-    ui->plotMeasures->graph(0)->setData(x_axis, mMeasure.lantencies);
+    ui->plotMeasures->graph(0)->setData(x_axis, validLatencies);
+
+    // Axis labels
     ui->plotMeasures->yAxis->setLabel(MS);
     ui->plotMeasures->xAxis->setLabel(TIMELINE);
-    ui->plotMeasures->xAxis->setRange(0, mMeasure.duration / 1000);
-    ui->plotMeasures->yAxis->setRange(0, mMeasure.meanLatency * 2);
+
+    // X range: total duration in seconds
+    double xMax = mMeasure.duration / 1000.0;
+    if (xMax <= 0) xMax = 10;
+    ui->plotMeasures->xAxis->setRange(0, xMax);
+
+    // Y range: based on actual data, with minimum range of 10ms
+    double yMax = mMeasure.meanLatency * 2;
+    if (yMax < 10) yMax = 100;
+    ui->plotMeasures->yAxis->setRange(0, yMax);
+
     ui->plotMeasures->graph(0)->setLineStyle(QCPGraph::LineStyle::lsStepRight);
 
     QCPScatterStyle scatter;
@@ -316,7 +349,7 @@ void StartScreen::plotMeasure()
     scatter.setPen(QPen(Qt::white));
     scatter.setSize(mCurrentSettings.fontSize);
 
-    if(mCurrentSettings.daltonicMode)
+    if (mCurrentSettings.daltonicMode)
     {
         scatter.setBrush(Qt::red);
         ui->plotMeasures->graph(0)->setPen(QPen(Qt::darkGreen));
