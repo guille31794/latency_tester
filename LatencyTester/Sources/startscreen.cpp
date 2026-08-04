@@ -200,25 +200,40 @@ void StartScreen::on_startMeasureButton_released()
     mMeasure.meanLatency = 0;
     mMeasure.date = QDateTime::currentDateTime();
 
-    // Disable interactive widgets, keep stop button enabled for interruption
+    // Step 1: Disable UI, keep stop enabled
     setMeasureWidgetsEnabled(false);
     ui->stopMeasureButton->setEnabled(true);
 
-    // Start non-blocking visual feedback (flashing start button)
-    int estimatedDurationMs = mMeasure.duration + 1000;
-    flashWidget(ui->startMeasureButton, {QColor(Qt::green), QColor(Qt::darkGreen)}, estimatedDurationMs, 500);
+    // Step 2: Start indefinite flash on start button (durationMs = 0)
+    flashWidget(ui->startMeasureButton, {QColor(Qt::green), QColor(Qt::darkGreen)}, 0, 500);
 
-    // Run measurement in background thread
-    auto future = QtConcurrent::run([this]() {
-        mSensorOperator.takeMeasure(mMeasure);
+    // Step 3: Run measurement in background thread
+    auto future = QtConcurrent::run([this]() -> bool {
+        return mSensorOperator.takeMeasure(mMeasure);
     });
 
-    // Watch for completion: re-enable UI and plot results
-    auto* watcher = new QFutureWatcher<void>(this);
-    connect(watcher, &QFutureWatcher<void>::finished, this, [this, watcher]() {
-        setMeasureWidgetsEnabled(true);
+    // When operation finishes: stop activity flash, then start result flash
+    auto* watcher = new QFutureWatcher<bool>(this);
+    connect(watcher, &QFutureWatcher<bool>::finished, this, [this, watcher]() {
         ui->stopMeasureButton->setEnabled(false);
-        plotMeasure();
+        bool success = watcher->result();
+
+        // Stop the activity flash (no callback yet — we chain manually)
+        mFlashOnFinished = nullptr;
+        stopFlash();
+
+        // Step 4: Result flash, then re-enable UI and plot when done
+        QList<QColor> resultColors = success
+            ? QList<QColor>{QColor(Qt::green), QColor(Qt::transparent)}
+            : QList<QColor>{QColor(Qt::red), QColor(Qt::transparent)};
+
+        flashWidget(ui->startMeasureButton, resultColors, 3000, 500, [this, success]() {
+            setMeasureWidgetsEnabled(true);
+            if (success)
+            {
+                plotMeasure();
+            }
+        });
         watcher->deleteLater();
     });
     watcher->setFuture(future);
@@ -246,21 +261,34 @@ void StartScreen::on_DurationSlider_valueChanged(int value)
 
 void StartScreen::on_calibrateButton_released()
 {
-    // Disable all interactive widgets during calibration
+    // Step 1: Disable UI
     setMeasureWidgetsEnabled(false);
 
-    // Start non-blocking visual feedback (flashing calibrate button)
-    flashWidget(ui->calibrateButton, {QColor(Qt::yellow), QColor(Qt::darkYellow)}, 5000, 500);
+    // Step 2: Start indefinite flash on calibrate button (durationMs = 0)
+    flashWidget(ui->calibrateButton, {QColor(Qt::yellow), QColor(Qt::darkYellow)}, 0, 500);
 
-    // Run calibration in background thread
-    auto future = QtConcurrent::run([this]() {
-        mSensorOperator.calibrateSensor();
+    // Step 3: Run calibration in background thread
+    auto future = QtConcurrent::run([this]() -> bool {
+        return mSensorOperator.calibrateSensor();
     });
 
-    // Watch for completion and re-enable UI
-    auto* watcher = new QFutureWatcher<void>(this);
-    connect(watcher, &QFutureWatcher<void>::finished, this, [this, watcher]() {
-        setMeasureWidgetsEnabled(true);
+    // When operation finishes: stop activity flash, then start result flash
+    auto* watcher = new QFutureWatcher<bool>(this);
+    connect(watcher, &QFutureWatcher<bool>::finished, this, [this, watcher]() {
+        bool success = watcher->result();
+
+        // Stop the activity flash (no callback yet — we chain manually)
+        mFlashOnFinished = nullptr; // Don't trigger callback on stop
+        stopFlash();
+
+        // Step 4: Result flash (green/red), then re-enable UI when done
+        QList<QColor> resultColors = success
+            ? QList<QColor>{QColor(Qt::green), QColor(Qt::transparent)}
+            : QList<QColor>{QColor(Qt::red), QColor(Qt::transparent)};
+
+        flashWidget(ui->calibrateButton, resultColors, 3000, 500, [this]() {
+            setMeasureWidgetsEnabled(true);
+        });
         watcher->deleteLater();
     });
     watcher->setFuture(future);
@@ -364,40 +392,69 @@ void StartScreen::plotMeasure()
     ui->plotMeasures->replot();
 }
 
-void StartScreen::flashWidget(QWidget* widget, const QList<QColor>& colors, int durationMs, int intervalMs)
+void StartScreen::flashWidget(QWidget* widget, const QList<QColor>& colors, int durationMs, int intervalMs, std::function<void()> onFinished)
 {
     if (!widget || colors.isEmpty())
     {
+        if (onFinished) onFinished();
         return;
     }
 
-    // Store original style for restoration
-    QString* originalStyle = new QString(widget->styleSheet());
+    // Stop any previous flash
+    stopFlash();
+
+    // Save state
+    mFlashWidget = widget;
+    mFlashOriginalStyle = widget->styleSheet();
+    mFlashOnFinished = onFinished;
+
     int* colorIndex = new int(0);
+    QList<QColor> colorsCopy = colors;
 
-    QTimer* flashTimer = new QTimer(this);
-    QTimer* stopTimer = new QTimer(this);
-
-    // Cycle through colors at intervalMs
-    connect(flashTimer, &QTimer::timeout, this, [=]() {
-        const QColor& color = colors[*colorIndex % colors.size()];
-        widget->setStyleSheet(QStringLiteral("background-color: %1;").arg(color.name()));
+    mFlashTimer = new QTimer(this);
+    connect(mFlashTimer, &QTimer::timeout, this, [this, colorIndex, colorsCopy]() {
+        const QColor& color = colorsCopy[*colorIndex % colorsCopy.size()];
+        if (mFlashWidget)
+        {
+            mFlashWidget->setStyleSheet(QStringLiteral("background-color: %1;").arg(color.name()));
+        }
         ++(*colorIndex);
     });
 
-    // Stop flashing after durationMs
-    connect(stopTimer, &QTimer::timeout, this, [=]() {
-        flashTimer->stop();
-        widget->setStyleSheet(*originalStyle);
-        flashTimer->deleteLater();
-        stopTimer->deleteLater();
-        delete originalStyle;
-        delete colorIndex;
-    });
+    // If durationMs > 0, auto-stop after that time; if 0, flash indefinitely until stopFlash()
+    if (durationMs > 0)
+    {
+        QTimer::singleShot(durationMs, this, [this, colorIndex]() {
+            delete colorIndex;
+            stopFlash();
+        });
+    }
 
-    flashTimer->start(intervalMs);
-    stopTimer->setSingleShot(true);
-    stopTimer->start(durationMs);
+    mFlashTimer->start(intervalMs);
+}
+
+void StartScreen::stopFlash()
+{
+    if (mFlashTimer && mFlashTimer->isActive())
+    {
+        mFlashTimer->stop();
+    }
+    if (mFlashTimer)
+    {
+        mFlashTimer->deleteLater();
+        mFlashTimer = nullptr;
+    }
+    if (mFlashWidget)
+    {
+        mFlashWidget->setStyleSheet(mFlashOriginalStyle);
+        mFlashWidget = nullptr;
+    }
+    if (mFlashOnFinished)
+    {
+        auto callback = mFlashOnFinished;
+        mFlashOnFinished = nullptr;
+        callback();
+    }
 }
 
 void StartScreen::setMeasureWidgetsEnabled(bool enabled)

@@ -42,14 +42,16 @@ public:
     /**
      * @brief takeMeasure takes a measure using the led and sensor.
      * @param registry where the measure data is stored.
+     * @return true if at least one valid measurement was taken, false otherwise.
      */
-    void takeMeasure(Measures& registry);
+    bool takeMeasure(Measures& registry);
 
     /**
      * @brief calibrateSensor calibrates the sensor to adapt it to environmental conditions.
      * Takes ambient light readings and establishes a baseline reference value.
+     * @return true if calibration succeeded (readings received), false otherwise.
      */
-    void calibrateSensor();
+    bool calibrateSensor();
 
     /**
      * @brief stopMeasure it stops the taking of a measure.

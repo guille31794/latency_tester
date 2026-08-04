@@ -30,14 +30,14 @@ bool SensorOperator::isTakingMeasure() const
     return mTakingMeasure;
 }
 
-void SensorOperator::takeMeasure(Measures &registry)
+bool SensorOperator::takeMeasure(Measures &registry)
 {
     // Guard against invalid parameters
     if (registry.timeFactor <= 0 || registry.duration <= 0)
     {
         qDebug() << "takeMeasure: parámetros inválidos (timeFactor:" << registry.timeFactor
                  << ", duration:" << registry.duration << ")";
-        return;
+        return false;
     }
 
     quint32 numberOfMeasuresToTake = static_cast<quint32>(registry.duration / registry.timeFactor);
@@ -111,9 +111,12 @@ void SensorOperator::takeMeasure(Measures &registry)
 
     // Signal measurement complete with quick blink
     quickBlink();
+
+    // Success if at least one valid (>0) measurement was taken
+    return registry.meanLatency > 0;
 }
 
-void SensorOperator::calibrateSensor()
+bool SensorOperator::calibrateSensor()
 {
     // Start the sensor acquisition
     switchOnSensor();
@@ -149,11 +152,13 @@ void SensorOperator::calibrateSensor()
     switchOffSensor();
 
     // Compute baseline from ambient readings
+    bool success = false;
     if (count > 0)
     {
         mSensorReferenceCalibration = static_cast<quint32>((sum / count) * 1000.0f);
         qDebug() << "Calibración completada. Referencia:" << mSensorReferenceCalibration << "mV"
                  << "(" << count << "muestras)";
+        success = true;
     }
     else
     {
@@ -162,6 +167,7 @@ void SensorOperator::calibrateSensor()
 
     // Signal calibration complete with quick blink
     quickBlink();
+    return success;
 }
 
 void SensorOperator::quickBlink(int blinks, int intervalMs)
