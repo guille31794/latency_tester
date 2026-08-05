@@ -264,4 +264,19 @@ Wszelkie prawa zastrzeżone.</translation>
         <translation>Informacje ogólne</translation>
     </message>
 </context>
+<context>
+    <name>RegistryScreen</name>
+    <message>
+        <source>Comprobar</source>
+        <translation>Sprawdź</translation>
+    </message>
+    <message>
+        <source>Borrar</source>
+        <translation>Usuń</translation>
+    </message>
+    <message>
+        <source>Renombrar</source>
+        <translation>Zmień nazwę</translation>
+    </message>
+</context>
 </TS>

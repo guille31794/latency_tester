@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
     , mSettingsScreen(new SettingsScreen(this))
     , mHelpScreen(new HelpScreen(this))
     , mHelpInfoScreen(new HelpInfoScreen(this))
+    , mRegistryScreen(new RegistryScreen(this))
     , mStartScreen(new StartScreen(this))
 {
     // Load settings FIRST (before any UI painting)
@@ -21,7 +22,8 @@ MainWindow::MainWindow(QWidget *parent)
     mStackedWidget->addWidget(mSettingsScreen);   // Index 1: Settings
     mStackedWidget->addWidget(mHelpScreen);       // Index 2: Help menu
     mStackedWidget->addWidget(mHelpInfoScreen);   // Index 3: Help info display
-    mStackedWidget->addWidget(mStartScreen);      // Index 4: Legacy (measure, registry)
+    mStackedWidget->addWidget(mRegistryScreen);   // Index 4: Registry
+    mStackedWidget->addWidget(mStartScreen);      // Index 5: Legacy (measure only)
 
     // Apply theme from settings to the top-level window before showing
     this->setStyleSheet(AppSettings::instance().currentStylesheet());
@@ -93,6 +95,15 @@ MainWindow::MainWindow(QWidget *parent)
         mStackedWidget->setCurrentIndex(HELP);
     });
 
+    // Connect RegistryScreen
+    connect(mRegistryScreen, &RegistryScreen::backRequested, this, &MainWindow::showHomeScreen);
+    connect(mRegistryScreen, &RegistryScreen::measureSelected, this, [this](const Measures& measure) {
+        // Navigate to legacy StartScreen to display the measure graph
+        mStackedWidget->setCurrentIndex(LEGACY);
+        mStartScreen->navigateTo(MenuScreen::REGISTRY_DISPLAYER_SCREEN);
+        // TODO: pass measure data to display screen when fully refactored
+    });
+
     // Connect StartScreen back-to-home signal
     connect(mStartScreen, &StartScreen::backToHome, this, &MainWindow::showHomeScreen);
 
@@ -128,8 +139,7 @@ void MainWindow::showMeasureScreen()
 
 void MainWindow::showHistoryScreen()
 {
-    mStackedWidget->setCurrentIndex(LEGACY);
-    mStartScreen->navigateTo(MenuScreen::MEASURES_REGISTRY_SCREEN);
+    mStackedWidget->setCurrentIndex(REGISTRY);
 }
 
 void MainWindow::showSettingsScreen()

@@ -6,6 +6,7 @@
 #include "homescreen.h"
 #include "helpscreen.h"
 #include "helpinfoscreen.h"
+#include "registryscreen.h"
 #include "settingsscreen.h"
 #include "startscreen.h"
 
@@ -34,9 +35,10 @@ private:
     SettingsScreen *mSettingsScreen;
     HelpScreen *mHelpScreen;
     HelpInfoScreen *mHelpInfoScreen;
+    RegistryScreen *mRegistryScreen;
     StartScreen *mStartScreen;
 
-    enum ScreenIndex { HOME = 0, SETTINGS = 1, HELP = 2, HELP_INFO = 3, LEGACY = 4 };
+    enum ScreenIndex { HOME = 0, SETTINGS = 1, HELP = 2, HELP_INFO = 3, REGISTRY = 4, LEGACY = 5 };
 };
 
 #endif // MAINWINDOW_H

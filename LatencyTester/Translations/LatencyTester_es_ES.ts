@@ -62,4 +62,19 @@
         <translation>Información general</translation>
     </message>
 </context>
+<context>
+    <name>RegistryScreen</name>
+    <message>
+        <source>Comprobar</source>
+        <translation>Comprobar</translation>
+    </message>
+    <message>
+        <source>Borrar</source>
+        <translation>Borrar</translation>
+    </message>
+    <message>
+        <source>Renombrar</source>
+        <translation>Renombrar</translation>
+    </message>
+</context>
 </TS>

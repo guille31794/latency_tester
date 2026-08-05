@@ -264,4 +264,19 @@ All rights reserved.</translation>
         <translation>General info</translation>
     </message>
 </context>
+<context>
+    <name>RegistryScreen</name>
+    <message>
+        <source>Comprobar</source>
+        <translation>Check</translation>
+    </message>
+    <message>
+        <source>Borrar</source>
+        <translation>Delete</translation>
+    </message>
+    <message>
+        <source>Renombrar</source>
+        <translation>Rename</translation>
+    </message>
+</context>
 </TS>
