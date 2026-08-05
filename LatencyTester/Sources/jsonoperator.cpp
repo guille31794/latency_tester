@@ -5,7 +5,7 @@
 const QString NAME{"Name"};
 const QString DATE{"Date"};
 const QString TIMEFACTOR{"TimeFactor"};
-const QString lantencies{"lantencies"};
+const QString lantencies{"Latencies"};
 const QString DURATION{"Duration"};
 const QString MEASURE{"_Medicion.json"};
 

@@ -929,19 +929,26 @@ void StartScreen::loadRegistry()
 {
     QPointer<QFileSystemModel> model = new QFileSystemModel;
     QPointer<NoIconOrExtensionFileDelegate> delegate = new NoIconOrExtensionFileDelegate;
-    QString home = QDir::homePath();
-    QDir registryFolder{home + MEASURES};
 
-    // If registry directory doesn't exist, is created
-    if(!registryFolder.exists(home + MEASURES))
+    // On Raspberry Pi: ~/Measures. On Desktop: use working directory (configured in Qt Creator)
+#ifdef RASPBERRY_PI
+    QString registryPath = QDir::homePath() + MEASURES;
+#else
+    QString registryPath = QDir::currentPath() + MEASURES;
+#endif
+
+    QDir registryFolder{registryPath};
+
+    // If registry directory doesn't exist, create it
+    if (!registryFolder.exists())
     {
-        registryFolder.mkdir(home + MEASURES);
+        registryFolder.mkpath(registryPath);
     }
 
-    model->setRootPath(home + MEASURES);
+    model->setRootPath(registryPath);
     ui->registryTreeView->setModel(model);
     ui->registryTreeView->setItemDelegate(delegate);
-    ui->registryTreeView->setRootIndex(model->index(home + MEASURES));
+    ui->registryTreeView->setRootIndex(model->index(registryPath));
     // Hide size and type colums
     ui->registryTreeView->hideColumn(1);
     ui->registryTreeView->hideColumn(2);
@@ -950,7 +957,7 @@ void StartScreen::loadRegistry()
     // While it's not possible to translate header labels they'll be hidden
     ui->registryTreeView->setHeaderHidden(true);
 
-    mJsonOperator.setPath(home + MEASURES);
+    mJsonOperator.setPath(registryPath);
 }
 
 void StartScreen::changeEvent(QEvent *event)
