@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
     , mHomeScreen(new HomeScreen(this))
     , mSettingsScreen(new SettingsScreen(this))
     , mHelpScreen(new HelpScreen(this))
+    , mHelpInfoScreen(new HelpInfoScreen(this))
     , mStartScreen(new StartScreen(this))
 {
     // Load settings FIRST (before any UI painting)
@@ -18,8 +19,9 @@ MainWindow::MainWindow(QWidget *parent)
     // Add screens to the stack
     mStackedWidget->addWidget(mHomeScreen);      // Index 0: Home
     mStackedWidget->addWidget(mSettingsScreen);   // Index 1: Settings
-    mStackedWidget->addWidget(mHelpScreen);       // Index 2: Help
-    mStackedWidget->addWidget(mStartScreen);      // Index 3: Legacy (measure, registry)
+    mStackedWidget->addWidget(mHelpScreen);       // Index 2: Help menu
+    mStackedWidget->addWidget(mHelpInfoScreen);   // Index 3: Help info display
+    mStackedWidget->addWidget(mStartScreen);      // Index 4: Legacy (measure, registry)
 
     // Apply theme from settings to the top-level window before showing
     this->setStyleSheet(AppSettings::instance().currentStylesheet());
@@ -69,6 +71,27 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Connect HelpScreen back signal
     connect(mHelpScreen, &HelpScreen::backRequested, this, &MainWindow::showHomeScreen);
+
+    // Connect HelpScreen navigation to info screen
+    connect(mHelpScreen, &HelpScreen::generalInfoRequested, this, [this]() {
+        mHelpInfoScreen->setContent(tr(
+            "Medidor de latencias para sistemas de videovigilancia críticos.\n\n"
+            "Versión de HW: 1.0\n"
+            "Versión de SW: 1.0\n"
+            "Autor: Guillermo Girón García\n"
+            "GitHub: @guille31794\n\n"
+            "Todos los derechos reservados."));
+        mStackedWidget->setCurrentIndex(HELP_INFO);
+    });
+    connect(mHelpScreen, &HelpScreen::usersManualRequested, this, [this]() {
+        mHelpInfoScreen->setContent(tr("Manual de usuario en desarrollo..."));
+        mStackedWidget->setCurrentIndex(HELP_INFO);
+    });
+
+    // Connect HelpInfoScreen back to help menu
+    connect(mHelpInfoScreen, &HelpInfoScreen::backRequested, this, [this]() {
+        mStackedWidget->setCurrentIndex(HELP);
+    });
 
     // Connect StartScreen back-to-home signal
     connect(mStartScreen, &StartScreen::backToHome, this, &MainWindow::showHomeScreen);

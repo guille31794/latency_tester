@@ -44,6 +44,7 @@ DEFINES += QT_NO_CONSTEXPR_METAOBJECT_DATA
 SOURCES += \
     Sources/appsettings.cpp \
     Sources/dialog.cpp \
+    Sources/helpinfoscreen.cpp \
     Sources/helpscreen.cpp \
     Sources/homescreen.cpp \
     Sources/jsonoperator.cpp \
@@ -61,6 +62,7 @@ HEADERS += \
     Headers/dataModel.hpp \
     Headers/dialog.h \
     Headers/extensionfiledelegate.h \
+    Headers/helpinfoscreen.h \
     Headers/helpscreen.h \
     Headers/homescreen.h \
     Headers/jsonoperator.h \
@@ -74,6 +76,7 @@ HEADERS += \
 
 FORMS += \
     Forms/dialog.ui \
+    Forms/helpinfoscreen.ui \
     Forms/helpscreen.ui \
     Forms/homescreen.ui \
     Forms/renamepopup.ui \

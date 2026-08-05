@@ -7,8 +7,6 @@ HelpScreen::HelpScreen(QWidget *parent)
     , ui(new Ui::HelpScreen)
 {
     ui->setupUi(this);
-    // Show help menu by default, hide info panel
-    ui->infoPanel->setVisible(false);
 }
 
 HelpScreen::~HelpScreen()
@@ -18,27 +16,17 @@ HelpScreen::~HelpScreen()
 
 void HelpScreen::on_backButton_released()
 {
-    if (ui->infoPanel->isVisible())
-    {
-        // Go back to help menu
-        ui->infoPanel->setVisible(false);
-        ui->helpMenu->setVisible(true);
-    }
-    else
-    {
-        emit backRequested();
-    }
+    emit backRequested();
 }
 
 void HelpScreen::on_generalInfoButton_released()
 {
-    ui->helpMenu->setVisible(false);
-    ui->infoPanel->setVisible(true);
+    emit generalInfoRequested();
 }
 
 void HelpScreen::on_usersManualButton_released()
 {
-    // TODO: Show user manual content
+    emit usersManualRequested();
 }
 
 void HelpScreen::changeEvent(QEvent *event)

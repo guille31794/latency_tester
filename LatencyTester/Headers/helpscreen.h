@@ -8,7 +8,8 @@ class HelpScreen;
 }
 
 /**
- * @brief The HelpScreen class provides help and general information about the application.
+ * @brief The HelpScreen class provides the help menu with navigation
+ * to user manual and general info screens.
  */
 class HelpScreen : public QWidget
 {
@@ -21,6 +22,8 @@ public:
 
 signals:
     void backRequested();
+    void generalInfoRequested();
+    void usersManualRequested();
 
 private slots:
     void on_backButton_released();
