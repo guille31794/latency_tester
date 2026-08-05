@@ -11,6 +11,7 @@
 #include <QTimer>
 #include <QtConcurrent/QtConcurrent>
 #include <QFutureWatcher>
+#include <QThread>
 
 const QString BACKBUTTONSTR{"Back_Button"};
 const QString MEASURES{"/Measures"};
@@ -102,7 +103,7 @@ void StartScreen::on_languagesComboBox_currentIndexChanged(int index)
 void StartScreen::on_fontSizeSlider_valueChanged(int value)
 {
     mNextSettings.fontSize = value;
-    ui->fontSizeLabel->setText(QStringLiteral("Tamaño de la fuente: %1 pt").arg(value));
+    ui->fontSizeLabel->setText(tr("Tamaño de la fuente: %1 pt").arg(value));
     ui->settingsButtonBox->setEnabled(true);
 }
 
@@ -123,6 +124,7 @@ void StartScreen::on_settingsButtonBox_clicked(QAbstractButton *button)
     if(QDialogButtonBox::ButtonRole::ApplyRole == ui->settingsButtonBox->buttonRole(button))
     {
         setSettings();
+        ui->settingsButtonBox->setEnabled(false);
     }
     else
     {
@@ -263,13 +265,13 @@ void StartScreen::on_startMeasuringButton_released()
 void StartScreen::on_TimeFactorSlider_valueChanged(int value)
 {
     mMeasure.timeFactor = value;
-    ui->timeFactorLabel->setText(QStringLiteral("Intérvalo entre mediciones: %1 ms").arg(value));
+    ui->timeFactorLabel->setText(tr("Intérvalo entre mediciones: %1 ms").arg(value));
 }
 
 void StartScreen::on_DurationSlider_valueChanged(int value)
 {
     mMeasure.duration = value * 1000; // Slider in seconds, stored in ms
-    ui->DurationLabel->setText(QStringLiteral("Duración: %1 s").arg(value));
+    ui->DurationLabel->setText(tr("Duración: %1 s").arg(value));
 }
 
 void StartScreen::on_calibrateButton_released()
@@ -343,16 +345,71 @@ void StartScreen::plotMeasure()
     }
 
     // Filter out failed measurements (-1) and zero values for plotting
+    // Use parallel filtering for large datasets
+    const int dataSize = mMeasure.lantencies.size();
+
+    // Pre-allocate with max possible size to avoid reallocations
     QVector<double> validLatencies;
     QVector<double> x_axis;
-    double timeStep = mMeasure.timeFactor / 1000.0;
+    validLatencies.reserve(dataSize);
+    x_axis.reserve(dataSize);
 
-    for (int i = 0; i < mMeasure.lantencies.size(); ++i)
+    const double timeStep = mMeasure.timeFactor / 1000.0;
+    const auto& latencies = mMeasure.lantencies;
+
+    if (dataSize > 100)
     {
-        if (mMeasure.lantencies[i] > 0) // Only positive latencies are valid
+        // Parallel: partition data across threads and merge results
+        const int threadCount = QThread::idealThreadCount();
+        const int chunkSize = (dataSize + threadCount - 1) / threadCount;
+
+        QVector<QVector<double>> threadLatencies(threadCount);
+        QVector<QVector<double>> threadXAxis(threadCount);
+
+        QVector<QFuture<void>> futures;
+        futures.reserve(threadCount);
+
+        for (int t = 0; t < threadCount; ++t)
         {
-            validLatencies.append(mMeasure.lantencies[i]);
-            x_axis.append(i * timeStep);
+            const int start = t * chunkSize;
+            const int end = qMin(start + chunkSize, dataSize);
+            threadLatencies[t].reserve(end - start);
+            threadXAxis[t].reserve(end - start);
+
+            futures.append(QtConcurrent::run([&latencies, &threadLatencies, &threadXAxis, start, end, t, timeStep]() {
+                for (int i = start; i < end; ++i)
+                {
+                    if (latencies[i] > 0)
+                    {
+                        threadLatencies[t].append(latencies[i]);
+                        threadXAxis[t].append(i * timeStep);
+                    }
+                }
+            }));
+        }
+
+        // Wait for all threads and merge
+        for (auto& future : futures)
+        {
+            future.waitForFinished();
+        }
+
+        for (int t = 0; t < threadCount; ++t)
+        {
+            validLatencies.append(threadLatencies[t]);
+            x_axis.append(threadXAxis[t]);
+        }
+    }
+    else
+    {
+        // Sequential for small datasets (threading overhead not worth it)
+        for (int i = 0; i < dataSize; ++i)
+        {
+            if (latencies[i] > 0)
+            {
+                validLatencies.append(latencies[i]);
+                x_axis.append(i * timeStep);
+            }
         }
     }
 
@@ -376,12 +433,18 @@ void StartScreen::plotMeasure()
 
     // X range: total duration in seconds
     double xMax = mMeasure.duration / 1000.0;
-    if (xMax <= 0) xMax = 10;
+    if (xMax <= 0)
+    {
+        xMax = 10;
+    }
     ui->plotMeasures->xAxis->setRange(0, xMax);
 
     // Y range: based on actual data, with minimum range of 10ms
     double yMax = mMeasure.meanLatency * 2;
-    if (yMax < 10) yMax = 100;
+    if (yMax < 10)
+    {
+        yMax = 100;
+    }
     ui->plotMeasures->yAxis->setRange(0, yMax);
 
     ui->plotMeasures->graph(0)->setLineStyle(QCPGraph::LineStyle::lsStepRight);
@@ -499,9 +562,9 @@ void StartScreen::widgetsMapInit()
     ui->backButton->setAccessibleName(BACKBUTTONSTR);
 
     // Initialize slider labels with current values and units
-    ui->fontSizeLabel->setText(QStringLiteral("Tamaño de la fuente: %1 pt").arg(ui->fontSizeSlider->value()));
-    ui->timeFactorLabel->setText(QStringLiteral("Intérvalo entre mediciones: %1 ms").arg(ui->TimeFactorSlider->value()));
-    ui->DurationLabel->setText(QStringLiteral("Duración: %1 s").arg(ui->DurationSlider->value()));
+    ui->fontSizeLabel->setText(tr("Tamaño de la fuente: %1 pt").arg(ui->fontSizeSlider->value()));
+    ui->timeFactorLabel->setText(tr("Intérvalo entre mediciones: %1 ms").arg(ui->TimeFactorSlider->value()));
+    ui->DurationLabel->setText(tr("Duración: %1 s").arg(ui->DurationSlider->value()));
 
     QAbstractButton* applyButton{new QPushButton(tr("Aplicar"), ui->settingsButtonBox)};
     QAbstractButton* cancelButton{new QPushButton(tr("Cancelar"), ui->settingsButtonBox)};
@@ -606,55 +669,69 @@ void StartScreen::transitionScreen(MenuScreen nextScreen)
 
 void StartScreen::setFontSize()
 {
-    if(mNextSettings.fontSize != mCurrentSettings.fontSize)
+    QFont font;
+    for (auto widget : std::as_const(mWidgets))
     {
-        QFont font;
-        for(auto widget : std::as_const(mWidgets))
+        font = widget->font();
+        font.setPointSize(mNextSettings.fontSize);
+        widget->setFont(font);
+        if (widget->accessibleName() != BACKBUTTONSTR)
         {
-            font = widget->font();
-            font.setPointSize(mNextSettings.fontSize);
-            widget->setFont(font);
-            if(widget->accessibleName() != BACKBUTTONSTR)
-            {
-                widget->adjustSize();
-            }
+            widget->adjustSize();
         }
-
-        ui->fontSizeSlider->setSliderPosition(mNextSettings.fontSize);
     }
+
+    // Also update the stop button font (not in mWidgets)
+    QFont stopFont = ui->stopMeasureButton->font();
+    stopFont.setPointSize(mNextSettings.fontSize);
+    ui->stopMeasureButton->setFont(stopFont);
+    ui->stopMeasureButton->adjustSize();
+
+    ui->fontSizeSlider->setSliderPosition(mNextSettings.fontSize);
+
+    // Force all layouts to recalculate
+    if (ui->startMeasureFrame->layout())
+    {
+        ui->startMeasureFrame->layout()->activate();
+    }
+    ui->startMeasureFrame->updateGeometry();
+    this->centralWidget()->updateGeometry();
 }
 
 void StartScreen::setTranslation()
 {
-    if(mNextSettings.language != mCurrentSettings.language)
+    // Always install the correct translator (needed at startup and on change)
+    QList<QAbstractButton*> buttons = ui->settingsButtonBox->buttons();
+
+    switch (mNextSettings.language)
     {
-        QList<QAbstractButton*> buttons = ui->settingsButtonBox->buttons();
-
-        switch (mNextSettings.language)
-        {
-            case Languages::SPANISH:
-            qApp->removeTranslator(&mTranslator);
-            buttons[1]->setText(APLICAR);
-            buttons[0]->setText(CANCELAR);
-            break;
-            case Languages::ENGLISH:
-            qApp->removeTranslator(&mTranslator);
-            (void)mTranslator.load(ENGLISH);
-            qApp->installTranslator(&mTranslator);
-            buttons[1]->setText(APPLY);
-            buttons[0]->setText(CANCEL);
-            break;
-            case Languages::POLISH:
-            qApp->removeTranslator(&mTranslator);
-            (void)mTranslator.load(POLSKI);
-            qApp->installTranslator(&mTranslator);
-            buttons[1]->setText(STOSOWAC);
-            buttons[0]->setText(ANULOWAC);
-            break;
-        }
-
-        ui->languagesComboBox->setCurrentIndex(static_cast<int>(mNextSettings.language));
+        case Languages::SPANISH:
+        qApp->removeTranslator(&mTranslator);
+        buttons[1]->setText(APLICAR);
+        buttons[0]->setText(CANCELAR);
+        break;
+        case Languages::ENGLISH:
+        qApp->removeTranslator(&mTranslator);
+        (void)mTranslator.load(ENGLISH);
+        qApp->installTranslator(&mTranslator);
+        buttons[1]->setText(APPLY);
+        buttons[0]->setText(CANCEL);
+        break;
+        case Languages::POLISH:
+        qApp->removeTranslator(&mTranslator);
+        (void)mTranslator.load(POLSKI);
+        qApp->installTranslator(&mTranslator);
+        buttons[1]->setText(STOSOWAC);
+        buttons[0]->setText(ANULOWAC);
+        break;
     }
+
+    ui->languagesComboBox->setCurrentIndex(static_cast<int>(mNextSettings.language));
+
+    // Refresh slider labels with translated text
+    ui->fontSizeLabel->setText(tr("Tamaño de la fuente: %1 pt").arg(ui->fontSizeSlider->value()));
+    ui->timeFactorLabel->setText(tr("Intérvalo entre mediciones: %1 ms").arg(ui->TimeFactorSlider->value()));
+    ui->DurationLabel->setText(tr("Duración: %1 s").arg(ui->DurationSlider->value()));
 }
 
 void StartScreen::setDaltonicMode()
@@ -709,7 +786,7 @@ void StartScreen::loadSettings()
 
     if(0 == mNextSettings.fontSize)
     {
-        mNextSettings.fontSize = 10;
+        mNextSettings.fontSize = 9;
     }
 
     if(settings.value("DaltonicMode") != 0)
@@ -881,6 +958,10 @@ void StartScreen::changeEvent(QEvent *event)
     if (event->type() == QEvent::LanguageChange)
     {
         ui->retranslateUi(this);
+        // Re-apply slider labels with values (retranslateUi resets them to .ui defaults without %1)
+        ui->fontSizeLabel->setText(tr("Tamaño de la fuente: %1 pt").arg(ui->fontSizeSlider->value()));
+        ui->timeFactorLabel->setText(tr("Intérvalo entre mediciones: %1 ms").arg(ui->TimeFactorSlider->value()));
+        ui->DurationLabel->setText(tr("Duración: %1 s").arg(ui->DurationSlider->value()));
     }
 
     QWidget::changeEvent(event);

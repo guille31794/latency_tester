@@ -109,6 +109,18 @@ All rights reserved.</translation>
         <translation>Font size</translation>
     </message>
     <message>
+        <source>Tamaño de la fuente: %1 pt</source>
+        <translation>Font size: %1 pt</translation>
+    </message>
+    <message>
+        <source>Intérvalo entre mediciones: %1 ms</source>
+        <translation>Interval between measures: %1 ms</translation>
+    </message>
+    <message>
+        <source>Duración: %1 s</source>
+        <translation>Duration: %1 s</translation>
+    </message>
+    <message>
         <location filename="startscreen.ui" line="339"/>
         <source>Modo daltónicos</source>
         <translation>Daltonic mode</translation>

@@ -109,6 +109,18 @@ Wszelkie prawa zastrzeżone.</translation>
         <translation>Rozmiar czcionki</translation>
     </message>
     <message>
+        <source>Tamaño de la fuente: %1 pt</source>
+        <translation>Rozmiar czcionki: %1 pt</translation>
+    </message>
+    <message>
+        <source>Intérvalo entre mediciones: %1 ms</source>
+        <translation>Odstęp między pomiarami: %1 ms</translation>
+    </message>
+    <message>
+        <source>Duración: %1 s</source>
+        <translation>Czas trwania: %1 s</translation>
+    </message>
+    <message>
         <location filename="startscreen.ui" line="339"/>
         <source>Modo daltónicos</source>
         <translation>Tryb dla daltonistów</translation>

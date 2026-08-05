@@ -29,7 +29,7 @@ enum class Languages
 struct GeneralConfigSettings
 {
     Languages language{Languages::SPANISH};
-    quint8 fontSize{10};
+    quint8 fontSize{9};
     bool daltonicMode{false};
     bool darkMode{false};
 };
