@@ -203,4 +203,65 @@ Wszelkie prawa zastrzeżone.</translation>
         <translation>Stosować</translation>
     </message>
 </context>
+<context>
+    <name>HomeScreen</name>
+    <message>
+        <source>Comenzar medición</source>
+        <translation>Rozpocznij pomiar</translation>
+    </message>
+    <message>
+        <source>Historial de mediciones</source>
+        <translation>Historia pomiarów</translation>
+    </message>
+    <message>
+        <source>Ajustes</source>
+        <translation>Ustawienia</translation>
+    </message>
+    <message>
+        <source>Ayuda</source>
+        <translation>Pomoc</translation>
+    </message>
+</context>
+<context>
+    <name>SettingsScreen</name>
+    <message>
+        <source>Idioma</source>
+        <translation>Język</translation>
+    </message>
+    <message>
+        <source>Tamaño de la fuente</source>
+        <translation>Rozmiar czcionki</translation>
+    </message>
+    <message>
+        <source>Tamaño de la fuente: %1 pt</source>
+        <translation>Rozmiar czcionki: %1 pt</translation>
+    </message>
+    <message>
+        <source>Modo daltónicos</source>
+        <translation>Tryb dla daltonistów</translation>
+    </message>
+    <message>
+        <source>Modo nocturno</source>
+        <translation>Tryb nocny</translation>
+    </message>
+    <message>
+        <source>Aplicar</source>
+        <translation>Stosować</translation>
+    </message>
+    <message>
+        <source>Cancelar</source>
+        <translation>Anulować</translation>
+    </message>
+</context>
+<context>
+    <name>HelpScreen</name>
+    <message>
+        <source>Manual de usuario</source>
+        <translation>Instrukcja obsługi</translation>
+    </message>
+    <message>
+        <source>Información general</source>
+        <translation>Informacje ogólne</translation>
+    </message>
+</context>
 </TS>

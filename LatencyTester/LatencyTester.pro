@@ -42,29 +42,42 @@ DEFINES += QT_NO_CONSTEXPR_METAOBJECT_DATA
 # --- Sources ---
 
 SOURCES += \
+    Sources/appsettings.cpp \
     Sources/dialog.cpp \
+    Sources/helpscreen.cpp \
+    Sources/homescreen.cpp \
     Sources/jsonoperator.cpp \
     Sources/main.cpp \
+    Sources/mainwindow.cpp \
     Sources/renamepopup.cpp \
     Sources/sensoroperator.cpp \
+    Sources/settingsscreen.cpp \
     Sources/startscreen.cpp \
     Libs/QCustomPlot/Sources/qcustomplot.cpp
 
 HEADERS += \
     Headers/ads1115.h \
+    Headers/appsettings.h \
     Headers/dataModel.hpp \
     Headers/dialog.h \
     Headers/extensionfiledelegate.h \
+    Headers/helpscreen.h \
+    Headers/homescreen.h \
     Headers/jsonoperator.h \
+    Headers/mainwindow.h \
     Headers/pigpio_stub.h \
     Headers/renamepopup.h \
     Headers/sensoroperator.h \
+    Headers/settingsscreen.h \
     Headers/startscreen.h \
     Libs/QCustomPlot/Headers/qcustomplot.h
 
 FORMS += \
     Forms/dialog.ui \
+    Forms/helpscreen.ui \
+    Forms/homescreen.ui \
     Forms/renamepopup.ui \
+    Forms/settingsscreen.ui \
     Forms/startscreen.ui
 
 # --- Translations ---

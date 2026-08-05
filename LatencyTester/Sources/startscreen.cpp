@@ -186,15 +186,17 @@ void StartScreen::on_renameRegistryEntryButton_released()
 
 void StartScreen::backToStartScreen()
 {
-    mCurrentScreen = MenuScreen::START_SCREEN;
+    // Emit signal to MainWindow to switch back to HomeScreen
+    emit backToHome();
+}
 
-    if(MenuScreen::START_SCREEN == mCurrentScreen)
-    {
-        ui->backButton->setVisible(false);
-        ui->backButton->setEnabled(false);
-    }
+void StartScreen::navigateTo(MenuScreen screen)
+{
+    mCurrentScreen = screen;
+    ui->backButton->setVisible(true);
+    ui->backButton->setEnabled(true);
 
-    QList<QPointer<QWidget>> nextWidgets{mWidgets.values(mCurrentScreen)};
+    QList<QPointer<QWidget>> nextWidgets{mWidgets.values(screen)};
     setUpNextScreen(mCurrentScreenWidgets, nextWidgets);
     mCurrentScreenWidgets = nextWidgets;
 }
@@ -767,7 +769,15 @@ void StartScreen::setDaltonicMode()
 
 void StartScreen::setDarkMode()
 {
-    this->setStyleSheet(mThemeStylesheets.value(mNextSettings.darkMode));
+    // Apply stylesheet to the top-level window so all screens (HomeScreen included) get themed
+    if (window())
+    {
+        window()->setStyleSheet(mThemeStylesheets.value(mNextSettings.darkMode));
+    }
+    else
+    {
+        this->setStyleSheet(mThemeStylesheets.value(mNextSettings.darkMode));
+    }
 }
 
 void StartScreen::loadSettings()

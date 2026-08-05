@@ -1,4 +1,4 @@
-#include "startscreen.h"
+#include "mainwindow.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])
@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
     qputenv("QT_IM_MODULE", QByteArray("qtvirtualkeyboard"));
 
     QApplication a(argc, argv);
-    StartScreen w;
+    MainWindow w;
     w.show();
     return a.exec();
 }

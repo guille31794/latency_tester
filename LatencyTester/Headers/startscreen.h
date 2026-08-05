@@ -41,6 +41,14 @@ public:
      * @param event triggered to translate ui
      */
     void changeEvent(QEvent *event) override;
+    /**
+     * @brief navigateTo switches to the specified screen within StartScreen
+     * @param screen the screen to navigate to
+     */
+    void navigateTo(MenuScreen screen);
+
+signals:
+    void backToHome();
 
 public slots:
     void changedName(const QString& name);

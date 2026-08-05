@@ -203,4 +203,65 @@ All rights reserved.</translation>
         <translation>Cancel</translation>
     </message>
 </context>
+<context>
+    <name>HomeScreen</name>
+    <message>
+        <source>Comenzar medición</source>
+        <translation>Start measuring</translation>
+    </message>
+    <message>
+        <source>Historial de mediciones</source>
+        <translation>Measure record</translation>
+    </message>
+    <message>
+        <source>Ajustes</source>
+        <translation>Settings</translation>
+    </message>
+    <message>
+        <source>Ayuda</source>
+        <translation>Help</translation>
+    </message>
+</context>
+<context>
+    <name>SettingsScreen</name>
+    <message>
+        <source>Idioma</source>
+        <translation>Language</translation>
+    </message>
+    <message>
+        <source>Tamaño de la fuente</source>
+        <translation>Font size</translation>
+    </message>
+    <message>
+        <source>Tamaño de la fuente: %1 pt</source>
+        <translation>Font size: %1 pt</translation>
+    </message>
+    <message>
+        <source>Modo daltónicos</source>
+        <translation>Daltonic mode</translation>
+    </message>
+    <message>
+        <source>Modo nocturno</source>
+        <translation>Night mode</translation>
+    </message>
+    <message>
+        <source>Aplicar</source>
+        <translation>Apply</translation>
+    </message>
+    <message>
+        <source>Cancelar</source>
+        <translation>Cancel</translation>
+    </message>
+</context>
+<context>
+    <name>HelpScreen</name>
+    <message>
+        <source>Manual de usuario</source>
+        <translation>User manual</translation>
+    </message>
+    <message>
+        <source>Información general</source>
+        <translation>General info</translation>
+    </message>
+</context>
 </TS>
