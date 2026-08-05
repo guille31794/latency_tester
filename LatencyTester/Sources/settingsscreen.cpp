@@ -4,6 +4,7 @@
 #include <QApplication>
 #include <QPushButton>
 
+const QString SPANISH_PATH{":/i18n/LatencyTester_es_ES.qm"};
 const QString ENGLISH_PATH{":/i18n/LatencyTester_en_EN.qm"};
 const QString POLSKI_PATH{":/i18n/LatencyTester_pl_PL.qm"};
 
@@ -69,27 +70,18 @@ void SettingsScreen::applyTranslation()
 
     switch (mNextSettings.language)
     {
+    case Languages::SPANISH:
+        (void)mTranslator.load(SPANISH_PATH);
+        break;
     case Languages::ENGLISH:
         (void)mTranslator.load(ENGLISH_PATH);
-        qApp->installTranslator(&mTranslator);
         break;
     case Languages::POLISH:
         (void)mTranslator.load(POLSKI_PATH);
-        qApp->installTranslator(&mTranslator);
-        break;
-    case Languages::SPANISH:
-    default:
-        // No translator needed for source language.
-        // Force LanguageChange to all widgets since removeTranslator may not trigger it.
-        {
-            QEvent langEvent(QEvent::LanguageChange);
-            for (QWidget* w : QApplication::topLevelWidgets())
-            {
-                QApplication::sendEvent(w, &langEvent);
-            }
-        }
         break;
     }
+
+    qApp->installTranslator(&mTranslator);
 }
 
 void SettingsScreen::on_fontSizeSlider_valueChanged(int value)

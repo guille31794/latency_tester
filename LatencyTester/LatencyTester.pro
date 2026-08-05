@@ -88,9 +88,11 @@ CONFIG += lrelease
 CONFIG += embed_translations
 
 TRANSLATIONS += \
+    Translations/LatencyTester_es_ES.ts \
     Translations/LatencyTester_en_EN.ts \
     Translations/LatencyTester_pl_PL.ts
 
 DISTFILES += \
+    Translations/LatencyTester_es_ES.ts \
     Translations/LatencyTester_en_EN.ts \
     Translations/LatencyTester_pl_PL.ts
