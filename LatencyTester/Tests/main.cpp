@@ -4,6 +4,7 @@
 #include "Core/tst_appsettings.h"
 #include "Core/tst_jsonoperator.h"
 #include "Core/tst_sensoroperator.h"
+#include "GUI/tst_homescreen.h"
 
 int main(int argc, char *argv[])
 {
@@ -29,7 +30,11 @@ int main(int argc, char *argv[])
         status |= QTest::qExec(&tst, argc, argv);
     }
 
-    // Future test classes will be added here as they are implemented.
+    // --- GUI tests ---
+    {
+        TestHomeScreen tst;
+        status |= QTest::qExec(&tst, argc, argv);
+    }
 
     return status;
 }

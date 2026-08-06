@@ -58,7 +58,7 @@ void TestSensorOperator::test_takeMeasure_allTimeoutReturnsNegativeLatencies()
 
     QCOMPARE(m.lantencies.size(), 2);
     // Latencies should be 0 (instant detection with stubs)
-    for (double lat : m.lantencies)
+    for (double lat : std::as_const(m.lantencies))
     {
         QVERIFY(lat >= 0);
     }
