@@ -5,6 +5,7 @@
 #include "Core/tst_jsonoperator.h"
 #include "Core/tst_sensoroperator.h"
 #include "GUI/tst_homescreen.h"
+#include "GUI/tst_measurescreen.h"
 
 int main(int argc, char *argv[])
 {
@@ -33,6 +34,10 @@ int main(int argc, char *argv[])
     // --- GUI tests ---
     {
         TestHomeScreen tst;
+        status |= QTest::qExec(&tst, argc, argv);
+    }
+    {
+        TestMeasureScreen tst;
         status |= QTest::qExec(&tst, argc, argv);
     }
 
