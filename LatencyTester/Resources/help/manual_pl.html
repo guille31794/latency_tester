@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+body { font-family: sans-serif; font-size: 10pt; margin: 10px; }
+h1 { font-size: 14pt; color: #004080; border-bottom: 1px solid #004080; padding-bottom: 4px; }
+h2 { font-size: 12pt; color: #006699; margin-top: 16px; }
+ul, ol { margin-left: 16px; }
+li { margin-bottom: 4px; }
+.warning { color: #cc0000; font-weight: bold; }
+.note { color: #555; font-style: italic; }
+table { border-collapse: collapse; margin: 8px 0; }
+td, th { border: 1px solid #999; padding: 4px 8px; font-size: 9pt; }
+th { background: #e0e8f0; }
+a { color: #0066cc; }
+</style>
+</head>
+<body>
+
+<h1>Instrukcja obsługi</h1>
+<p><b>Spis treści:</b>
+<a href="#bezpieczenstwo">Bezpieczeństwo</a> |
+<a href="#opis">Opis</a> |
+<a href="#zasilanie">Zasilanie</a> |
+<a href="#ekran">Ekran główny</a> |
+<a href="#pomiar">Pomiary</a> |
+<a href="#historia">Historia</a> |
+<a href="#ustawienia">Ustawienia</a> |
+<a href="#problemy">Problemy</a>
+</p>
+
+<h1 id="bezpieczenstwo">Zasady bezpieczeństwa</h1>
+<ul>
+<li>Nie narażaj urządzenia na działanie płynów ani temperatur powyżej 40 °C.</li>
+<li>Nie kieruj diody LED w oczy.</li>
+<li>Używaj wyłącznie określonego akumulatora i ładowarki (5 V / 3 A).</li>
+<li>Nie otwieraj obudowy, gdy urządzenie jest podłączone do zasilania.</li>
+<li class="warning">W przypadku przegrzania lub zapachu spalenizny natychmiast odłącz zasilanie.</li>
+</ul>
+
+<h1 id="opis">Opis urządzenia</h1>
+<p>Urządzenie emituje impuls świetlny (LED) w kierunku kamery testowanego systemu. Fotoczujnik wykrywa, kiedy monitor odtwarza ten bodziec. Różnica czasowa to <b>opóźnienie</b> systemu.</p>
+
+<h2>Komponenty</h2>
+<ul>
+<li><b>Ekran dotykowy (przód):</b> 7 cali, pojemnościowy. Jedyny sposób interakcji.</li>
+<li><b>LED stymulacyjna (bok):</b> włącza się automatycznie podczas pomiarów.</li>
+<li><b>Fotoczujnik (przeciwna strona):</b> należy skierować w stronę monitora.</li>
+<li><b>Port USB-C (dół):</b> ładowanie i zasilanie.</li>
+</ul>
+
+<h1 id="zasilanie">Włączanie i wyłączanie</h1>
+<ul>
+<li><b>Włączenie:</b> przytrzymaj przycisk zasilania przez 2 sekundy.</li>
+<li><b>Wyłączenie:</b> przytrzymaj przycisk ← na ekranie głównym przez 3 sekundy.</li>
+</ul>
+<p class="note">Nie odłączaj zasilania gwałtownie, aby uniknąć uszkodzenia zapisanych pomiarów.</p>
+
+<h1 id="ekran">Ekran główny</h1>
+<p>Menu główne zawiera cztery opcje:</p>
+<ul>
+<li><b>Rozpocznij pomiar:</b> otwiera ekran pomiarowy.</li>
+<li><b>Historia pomiarów:</b> przeglądanie wcześniejszych pomiarów.</li>
+<li><b>Ustawienia:</b> konfiguracja języka, czcionki i trybów wyświetlania.</li>
+<li><b>Pomoc:</b> wyświetla niniejszą instrukcję i informacje ogólne.</li>
+</ul>
+<p>Wszystkie ekrany mają żółty przycisk <b>←</b> do powrotu.</p>
+
+<h1 id="pomiar">Wykonywanie pomiarów</h1>
+
+<h2>1. Kalibracja (wymagana przed pomiarem)</h2>
+<ol>
+<li>Skieruj fotoczujnik na obszar monitora, gdzie pojawi się bodziec.</li>
+<li>Naciśnij <b>Kalibracja</b>.</li>
+<li>LED będzie migać podczas procesu (4 cykle). Nie ruszaj urządzenia.</li>
+<li>Wynik: zielony = sukces, czerwony = błąd (zmień pozycję czujnika).</li>
+</ol>
+
+<h2>2. Konfiguracja parametrów</h2>
+<ul>
+<li><b>Odstęp między pomiarami:</b> 100–2000 ms. Niższe wartości = więcej danych.</li>
+<li><b>Czas trwania:</b> 10–600 s. Całkowity czas testu.</li>
+</ul>
+
+<h2>3. Pomiar</h2>
+<ol>
+<li>Skieruj LED w stronę kamery, a fotoczujnik w stronę monitora.</li>
+<li>Naciśnij <b>Rozpocznij</b>.</li>
+<li>Przycisk miga na zielono podczas pomiaru.</li>
+<li>Po zakończeniu: zielony = sukces (wykres), czerwony = błąd.</li>
+<li>Wyniki zapisywane są automatycznie.</li>
+</ol>
+<p class="note">Naciśnij <b>Zakończ</b> w dowolnym momencie, aby anulować.</p>
+
+<h2>Odczyt wykresu</h2>
+<ul>
+<li>Oś pozioma: czas (s).</li>
+<li>Oś pionowa: zmierzone opóźnienie (ms).</li>
+<li>Każdy punkt to pojedynczy pomiar.</li>
+</ul>
+
+<h1 id="historia">Historia pomiarów</h1>
+<p>Lista wszystkich zapisanych pomiarów. Dostępne akcje:</p>
+<ul>
+<li><b>Sprawdź:</b> wyświetl wykres i dane (nazwa, data, średnie opóźnienie, interwał).</li>
+<li><b>Usuń:</b> trwale usuwa wybrany pomiar.</li>
+<li><b>Zmień nazwę:</b> zmienia nazwę pliku pomiaru.</li>
+</ul>
+
+<h1 id="ustawienia">Ustawienia</h1>
+<ul>
+<li><b>Język:</b> Español, English, Polski.</li>
+<li><b>Rozmiar czcionki:</b> 9–15 pt.</li>
+<li><b>Tryb dla daltonistów:</b> paleta o wysokim kontraście.</li>
+<li><b>Tryb nocny:</b> ciemny motyw dla słabego oświetlenia.</li>
+</ul>
+<p>Naciśnij <b>Stosować</b>, aby zapisać. <b>Anulować</b>, aby odrzucić.</p>
+<p class="note">Oba tryby mogą być aktywne jednocześnie. Tryb dla daltonistów ma priorytet wizualny.</p>
+
+<h1 id="problemy">Rozwiązywanie problemów</h1>
+<table>
+<tr><th>Objaw</th><th>Prawdopodobna przyczyna</th><th>Rozwiązanie</th></tr>
+<tr><td>Kalibracja nie powiodła się (czerwony)</td><td>Nadmierne światło lub źle ustawiony czujnik</td><td>Zmniejsz światło; zmień pozycję czujnika</td></tr>
+<tr><td>Opóźnienie zawsze zero</td><td>Fotoczujnik odbiera światło bezpośrednio z LED</td><td>Prawidłowo rozdziel LED i czujnik</td></tr>
+<tr><td>Pomiar przekracza czas</td><td>Monitor nie odtwarza bodźca</td><td>Sprawdź kamera→LED i monitor→czujnik</td></tr>
+<tr><td>Wykres bez danych</td><td>Wszystkie pomiary nie powiodły się</td><td>Rekalibruj i zmniejsz interwał</td></tr>
+</table>
+
+</body>
+</html>

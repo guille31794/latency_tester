@@ -1994,6 +1994,243 @@ En último lugar, y aunque no les conozca en persona, quiero agradecer a Jim, mi
 
 \chapter{Manual de usuario}
 
+Este capítulo constituye la guía de uso del medidor de latencias. Está dirigido al operador final del equipo y asume que el dispositivo ya se encuentra correctamente ensamblado y encendido. Para instrucciones de montaje e instalación, consulte el Apéndice A (Manual de instalación).
+
+% =========================================================================
+\section{Indicaciones de seguridad}
+
+\begin{itemize}
+    \item No exponga el equipo a líquidos, humedad excesiva ni temperaturas superiores a 40~°C.
+    \item No dirija el LED estimulador directamente a los ojos. Aunque su potencia es baja, la exposición prolongada puede causar molestias visuales.
+    \item Utilice únicamente la batería y el cargador especificados por el fabricante (PiSugar 3+ o equivalente, 5~V / 3~A).
+    \item No abra la carcasa del equipo mientras esté conectado a la corriente eléctrica.
+    \item Ante cualquier comportamiento anómalo (calentamiento excesivo, olor a quemado, pantalla en blanco prolongado), desconecte la alimentación inmediatamente.
+\end{itemize}
+
+% =========================================================================
+\section{Descripción general del equipo}
+
+El medidor de latencias es un instrumento portátil diseñado para cuantificar el retardo de vídeo en sistemas de videovigilancia. Su principio de funcionamiento es el siguiente:
+
+\begin{enumerate}
+    \item Un LED de alta luminancia emite un pulso de luz hacia la cámara del sistema bajo prueba.
+    \item La cámara captura el pulso y lo transmite al monitor.
+    \item Un fotosensor adosado al monitor detecta cuándo se reproduce el estímulo luminoso.
+    \item El equipo calcula la diferencia temporal entre la emisión y la detección: esa diferencia es la \textbf{latencia del sistema}.
+\end{enumerate}
+
+\subsection{Componentes externos}
+
+\begin{description}
+    \item[Pantalla táctil (frontal)] Pantalla capacitiva de 7 pulgadas. Es el único medio de interacción con el equipo.
+    \item[LED estimulador (lateral)] Diodo emisor de luz de alta luminancia. Se enciende automáticamente durante las mediciones.
+    \item[Fotosensor (lateral opuesto)] Sensor óptico con ventana receptora. Debe orientarse hacia el monitor del sistema bajo prueba.
+    \item[Puerto USB-C (inferior)] Carga de batería y alimentación externa.
+    \item[Indicador de carga (inferior)] LED de estado de batería (verde = cargado, rojo = cargando).
+\end{description}
+
+% =========================================================================
+\section{Encendido y apagado}
+
+\subsection{Encendido}
+Mantenga pulsado el botón de encendido durante 2 segundos. La pantalla mostrará brevemente el logotipo del sistema operativo y, a continuación, la pantalla de inicio de la aplicación.
+
+\subsection{Apagado}
+Mantenga pulsado el botón de retroceso (\textbf{←}) en la pantalla de inicio durante 3 segundos. El equipo guardará la configuración actual y se apagará de forma segura.
+
+\textbf{Nota:} No desconecte la alimentación de forma abrupta. Podría dañar los datos de mediciones almacenados.
+
+% =========================================================================
+\section{Pantalla de inicio}
+
+Al arrancar la aplicación se presenta el menú principal con cuatro botones:
+
+\begin{description}
+    \item[Comenzar medición] Accede a la pantalla de toma de mediciones (Sección~\ref{sec:manual_medicion}).
+    \item[Historial de mediciones] Consulta las mediciones anteriores guardadas en el equipo (Sección~\ref{sec:manual_historial}).
+    \item[Ajustes] Configura el idioma, tamaño de fuente y modos de visualización (Sección~\ref{sec:manual_ajustes}).
+    \item[Ayuda] Muestra información general del equipo y acceso al presente manual (Sección~\ref{sec:manual_ayuda}).
+\end{description}
+
+Todas las pantallas secundarias disponen de un botón de retroceso amarillo (\textbf{←}) en la esquina superior izquierda que devuelve a la pantalla anterior.
+
+% =========================================================================
+\section{Toma de mediciones}
+\label{sec:manual_medicion}
+
+Esta es la pantalla principal de trabajo. Contiene los siguientes elementos:
+
+\begin{description}
+    \item[Gráfica de latencias] Área central donde se visualizan los resultados en tiempo real. El eje horizontal representa el tiempo transcurrido (en segundos) y el eje vertical la latencia medida (en milisegundos).
+    \item[Botón ``Calibrar''] Inicia el proceso de calibración del fotosensor.
+    \item[Botón ``Comenzar''] Inicia la toma de mediciones.
+    \item[Botón ``Detener''] Interrumpe una medición o calibración en curso. Solo está activo durante una operación.
+    \item[Deslizador ``Intervalo entre mediciones''] Configura el tiempo de espera entre pulsos consecutivos (100--2000~ms).
+    \item[Deslizador ``Duración''] Configura la duración total del ensayo (10--600~s).
+\end{description}
+
+\subsection{Procedimiento de calibración}
+\label{sec:manual_calibracion}
+
+La calibración adapta el umbral del fotosensor a las condiciones de iluminación ambiental. \textbf{Debe realizarse siempre antes de la primera medición} y repetirse cada vez que cambien las condiciones de luz del entorno.
+
+\begin{enumerate}
+    \item Coloque el fotosensor orientado hacia la zona del monitor donde se proyectará el estímulo.
+    \item Pulse \textbf{Calibrar}.
+    \item El LED del equipo parpadeará de forma intermitente durante el proceso (4 ciclos de 1 segundo). No mueva el equipo durante esta fase.
+    \item Si la calibración es satisfactoria, el botón \textbf{Calibrar} parpadeará en \textcolor{green}{verde} durante 3 segundos.
+    \item Si falla, parpadeará en \textcolor{red}{rojo}. Revise la orientación del sensor y vuelva a intentarlo.
+\end{enumerate}
+
+\textbf{Nota:} Durante la calibración, la interfaz se deshabilita temporalmente. Puede pulsar \textbf{Detener} en cualquier momento para cancelar.
+
+\subsection{Procedimiento de medición}
+
+\begin{enumerate}
+    \item Asegúrese de haber completado una calibración satisfactoria (ver Sección~\ref{sec:manual_calibracion}).
+    \item Ajuste el \textbf{intervalo entre mediciones} según la precisión deseada:
+    \begin{itemize}
+        \item Valores bajos (100--300~ms): mayor resolución temporal, genera más datos.
+        \item Valores altos (1000--2000~ms): menor resolución, útil para ensayos largos.
+    \end{itemize}
+    \item Ajuste la \textbf{duración} del ensayo según las necesidades.
+    \item Dirija el LED hacia la cámara del sistema bajo prueba y el fotosensor hacia su monitor.
+    \item Pulse \textbf{Comenzar}.
+    \item El botón \textbf{Comenzar} parpadeará en verde mientras la medición esté en curso.
+    \item Al finalizar:
+    \begin{itemize}
+        \item Si ha sido satisfactoria: el botón parpadea en verde y se muestra la gráfica de resultados.
+        \item Si ha habido errores: el botón parpadea en rojo.
+    \end{itemize}
+    \item Los resultados se almacenan automáticamente en la memoria interna del equipo.
+\end{enumerate}
+
+\textbf{Nota:} Pulse \textbf{Detener} en cualquier momento para interrumpir la medición. Los datos recogidos hasta ese instante no se guardarán.
+
+\subsection{Interpretación de la gráfica}
+
+\begin{itemize}
+    \item Cada punto representa una medición individual de latencia.
+    \item La línea conecta los puntos con estilo escalón (step-right), facilitando la lectura de valores constantes.
+    \item La latencia media se utiliza para ajustar automáticamente el rango vertical.
+    \item En modo daltónico, los colores de la gráfica cambian a combinaciones de alto contraste (rojo/verde oscuro).
+\end{itemize}
+
+% =========================================================================
+\section{Historial de mediciones}
+\label{sec:manual_historial}
+
+La pantalla de historial presenta una lista con todas las mediciones almacenadas en el equipo, organizadas por nombre de fichero.
+
+\subsection{Acciones disponibles}
+
+\begin{description}
+    \item[Comprobar] Seleccione una medición de la lista y pulse \textbf{Comprobar} para visualizar su gráfica y datos asociados (nombre, fecha, latencia media, intervalo).
+    \item[Borrar] Elimina permanentemente la medición seleccionada. Esta acción no se puede deshacer.
+    \item[Renombrar] Abre una ventana emergente donde puede introducir un nuevo nombre para la medición seleccionada.
+\end{description}
+
+\subsection{Pantalla de visualización}
+
+Al pulsar \textbf{Comprobar}, se muestra la pantalla de detalle con:
+
+\begin{itemize}
+    \item Gráfica de la medición almacenada (idéntica a la visualización en tiempo real).
+    \item Cuatro campos informativos organizados en dos columnas:
+    \begin{itemize}
+        \item \textbf{Nombre}: identificador de la medición.
+        \item \textbf{Fecha}: fecha y hora en que se realizó.
+        \item \textbf{Latencia (ms)}: valor medio de latencia obtenido.
+        \item \textbf{Intervalo (ms)}: intervalo entre pulsos utilizado.
+    \end{itemize}
+\end{itemize}
+
+% =========================================================================
+\section{Ajustes}
+\label{sec:manual_ajustes}
+
+La pantalla de ajustes permite personalizar la experiencia de uso del equipo.
+
+\begin{description}
+    \item[Idioma] Selector desplegable con tres opciones: Español, English, Polski. El cambio es inmediato tras pulsar \textbf{Aplicar}.
+    \item[Tamaño de fuente] Deslizador con rango de 9 a 15 puntos. La etiqueta muestra el valor actual en tiempo real.
+    \item[Modo daltónicos] Casilla de verificación que activa una paleta de colores de alto contraste optimizada para usuarios con deficiencias en la percepción cromática.
+    \item[Modo nocturno] Casilla de verificación que activa un tema oscuro para entornos con baja iluminación, reduciendo la fatiga visual.
+\end{description}
+
+\subsection{Aplicar y cancelar cambios}
+
+\begin{itemize}
+    \item Pulse \textbf{Aplicar} para guardar los cambios. La configuración se conserva entre sesiones.
+    \item Pulse \textbf{Cancelar} para descartar todos los cambios realizados y restaurar los valores anteriores.
+\end{itemize}
+
+\textbf{Nota:} Los modos daltónico y nocturno son ortogonales (pueden activarse simultáneamente). El modo daltónico tiene prioridad visual sobre el modo nocturno.
+
+% =========================================================================
+\section{Ayuda}
+\label{sec:manual_ayuda}
+
+La pantalla de ayuda presenta dos opciones:
+
+\begin{description}
+    \item[Manual de usuario] Muestra una versión resumida de las instrucciones de uso integrada en el equipo.
+    \item[Información general] Muestra los datos del fabricante, versión de hardware y software, y datos de contacto.
+\end{description}
+
+% =========================================================================
+\section{Solución de problemas}
+
+\begin{table}[H]
+\centering
+\caption{Guía de resolución de problemas}
+\label{tab:troubleshooting}
+\begin{tabular}{|p{4.5cm}|p{4.5cm}|p{4.5cm}|}
+\hline
+\textbf{Síntoma} & \textbf{Causa probable} & \textbf{Solución} \\ \hline
+La calibración falla repetidamente (parpadeo rojo) & Iluminación ambiental excesiva o fotosensor mal orientado & Reduzca la luz ambiental; reoriente el sensor hacia una zona oscura del monitor \\ \hline
+La medición da siempre latencia cero & El fotosensor recibe luz directa del LED (no del monitor) & Separe LED y fotosensor; asegúrese de que apuntan a cámara y monitor respectivamente \\ \hline
+La medición se agota por timeout & El monitor no reproduce el estímulo (sistema desconectado o latencia $>$ 5~s) & Verifique que la cámara enfoca el LED y el monitor muestra la imagen \\ \hline
+La pantalla no responde al tacto & La pantalla táctil requiere calibración o está defectuosa & Reinicie el equipo; si persiste, contacte con soporte técnico \\ \hline
+La gráfica no muestra datos tras una medición & Todas las mediciones fallaron por timeout & Recalibre el sensor y reduzca el intervalo entre mediciones \\ \hline
+El idioma no cambia al pulsar Aplicar & Error de carga del fichero de traducción & Reinicie la aplicación; si persiste, reinstale el software \\ \hline
+\end{tabular}
+\end{table}
+
+% =========================================================================
+\section{Mantenimiento}
+
+\begin{itemize}
+    \item Limpie la pantalla táctil con un paño de microfibra seco.
+    \item Mantenga la ventana del fotosensor y la lente del LED libres de polvo y huellas.
+    \item Almacene el equipo en un lugar seco y a temperatura ambiente (15--30~°C).
+    \item Cargue la batería completamente antes de períodos prolongados de almacenamiento.
+    \item No exponga el equipo a vibraciones fuertes ni impactos.
+\end{itemize}
+
+% =========================================================================
+\section{Especificaciones técnicas}
+
+\begin{table}[H]
+\centering
+\caption{Especificaciones del equipo}
+\label{tab:specs_manual}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Parámetro} & \textbf{Valor} \\ \hline
+Pantalla & 7'' capacitiva, 800$\times$480 px \\ \hline
+Rango de medición de latencia & 0--5000~ms \\ \hline
+Resolución temporal & 1~ms \\ \hline
+Intervalo entre pulsos configurable & 100--2000~ms \\ \hline
+Duración máxima de ensayo & 600~s (10 minutos) \\ \hline
+Autonomía de batería & $\geq$~3~h (uso continuo) \\ \hline
+Temperatura de operación & 0--40~°C \\ \hline
+Dimensiones & Aprox. 180$\times$120$\times$45~mm \\ \hline
+Peso & Aprox. 350~g (con batería) \\ \hline
+Idiomas disponibles & Español, Inglés, Polaco \\ \hline
+\end{tabular}
+\end{table}
+
 \chapter{Manual del desarrollador}
 
 \bibliographystyle{splncs03}

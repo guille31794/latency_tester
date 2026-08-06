@@ -19,6 +19,7 @@ public:
     explicit HelpScreen(QWidget *parent = nullptr);
     ~HelpScreen();
     void changeEvent(QEvent *event) override;
+    void showEvent(QShowEvent *event) override;
 
 signals:
     void backRequested();
@@ -31,6 +32,12 @@ private slots:
     void on_usersManualButton_released();
 
 private:
+    /**
+     * @brief updateManualButtonState enables or disables the manual button
+     * depending on whether the HTML resource exists for the current language.
+     */
+    void updateManualButtonState();
+
     Ui::HelpScreen *ui;
 };
 

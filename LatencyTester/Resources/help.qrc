@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/help">
+        <file>help/manual_es.html</file>
+        <file>help/manual_en.html</file>
+        <file>help/manual_pl.html</file>
+    </qresource>
+</RCC>

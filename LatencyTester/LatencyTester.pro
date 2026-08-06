@@ -115,3 +115,7 @@ DISTFILES += \
     Translations/LatencyTester_es_ES.ts \
     Translations/LatencyTester_en_EN.ts \
     Translations/LatencyTester_pl_PL.ts
+
+# --- Resources ---
+RESOURCES += \
+    Resources/help.qrc

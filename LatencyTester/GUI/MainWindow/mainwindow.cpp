@@ -87,7 +87,16 @@ MainWindow::MainWindow(QWidget *parent)
         mStackedWidget->setCurrentIndex(HELP_INFO);
     });
     connect(mHelpScreen, &HelpScreen::usersManualRequested, this, [this]() {
-        mHelpInfoScreen->setContent(tr("Manual de usuario en desarrollo..."));
+        // Load the user manual HTML for the current language
+        QString lang;
+        switch (AppSettings::instance().language())
+        {
+            case Languages::ENGLISH: lang = "en"; break;
+            case Languages::POLISH:  lang = "pl"; break;
+            default:                 lang = "es"; break;
+        }
+        mHelpInfoScreen->setHtmlResource(
+            QStringLiteral(":/help/help/manual_%1.html").arg(lang));
         mStackedWidget->setCurrentIndex(HELP_INFO);
     });
 

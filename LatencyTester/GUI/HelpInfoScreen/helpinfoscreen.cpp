@@ -1,6 +1,7 @@
 #include "helpinfoscreen.h"
 #include "ui_helpinfoscreen.h"
 #include <QEvent>
+#include <QFile>
 
 HelpInfoScreen::HelpInfoScreen(QWidget *parent)
     : QWidget(parent)
@@ -16,7 +17,21 @@ HelpInfoScreen::~HelpInfoScreen()
 
 void HelpInfoScreen::setContent(const QString& text)
 {
-    ui->contentText->setPlainText(text);
+    ui->contentBrowser->setPlainText(text);
+}
+
+void HelpInfoScreen::setHtmlResource(const QString& resourcePath)
+{
+    QFile file(resourcePath);
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        ui->contentBrowser->setHtml(QString::fromUtf8(file.readAll()));
+        file.close();
+    }
+    else
+    {
+        ui->contentBrowser->setPlainText("Error: could not load " + resourcePath);
+    }
 }
 
 void HelpInfoScreen::on_backButton_released()

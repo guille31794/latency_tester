@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+body { font-family: sans-serif; font-size: 10pt; margin: 10px; }
+h1 { font-size: 14pt; color: #004080; border-bottom: 1px solid #004080; padding-bottom: 4px; }
+h2 { font-size: 12pt; color: #006699; margin-top: 16px; }
+ul, ol { margin-left: 16px; }
+li { margin-bottom: 4px; }
+.warning { color: #cc0000; font-weight: bold; }
+.note { color: #555; font-style: italic; }
+table { border-collapse: collapse; margin: 8px 0; }
+td, th { border: 1px solid #999; padding: 4px 8px; font-size: 9pt; }
+th { background: #e0e8f0; }
+a { color: #0066cc; }
+</style>
+</head>
+<body>
+
+<h1>Manual de usuario</h1>
+<p><b>Índice:</b>
+<a href="#seguridad">Seguridad</a> |
+<a href="#descripcion">Descripción</a> |
+<a href="#encendido">Encendido</a> |
+<a href="#inicio">Pantalla de inicio</a> |
+<a href="#medicion">Mediciones</a> |
+<a href="#historial">Historial</a> |
+<a href="#ajustes">Ajustes</a> |
+<a href="#problemas">Problemas</a>
+</p>
+
+<h1 id="seguridad">Indicaciones de seguridad</h1>
+<ul>
+<li>No exponga el equipo a líquidos ni temperaturas superiores a 40 °C.</li>
+<li>No dirija el LED a los ojos.</li>
+<li>Use únicamente la batería y cargador especificados (5 V / 3 A).</li>
+<li>No abra la carcasa con el equipo conectado a corriente.</li>
+<li class="warning">Ante calentamiento excesivo u olor a quemado, desconecte inmediatamente.</li>
+</ul>
+
+<h1 id="descripcion">Descripción del equipo</h1>
+<p>El medidor emite un pulso luminoso (LED) hacia la cámara del sistema bajo prueba. Un fotosensor detecta cuándo el monitor reproduce ese estímulo. La diferencia temporal es la <b>latencia</b> del sistema.</p>
+
+<h2>Componentes</h2>
+<ul>
+<li><b>Pantalla táctil (frontal):</b> 7 pulgadas, capacitiva. Único medio de interacción.</li>
+<li><b>LED estimulador (lateral):</b> se enciende automáticamente durante las mediciones.</li>
+<li><b>Fotosensor (lateral opuesto):</b> debe orientarse hacia el monitor.</li>
+<li><b>Puerto USB-C (inferior):</b> carga y alimentación.</li>
+</ul>
+
+<h1 id="encendido">Encendido y apagado</h1>
+<ul>
+<li><b>Encender:</b> mantenga pulsado el botón de encendido 2 segundos.</li>
+<li><b>Apagar:</b> mantenga pulsado el botón ← en la pantalla de inicio durante 3 segundos.</li>
+</ul>
+<p class="note">No desconecte la alimentación de forma abrupta para no dañar las mediciones guardadas.</p>
+
+<h1 id="inicio">Pantalla de inicio</h1>
+<p>El menú principal presenta cuatro opciones:</p>
+<ul>
+<li><b>Comenzar medición:</b> accede a la pantalla de mediciones.</li>
+<li><b>Historial de mediciones:</b> consulta mediciones anteriores.</li>
+<li><b>Ajustes:</b> configura idioma, fuente y modos visuales.</li>
+<li><b>Ayuda:</b> muestra este manual e información general.</li>
+</ul>
+<p>Todas las pantallas tienen un botón amarillo <b>←</b> para volver atrás.</p>
+
+<h1 id="medicion">Toma de mediciones</h1>
+
+<h2>1. Calibración (obligatoria antes de medir)</h2>
+<ol>
+<li>Oriente el fotosensor hacia la zona del monitor donde aparecerá el estímulo.</li>
+<li>Pulse <b>Calibrar</b>.</li>
+<li>El LED parpadeará durante el proceso (4 ciclos). No mueva el equipo.</li>
+<li>Resultado: verde = éxito, rojo = fallo (reoriente el sensor).</li>
+</ol>
+
+<h2>2. Configurar parámetros</h2>
+<ul>
+<li><b>Intervalo entre mediciones:</b> 100–2000 ms. Valores bajos = más datos.</li>
+<li><b>Duración:</b> 10–600 s. Tiempo total del ensayo.</li>
+</ul>
+
+<h2>3. Medir</h2>
+<ol>
+<li>Dirija el LED hacia la cámara y el fotosensor hacia el monitor.</li>
+<li>Pulse <b>Comenzar</b>.</li>
+<li>El botón parpadea en verde mientras mide.</li>
+<li>Al terminar: verde = éxito (se muestra la gráfica), rojo = error.</li>
+<li>Los resultados se guardan automáticamente.</li>
+</ol>
+<p class="note">Pulse <b>Detener</b> en cualquier momento para cancelar.</p>
+
+<h2>Interpretación de la gráfica</h2>
+<ul>
+<li>Eje horizontal: tiempo transcurrido (s).</li>
+<li>Eje vertical: latencia medida (ms).</li>
+<li>Cada punto es una medición individual.</li>
+</ul>
+
+<h1 id="historial">Historial de mediciones</h1>
+<p>Lista todas las mediciones almacenadas. Acciones disponibles:</p>
+<ul>
+<li><b>Comprobar:</b> ver gráfica y datos (nombre, fecha, latencia media, intervalo).</li>
+<li><b>Borrar:</b> elimina permanentemente la medición seleccionada.</li>
+<li><b>Renombrar:</b> cambia el nombre del fichero de medición.</li>
+</ul>
+
+<h1 id="ajustes">Ajustes</h1>
+<ul>
+<li><b>Idioma:</b> Español, English, Polski.</li>
+<li><b>Tamaño de fuente:</b> 9–15 pt.</li>
+<li><b>Modo daltónicos:</b> paleta de alto contraste.</li>
+<li><b>Modo nocturno:</b> tema oscuro para baja iluminación.</li>
+</ul>
+<p>Pulse <b>Aplicar</b> para guardar. <b>Cancelar</b> para descartar.</p>
+<p class="note">Ambos modos pueden activarse simultáneamente. El modo daltónico tiene prioridad visual.</p>
+
+<h1 id="problemas">Solución de problemas</h1>
+<table>
+<tr><th>Síntoma</th><th>Causa probable</th><th>Solución</th></tr>
+<tr><td>Calibración falla (rojo)</td><td>Luz excesiva o sensor mal orientado</td><td>Reduzca luz ambiental; reoriente sensor</td></tr>
+<tr><td>Latencia siempre cero</td><td>Fotosensor recibe luz directa del LED</td><td>Separe LED y sensor correctamente</td></tr>
+<tr><td>Medición se agota</td><td>Monitor no reproduce el estímulo</td><td>Verifique cámara→LED y monitor→sensor</td></tr>
+<tr><td>Gráfica sin datos</td><td>Todas las mediciones fallaron</td><td>Recalibre y reduzca intervalo</td></tr>
+</table>
+
+</body>
+</html>

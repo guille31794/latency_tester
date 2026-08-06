@@ -2,14 +2,15 @@
 #define HELPINFOSCREEN_H
 
 #include <QWidget>
+#include <QUrl>
 
 namespace Ui {
 class HelpInfoScreen;
 }
 
 /**
- * @brief The HelpInfoScreen class displays read-only information
- * (general info or user manual content).
+ * @brief The HelpInfoScreen class displays read-only information.
+ * Can show plain text or HTML content from embedded resources.
  */
 class HelpInfoScreen : public QWidget
 {
@@ -20,7 +21,16 @@ public:
     ~HelpInfoScreen();
     void changeEvent(QEvent *event) override;
 
+    /**
+     * @brief setContent sets plain text content (for general info, etc.)
+     */
     void setContent(const QString& text);
+
+    /**
+     * @brief setHtmlResource loads an HTML file from Qt resources (qrc).
+     * @param resourcePath e.g. "qrc:/help/help/manual_es.html"
+     */
+    void setHtmlResource(const QString& resourcePath);
 
 signals:
     void backRequested();

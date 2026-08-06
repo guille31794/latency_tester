@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+body { font-family: sans-serif; font-size: 10pt; margin: 10px; }
+h1 { font-size: 14pt; color: #004080; border-bottom: 1px solid #004080; padding-bottom: 4px; }
+h2 { font-size: 12pt; color: #006699; margin-top: 16px; }
+ul, ol { margin-left: 16px; }
+li { margin-bottom: 4px; }
+.warning { color: #cc0000; font-weight: bold; }
+.note { color: #555; font-style: italic; }
+table { border-collapse: collapse; margin: 8px 0; }
+td, th { border: 1px solid #999; padding: 4px 8px; font-size: 9pt; }
+th { background: #e0e8f0; }
+a { color: #0066cc; }
+</style>
+</head>
+<body>
+
+<h1>User Manual</h1>
+<p><b>Contents:</b>
+<a href="#safety">Safety</a> |
+<a href="#description">Description</a> |
+<a href="#power">Power</a> |
+<a href="#home">Home screen</a> |
+<a href="#measurement">Measurements</a> |
+<a href="#history">History</a> |
+<a href="#settings">Settings</a> |
+<a href="#troubleshooting">Troubleshooting</a>
+</p>
+
+<h1 id="safety">Safety instructions</h1>
+<ul>
+<li>Do not expose the device to liquids or temperatures above 40 °C.</li>
+<li>Do not point the LED at eyes.</li>
+<li>Use only the specified battery and charger (5 V / 3 A).</li>
+<li>Do not open the case while connected to power.</li>
+<li class="warning">In case of excessive heat or burning smell, disconnect immediately.</li>
+</ul>
+
+<h1 id="description">Device description</h1>
+<p>The device emits a light pulse (LED) toward the camera of the system under test. A photosensor detects when the monitor reproduces that stimulus. The time difference is the system's <b>latency</b>.</p>
+
+<h2>Components</h2>
+<ul>
+<li><b>Touchscreen (front):</b> 7-inch capacitive. Only means of interaction.</li>
+<li><b>Stimulus LED (side):</b> turns on automatically during measurements.</li>
+<li><b>Photosensor (opposite side):</b> must face the monitor.</li>
+<li><b>USB-C port (bottom):</b> charging and power supply.</li>
+</ul>
+
+<h1 id="power">Power on / off</h1>
+<ul>
+<li><b>Power on:</b> hold the power button for 2 seconds.</li>
+<li><b>Power off:</b> hold the ← button on the home screen for 3 seconds.</li>
+</ul>
+<p class="note">Do not disconnect power abruptly to avoid corrupting saved measurements.</p>
+
+<h1 id="home">Home screen</h1>
+<p>The main menu has four options:</p>
+<ul>
+<li><b>Start measuring:</b> opens the measurement screen.</li>
+<li><b>Measure record:</b> browse previous measurements.</li>
+<li><b>Settings:</b> configure language, font, and display modes.</li>
+<li><b>Help:</b> shows this manual and general information.</li>
+</ul>
+<p>All screens have a yellow <b>←</b> button to go back.</p>
+
+<h1 id="measurement">Taking measurements</h1>
+
+<h2>1. Calibration (required before measuring)</h2>
+<ol>
+<li>Point the photosensor toward the monitor area where the stimulus will appear.</li>
+<li>Press <b>Calibrate</b>.</li>
+<li>The LED will blink during the process (4 cycles). Do not move the device.</li>
+<li>Result: green = success, red = failure (reposition the sensor).</li>
+</ol>
+
+<h2>2. Configure parameters</h2>
+<ul>
+<li><b>Interval between measures:</b> 100–2000 ms. Lower values = more data points.</li>
+<li><b>Duration:</b> 10–600 s. Total test duration.</li>
+</ul>
+
+<h2>3. Measure</h2>
+<ol>
+<li>Point the LED toward the camera and the photosensor toward the monitor.</li>
+<li>Press <b>Start</b>.</li>
+<li>The button blinks green while measuring.</li>
+<li>When finished: green = success (graph shown), red = error.</li>
+<li>Results are saved automatically.</li>
+</ol>
+<p class="note">Press <b>Stop</b> at any time to cancel.</p>
+
+<h2>Reading the graph</h2>
+<ul>
+<li>Horizontal axis: elapsed time (s).</li>
+<li>Vertical axis: measured latency (ms).</li>
+<li>Each dot is an individual measurement.</li>
+</ul>
+
+<h1 id="history">Measurement history</h1>
+<p>Lists all stored measurements. Available actions:</p>
+<ul>
+<li><b>Check:</b> view graph and data (name, date, mean latency, interval).</li>
+<li><b>Delete:</b> permanently removes the selected measurement.</li>
+<li><b>Rename:</b> changes the measurement file name.</li>
+</ul>
+
+<h1 id="settings">Settings</h1>
+<ul>
+<li><b>Language:</b> Español, English, Polski.</li>
+<li><b>Font size:</b> 9–15 pt.</li>
+<li><b>Colorblind mode:</b> high-contrast color palette.</li>
+<li><b>Night mode:</b> dark theme for low-light environments.</li>
+</ul>
+<p>Press <b>Apply</b> to save. <b>Cancel</b> to discard.</p>
+<p class="note">Both modes can be active simultaneously. Colorblind mode takes visual priority.</p>
+
+<h1 id="troubleshooting">Troubleshooting</h1>
+<table>
+<tr><th>Symptom</th><th>Probable cause</th><th>Solution</th></tr>
+<tr><td>Calibration fails (red)</td><td>Excessive light or misaligned sensor</td><td>Reduce ambient light; reposition sensor</td></tr>
+<tr><td>Latency always zero</td><td>Photosensor receiving direct LED light</td><td>Properly separate LED and sensor</td></tr>
+<tr><td>Measurement times out</td><td>Monitor not reproducing stimulus</td><td>Verify camera→LED and monitor→sensor</td></tr>
+<tr><td>Graph shows no data</td><td>All measurements failed</td><td>Recalibrate and reduce interval</td></tr>
+</table>
+
+</body>
+</html>
