@@ -6,11 +6,21 @@ QT += core gui widgets printsupport concurrent virtualkeyboard
 CONFIG += c++17
 
 # --- Directory layout ---
-INCLUDEPATH += Headers
+INCLUDEPATH += Core
+INCLUDEPATH += Core/Helpers
+INCLUDEPATH += Core/AppSettings
+INCLUDEPATH += Core/JsonOperator
+INCLUDEPATH += Core/SensorOperator
+INCLUDEPATH += GUI/MainWindow
+INCLUDEPATH += GUI/HomeScreen
+INCLUDEPATH += GUI/MeasureScreen
+INCLUDEPATH += GUI/SettingsScreen
+INCLUDEPATH += GUI/HelpScreen
+INCLUDEPATH += GUI/HelpInfoScreen
+INCLUDEPATH += GUI/RegistryScreen
+INCLUDEPATH += GUI/RegistryDisplayScreen
 INCLUDEPATH += Libs/QCustomPlot/Headers
 INCLUDEPATH += Libs/rpi_ads1115
-DEPENDPATH += Headers
-DEPENDPATH += Libs/QCustomPlot/Headers
 
 # --- Platform-specific configuration ---
 
@@ -26,7 +36,7 @@ contains(QMAKE_HOST.arch, arm.*) | contains(QT_ARCH, arm.*) | contains(QMAKE_PLA
 } else {
     message("Building for Desktop (local development)")
     # No pigpio/ads1115 linkage - using stub headers
-    HEADERS += Headers/ads1115rpi_stub.h
+    HEADERS += Core/Helpers/ads1115rpi_stub.h
 }
 
 # --- MinGW big-obj fix (qcustomplot generates too many sections in debug) ---
@@ -42,52 +52,52 @@ DEFINES += QT_NO_CONSTEXPR_METAOBJECT_DATA
 # --- Sources ---
 
 SOURCES += \
-    Sources/appsettings.cpp \
-    Sources/dialog.cpp \
-    Sources/helpinfoscreen.cpp \
-    Sources/helpscreen.cpp \
-    Sources/homescreen.cpp \
-    Sources/jsonoperator.cpp \
-    Sources/main.cpp \
-    Sources/mainwindow.cpp \
-    Sources/measurescreen.cpp \
-    Sources/registrydisplayscreen.cpp \
-    Sources/registryscreen.cpp \
-    Sources/renamepopup.cpp \
-    Sources/sensoroperator.cpp \
-    Sources/settingsscreen.cpp \
+    main.cpp \
+    Core/AppSettings/appsettings.cpp \
+    Core/JsonOperator/jsonoperator.cpp \
+    Core/SensorOperator/sensoroperator.cpp \
+    GUI/MainWindow/mainwindow.cpp \
+    GUI/HomeScreen/homescreen.cpp \
+    GUI/MeasureScreen/measurescreen.cpp \
+    GUI/SettingsScreen/settingsscreen.cpp \
+    GUI/HelpScreen/helpscreen.cpp \
+    GUI/HelpInfoScreen/helpinfoscreen.cpp \
+    GUI/RegistryScreen/registryscreen.cpp \
+    GUI/RegistryScreen/dialog.cpp \
+    GUI/RegistryScreen/renamepopup.cpp \
+    GUI/RegistryDisplayScreen/registrydisplayscreen.cpp \
     Libs/QCustomPlot/Sources/qcustomplot.cpp
 
 HEADERS += \
-    Headers/ads1115.h \
-    Headers/appsettings.h \
-    Headers/dataModel.hpp \
-    Headers/dialog.h \
-    Headers/extensionfiledelegate.h \
-    Headers/helpinfoscreen.h \
-    Headers/helpscreen.h \
-    Headers/homescreen.h \
-    Headers/jsonoperator.h \
-    Headers/mainwindow.h \
-    Headers/measurescreen.h \
-    Headers/pigpio_stub.h \
-    Headers/registrydisplayscreen.h \
-    Headers/registryscreen.h \
-    Headers/renamepopup.h \
-    Headers/sensoroperator.h \
-    Headers/settingsscreen.h \
+    Core/Helpers/ads1115.h \
+    Core/Helpers/pigpio_stub.h \
+    Core/AppSettings/appsettings.h \
+    Core/dataModel.hpp \
+    Core/JsonOperator/jsonoperator.h \
+    Core/SensorOperator/sensoroperator.h \
+    GUI/MainWindow/mainwindow.h \
+    GUI/HomeScreen/homescreen.h \
+    GUI/MeasureScreen/measurescreen.h \
+    GUI/SettingsScreen/settingsscreen.h \
+    GUI/HelpScreen/helpscreen.h \
+    GUI/HelpInfoScreen/helpinfoscreen.h \
+    GUI/RegistryScreen/registryscreen.h \
+    GUI/RegistryScreen/dialog.h \
+    GUI/RegistryScreen/renamepopup.h \
+    GUI/RegistryScreen/extensionfiledelegate.h \
+    GUI/RegistryDisplayScreen/registrydisplayscreen.h \
     Libs/QCustomPlot/Headers/qcustomplot.h
 
 FORMS += \
-    Forms/dialog.ui \
-    Forms/helpinfoscreen.ui \
-    Forms/helpscreen.ui \
-    Forms/homescreen.ui \
-    Forms/measurescreen.ui \
-    Forms/registrydisplayscreen.ui \
-    Forms/registryscreen.ui \
-    Forms/renamepopup.ui \
-    Forms/settingsscreen.ui
+    GUI/HomeScreen/homescreen.ui \
+    GUI/MeasureScreen/measurescreen.ui \
+    GUI/SettingsScreen/settingsscreen.ui \
+    GUI/HelpScreen/helpscreen.ui \
+    GUI/HelpInfoScreen/helpinfoscreen.ui \
+    GUI/RegistryScreen/registryscreen.ui \
+    GUI/RegistryScreen/dialog.ui \
+    GUI/RegistryScreen/renamepopup.ui \
+    GUI/RegistryDisplayScreen/registrydisplayscreen.ui
 
 # --- Translations ---
 # Qt 6: lrelease + embed_translations generates and embeds .qm automatically from .ts files.
