@@ -42,6 +42,9 @@ linux {
 
 DEFINES += QT_NO_CONSTEXPR_METAOBJECT_DATA
 
+# Suppress misleading-indentation warning from QCustomPlot (third-party code)
+QMAKE_CXXFLAGS += -Wno-misleading-indentation
+
 # --- Desktop stubs ---
 HEADERS += ../Core/Helpers/ads1115rpi_stub.h
 

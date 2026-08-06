@@ -57,6 +57,9 @@ CONFIG(debug, debug|release):linux {
 # the new constexpr metaobject generation in Qt 6.8+. Disable it.
 DEFINES += QT_NO_CONSTEXPR_METAOBJECT_DATA
 
+# Suppress misleading-indentation warning from QCustomPlot (third-party code)
+QMAKE_CXXFLAGS += -Wno-misleading-indentation
+
 # --- Sources ---
 
 SOURCES += \
