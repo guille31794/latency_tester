@@ -44,15 +44,9 @@ latency_tester/
 │   ├── Core/                     ← Business logic (no GUI)
 │   │   ├── dataModel.hpp         ← Shared data structures
 │   │   ├── Helpers/              ← Stubs & header-only utilities
-│   │   │   ├── ads1115.h
-│   │   │   ├── ads1115rpi_stub.h
-│   │   │   └── pigpio_stub.h
 │   │   ├── AppSettings/          ← Singleton config manager
-│   │   │   └── appsettings.h/.cpp
 │   │   ├── JsonOperator/         ← JSON read/write for measurements
-│   │   │   └── jsonoperator.h/.cpp
 │   │   └── SensorOperator/       ← LED + photosensor control (ADS1115)
-│   │       └── sensoroperator.h/.cpp
 │   ├── GUI/                      ← UI layer (one folder per screen)
 │   │   ├── MainWindow/           ← Navigation controller (QStackedWidget)
 │   │   ├── HomeScreen/           ← Main menu (4 buttons)
@@ -62,6 +56,14 @@ latency_tester/
 │   │   ├── HelpInfoScreen/       ← Help content display
 │   │   ├── RegistryScreen/       ← Measurement history (TreeView + actions)
 │   │   └── RegistryDisplayScreen/← Saved measurement viewer (graph + data)
+│   ├── Scripts/                  ← Build & setup automation
+│   │   ├── Doxyfile             ← Doxygen configuration (shared)
+│   │   ├── Windows/
+│   │   │   ├── build.ps1       ← Windows build + docs script
+│   │   │   └── setup.ps1       ← Windows environment setup
+│   │   └── Linux/
+│   │       ├── build.sh         ← Linux build + docs script
+│   │       └── setup.sh         ← Linux environment setup
 │   ├── Libs/                     ← Third-party libraries
 │   │   ├── QCustomPlot/          ← 2D plotting (patched for Qt 6.11)
 │   │   └── rpi_ads1115/          ← ADS1115 ADC driver (git submodule)
@@ -69,8 +71,6 @@ latency_tester/
 │   ├── Tests/                    ← (reserved)
 │   └── Translations/             ← i18n files (.ts: es_ES, en_EN, pl_PL)
 ├── Medidor_de_latencias_.../     ← Academic report (LaTeX)
-├── setup.ps1                     ← Windows setup script
-├── setup.sh                      ← Linux setup script
 ├── toolchain_setup.md            ← Cross-compilation guide
 └── README.md
 ```
@@ -83,6 +83,7 @@ latency_tester/
 - **MinGW 13+** (Windows) or **GCC 11+** (Linux)
 - **Git** (for submodules)
 - (Optional) **Qt Virtual Keyboard** — install via Qt Maintenance Tool
+- (Optional) **Doxygen + Graphviz** — for API documentation generation
 
 ### Clone
 
@@ -91,7 +92,28 @@ git clone --recurse-submodules https://github.com/guille31794/latency_tester.git
 cd latency_tester/LatencyTester
 ```
 
-### Desktop (local development)
+### Automated build (recommended)
+
+Both scripts compile the application in Release mode and generate Doxygen documentation into `LatencyTester/Documentation/`.
+
+**Windows (PowerShell):**
+```powershell
+.\LatencyTester\Scripts\Windows\build.ps1              # Build + docs
+.\LatencyTester\Scripts\Windows\build.ps1 -NoDocs     # Build only
+.\LatencyTester\Scripts\Windows\build.ps1 -DocsOnly   # Docs only
+.\LatencyTester\Scripts\Windows\build.ps1 -Clean      # Remove artifacts
+```
+
+**Linux (Bash):**
+```bash
+./LatencyTester/Scripts/Linux/build.sh               # Build + docs
+./LatencyTester/Scripts/Linux/build.sh --no-docs     # Build only
+./LatencyTester/Scripts/Linux/build.sh --docs-only   # Docs only
+./LatencyTester/Scripts/Linux/build.sh --clean       # Remove artifacts
+./LatencyTester/Scripts/Linux/build.sh --jobs 4      # Custom parallelism
+```
+
+### Desktop (manual build)
 
 #### Using Qt Creator
 

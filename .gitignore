@@ -2,6 +2,9 @@
 # Latency Tester - Unified .gitignore
 # ==============================================================================
 
+# --- Generated documentation ---
+LatencyTester/Documentation/
+
 # --- OS generated ---
 .DS_Store
 Thumbs.db
