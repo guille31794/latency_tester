@@ -6,6 +6,7 @@
 #include "Core/tst_sensoroperator.h"
 #include "GUI/tst_homescreen.h"
 #include "GUI/tst_measurescreen.h"
+#include "GUI/tst_settingsscreen.h"
 
 int main(int argc, char *argv[])
 {
@@ -38,6 +39,10 @@ int main(int argc, char *argv[])
     }
     {
         TestMeasureScreen tst;
+        status |= QTest::qExec(&tst, argc, argv);
+    }
+    {
+        TestSettingsScreen tst;
         status |= QTest::qExec(&tst, argc, argv);
     }
 

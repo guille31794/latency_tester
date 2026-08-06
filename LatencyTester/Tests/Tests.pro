@@ -101,7 +101,8 @@ HEADERS += \
     Core/tst_jsonoperator.h \
     Core/tst_sensoroperator.h \
     GUI/tst_homescreen.h \
-    GUI/tst_measurescreen.h
+    GUI/tst_measurescreen.h \
+    GUI/tst_settingsscreen.h
 
 SOURCES += \
     main.cpp \
@@ -110,5 +111,6 @@ SOURCES += \
     Core/tst_jsonoperator.cpp \
     Core/tst_sensoroperator.cpp \
     GUI/tst_homescreen.cpp \
-    GUI/tst_measurescreen.cpp
+    GUI/tst_measurescreen.cpp \
+    GUI/tst_settingsscreen.cpp
 
