@@ -103,7 +103,8 @@ HEADERS += \
     GUI/tst_homescreen.h \
     GUI/tst_measurescreen.h \
     GUI/tst_settingsscreen.h \
-    GUI/tst_helpscreen.h
+    GUI/tst_helpscreen.h \
+    GUI/tst_registryscreen.h
 
 SOURCES += \
     main.cpp \
@@ -114,5 +115,6 @@ SOURCES += \
     GUI/tst_homescreen.cpp \
     GUI/tst_measurescreen.cpp \
     GUI/tst_settingsscreen.cpp \
-    GUI/tst_helpscreen.cpp
+    GUI/tst_helpscreen.cpp \
+    GUI/tst_registryscreen.cpp
 
