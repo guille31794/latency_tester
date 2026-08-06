@@ -1,97 +1,179 @@
-# LatencyTester - Medidor de Latencias para Sistemas de Videovigilancia Críticos
+# LatencyTester — Video Surveillance Latency Measurement Device
 
-Dispositivo portátil de medición de latencias para sistemas de videovigilancia en tiempo real. Cuantifica el retardo de vídeo entre la captura de una imagen por la cámara y su visualización en el monitor, determinando si un sistema puede clasificarse como crítico.
+A portable device for measuring end-to-end latency in real-time video surveillance systems. It quantifies the delay between a camera capturing an image and a monitor displaying it, determining whether a system qualifies as real-time critical.
 
-## Descripción
+## Overview
 
-Un sistema de videovigilancia es crítico cuando opera en tiempo real con un retardo lo suficientemente bajo como para que el operador no perciba disonancia entre lo que ocurre y lo que ve en pantalla. Este proyecto proporciona un instrumento de medición de bajo coste y alta efectividad para cuantificar dicho retardo.
+A video surveillance system is considered *critical* when it operates in real-time with a delay low enough that the operator perceives no disjunction between reality and what is shown on screen. This project provides a low-cost, high-accuracy instrument to measure that delay.
 
-El dispositivo emite un impulso luminoso (LED) hacia la cámara del sistema bajo prueba, y un fotosensor detecta cuándo el monitor reproduce ese estímulo. La diferencia temporal entre ambos eventos es la latencia del sistema.
+The device emits a light pulse (LED) into the camera under test, and a photosensor detects when the monitor reproduces that stimulus. The time difference between both events is the system's latency.
 
-## Objetivos
+## Key Features
 
-- Desarrollar un dispositivo portátil y autónomo (con batería) para medir latencias de sistemas de vídeo.
-- Proporcionar una interfaz de usuario táctil, sencilla e intuitiva.
-- Establecer pautas de medición para distintos tipos de sistemas de videovigilancia.
-- Ofrecer una solución de bajo coste basada en hardware open source.
-- Permitir la clasificación de sistemas como "de tiempo real" en base a su latencia medida.
+- Portable, battery-powered, standalone measurement device
+- Touch-friendly Qt GUI on a 7" capacitive display
+- Calibration workflow with LED blink feedback
+- Real-time latency graph (QCustomPlot)
+- Measurement history with JSON persistence
+- Multi-language UI (Spanish, English, Polish)
+- Dark mode and colorblind-accessible mode
+- Runs on Raspberry Pi 3 Model B
 
-## Tecnologías
+## Technology Stack
 
-| Componente | Tecnología |
+| Component | Technology |
 |---|---|
 | Hardware | Raspberry Pi 3 Model B |
-| Lenguaje | C++17 |
-| Framework UI | Qt 6.11 (Widgets) |
-| Gráficas | QCustomPlot 2.1.0 |
+| Language | C++17 |
+| UI Framework | Qt 6.11 (Widgets) |
+| Charts | QCustomPlot 2.1.0 |
 | GPIO | pigpio |
-| ADC (fotosensor) | ADS1115 vía I2C (rpi_ads1115) |
-| Sistema operativo | Raspi OS Lite personalizado |
-| Teclado virtual | Qt Virtual Keyboard |
-| Idiomas | Español, Inglés, Polaco |
+| ADC (photosensor) | ADS1115 via I2C (rpi_ads1115) |
+| OS | Raspi OS Lite (custom) |
+| Virtual keyboard | Qt Virtual Keyboard |
+| Build system | qmake + GNU Make |
+| Languages | Spanish, English, Polish |
 
-## Estructura del Proyecto
+## Project Structure
 
 ```
 latency_tester/
-├── LatencyTester/            ← Código fuente de la aplicación
-│   ├── Headers/              ← Cabeceras propias (.h, .hpp)
-│   ├── Sources/              ← Implementaciones (.cpp)
-│   ├── Forms/                ← Formularios Qt Designer (.ui)
-│   ├── Translations/         ← Traducciones (.ts)
-│   ├── Libs/                 ← Bibliotecas de terceros
-│   │   ├── QCustomPlot/      ← Gráficas 2D
-│   │   └── rpi_ads1115/      ← Driver ADC ADS1115 (git submodule)
-│   ├── Measures/             ← Mediciones guardadas (.json)
-│   └── LatencyTester.pro     ← Proyecto qmake
-├── Medidor_de_latencias_.../  ← Memoria técnica (LaTeX)
+├── LatencyTester/                ← Application source code
+│   ├── main.cpp                  ← Entry point
+│   ├── LatencyTester.pro         ← qmake project file
+│   ├── Core/                     ← Business logic (no GUI)
+│   │   ├── dataModel.hpp         ← Shared data structures
+│   │   ├── Helpers/              ← Stubs & header-only utilities
+│   │   │   ├── ads1115.h
+│   │   │   ├── ads1115rpi_stub.h
+│   │   │   └── pigpio_stub.h
+│   │   ├── AppSettings/          ← Singleton config manager
+│   │   │   └── appsettings.h/.cpp
+│   │   ├── JsonOperator/         ← JSON read/write for measurements
+│   │   │   └── jsonoperator.h/.cpp
+│   │   └── SensorOperator/       ← LED + photosensor control (ADS1115)
+│   │       └── sensoroperator.h/.cpp
+│   ├── GUI/                      ← UI layer (one folder per screen)
+│   │   ├── MainWindow/           ← Navigation controller (QStackedWidget)
+│   │   ├── HomeScreen/           ← Main menu (4 buttons)
+│   │   ├── MeasureScreen/        ← Calibration, measurement, live graph
+│   │   ├── SettingsScreen/       ← Language, font size, dark/colorblind modes
+│   │   ├── HelpScreen/           ← Help menu
+│   │   ├── HelpInfoScreen/       ← Help content display
+│   │   ├── RegistryScreen/       ← Measurement history (TreeView + actions)
+│   │   └── RegistryDisplayScreen/← Saved measurement viewer (graph + data)
+│   ├── Libs/                     ← Third-party libraries
+│   │   ├── QCustomPlot/          ← 2D plotting (patched for Qt 6.11)
+│   │   └── rpi_ads1115/          ← ADS1115 ADC driver (git submodule)
+│   ├── Measures/                 ← Saved measurement files (.json)
+│   ├── Tests/                    ← (reserved)
+│   └── Translations/             ← i18n files (.ts: es_ES, en_EN, pl_PL)
+├── Medidor_de_latencias_.../     ← Academic report (LaTeX)
+├── setup.ps1                     ← Windows setup script
+├── setup.sh                      ← Linux setup script
+├── toolchain_setup.md            ← Cross-compilation guide
 └── README.md
 ```
 
-## Compilación
+## Building
 
-### Requisitos
+### Prerequisites
 
-- **Qt 6.11+** con módulos: Core, Gui, Widgets, PrintSupport
-- **MinGW 13+** (Windows) o **GCC 11+** (Linux)
-- (Opcional) **Qt Virtual Keyboard** — instalar via Qt Maintenance Tool
+- **Qt 6.11+** with modules: Core, Gui, Widgets, PrintSupport, Concurrent
+- **MinGW 13+** (Windows) or **GCC 11+** (Linux)
+- **Git** (for submodules)
+- (Optional) **Qt Virtual Keyboard** — install via Qt Maintenance Tool
 
-### Desktop (desarrollo local)
+### Clone
 
 ```bash
-# Clonar con submodules
-git clone --recurse-submodules <url-del-repo>
-
-# Abrir en Qt Creator
-# File → Open File or Project → LatencyTester/LatencyTester.pro
-# Seleccionar kit: Desktop Qt 6.x MinGW 64-bit
-# Build → Build All
+git clone --recurse-submodules https://github.com/guille31794/latency_tester.git
+cd latency_tester/LatencyTester
 ```
 
-En modo Desktop, el hardware GPIO se sustituye por stubs (no-op) que permiten desarrollar y probar la interfaz sin dispositivo físico.
+### Desktop (local development)
 
-### Raspberry Pi (producción)
+#### Using Qt Creator
 
-Requiere compilación cruzada ARM o compilación nativa en la RPi:
+1. Open `LatencyTester/LatencyTester.pro`
+2. Select kit: **Desktop Qt 6.11+ MinGW 64-bit**
+3. Build → Build All
+
+#### From the command line (Windows)
+
+```powershell
+# Ensure Qt's bin and MinGW bin are in PATH
+qmake LatencyTester.pro
+mingw32-make -j8
+```
+
+#### From the command line (Linux)
 
 ```bash
-# En la Raspberry Pi con Qt 6 instalado
+qmake LatencyTester.pro
+make -j$(nproc)
+```
+
+In Desktop mode, GPIO hardware is replaced by no-op stubs, allowing full UI development without physical hardware.
+
+### Raspberry Pi (production)
+
+Cross-compilation or native build on the Pi:
+
+```bash
+# Native build on Raspberry Pi with Qt 6 installed
 qmake LatencyTester.pro
 make -j4
 ```
 
-El sistema define automáticamente `RASPBERRY_PI` cuando detecta arquitectura ARM y linkea `pigpio` y `libgpiod`.
+The build system automatically defines `RASPBERRY_PI` when it detects ARM architecture, linking `pigpio` and `libgpiod`.
 
-### Componentes hardware
+For cross-compilation setup, see [toolchain_setup.md](toolchain_setup.md).
 
-- Raspberry Pi 3 Model B
-- Pantalla táctil capacitiva 7" (conexión SPI)
-- LED de alta luminancia (GPIO 24)
-- Fotosensor OPT101 + ADS1115 ADC (I2C)
-- Batería Pi Sugar 3+ (≥3000 mAh)
-- Carcasa impresa en 3D (PLA)
+### Build output
 
-## Licencia
+The resulting binary is `LatencyTester` (Linux/RPi) or `release/LatencyTester.exe` (Windows).
 
-Proyecto académico — Universidad de Cádiz (UCA).
-QCustomPlot: GPL v3. rpi_ads1115: GPL v2.
+Working directory must contain a `Measures/` folder for JSON persistence (created automatically if absent).
+
+## Architecture
+
+The application follows a **Core/GUI separation**:
+
+- **Core** — Pure business logic with no Qt GUI dependencies (settings, sensor control, JSON I/O, data models)
+- **GUI** — Qt Widgets screens, each in its own self-contained folder with `.h`, `.cpp`, and `.ui`
+
+Navigation is managed by `MainWindow` using a `QStackedWidget` with 7 screens. Screens communicate via Qt signals/slots.
+
+Settings are managed by a singleton (`AppSettings`) that emits signals when configuration changes, allowing the `MainWindow` to apply themes, font sizes, and accessibility modes globally.
+
+### Screens
+
+| Index | Screen | Description |
+|---|---|---|
+| 0 | HomeScreen | Main menu with 4 navigation buttons |
+| 1 | SettingsScreen | Language, font size, dark mode, colorblind mode |
+| 2 | HelpScreen | Help menu (manual + general info) |
+| 3 | HelpInfoScreen | Read-only help content |
+| 4 | RegistryScreen | Measurement history (list + check/delete/rename) |
+| 5 | RegistryDisplayScreen | Saved measurement graph and data |
+| 6 | MeasureScreen | Calibration, measurement, live graph, sliders |
+
+## Hardware Components
+
+| Component | Purpose |
+|---|---|
+| Raspberry Pi 3 Model B | Main computer |
+| 7" capacitive touch display | User interface (SPI) |
+| High-luminance LED (GPIO 24) | Light stimulus emitter |
+| OPT101 photosensor + ADS1115 ADC | Light stimulus detector (I2C) |
+| PiSugar 3+ battery (≥3000 mAh) | Portable power supply |
+| 3D-printed case (PLA) | Enclosure |
+
+## License
+
+Academic project — University of Cádiz (UCA).
+
+Third-party licenses:
+- QCustomPlot: GPL v3
+- rpi_ads1115: GPL v2
