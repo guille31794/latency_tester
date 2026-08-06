@@ -44,6 +44,14 @@ win32-g++|win32-g++-*|mingw {
     QMAKE_CXXFLAGS += -Wa,-mbig-obj
 }
 
+# --- AddressSanitizer (Debug only) ---
+# Detects memory leaks, buffer overflows, use-after-free at runtime.
+# Only available on Linux (GCC ships libasan). MinGW from Qt does not include it.
+CONFIG(debug, debug|release):linux {
+    QMAKE_CXXFLAGS += -fsanitize=address -fno-omit-frame-pointer
+    QMAKE_LFLAGS += -fsanitize=address
+}
+
 # --- QCustomPlot compatibility with Qt 6.8+ MOC ---
 # QCustomPlot 2.x uses Q_GADGET in namespace QCP which triggers issues with
 # the new constexpr metaobject generation in Qt 6.8+. Disable it.

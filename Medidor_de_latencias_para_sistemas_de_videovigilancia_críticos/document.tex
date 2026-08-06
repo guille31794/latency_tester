@@ -2233,6 +2233,366 @@ Idiomas disponibles & Español, Inglés, Polaco \\ \hline
 
 \chapter{Manual del desarrollador}
 
+Este capítulo está dirigido a programadores que necesiten mantener, extender o depurar el software del medidor de latencias. Se describe la arquitectura del sistema, la organización del código fuente, las interfaces públicas de cada módulo y las instrucciones para compilar, probar y desplegar la aplicación.
+
+% =========================================================================
+\section{Arquitectura del software}
+
+El software sigue una arquitectura de dos capas claramente diferenciadas:
+
+\begin{description}
+    \item[Core] Lógica de negocio sin dependencias de interfaz gráfica. Contiene la gestión de configuración, la lectura/escritura de mediciones en JSON y el control del hardware (LED + fotosensor).
+    \item[GUI] Capa de presentación basada en Qt Widgets. Cada pantalla de la aplicación es un widget independiente, gestionado por un controlador de navegación central (\texttt{MainWindow}).
+\end{description}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    layer/.style={draw=black, rounded corners=6pt, minimum width=12cm, minimum height=1.8cm, align=center, font=\small},
+    module/.style={draw=black, rounded corners=3pt, fill=blue!10, minimum width=2.8cm, minimum height=0.8cm, font=\scriptsize, align=center},
+    arrow/.style={-{Stealth[length=3mm]}, thick}
+]
+    % GUI layer
+    \node[layer, fill=green!10] (gui) at (0, 3) {};
+    \node[font=\small\bfseries, anchor=north west] at (-6, 3.8) {GUI};
+    \node[module] at (-4.5, 3) {HomeScreen};
+    \node[module] at (-1.5, 3) {MeasureScreen};
+    \node[module] at (1.5, 3) {SettingsScreen};
+    \node[module] at (4.5, 3) {RegistryScreen};
+
+    % MainWindow
+    \node[draw=black, rounded corners=4pt, fill=yellow!20, minimum width=12cm, minimum height=0.7cm, font=\small\bfseries] (mw) at (0, 1.5) {MainWindow (QStackedWidget)};
+
+    % Core layer
+    \node[layer, fill=orange!10] (core) at (0, -0.3) {};
+    \node[font=\small\bfseries, anchor=north west] at (-6, 0.6) {Core};
+    \node[module] at (-4, -0.3) {AppSettings};
+    \node[module] at (-0.8, -0.3) {SensorOperator};
+    \node[module] at (2.8, -0.3) {JsonOperator};
+
+    % Hardware
+    \node[draw=black, dashed, rounded corners=4pt, fill=gray!10, minimum width=6cm, minimum height=0.7cm, font=\small] (hw) at (0, -1.8) {Hardware: pigpio + ADS1115 (stubs en Desktop)};
+
+    % Arrows
+    \draw[arrow] (gui) -- (mw);
+    \draw[arrow] (mw) -- (core);
+    \draw[arrow] (core) -- (hw);
+\end{tikzpicture}
+\caption{Diagrama de capas de la arquitectura software}
+\label{fig:dev_architecture}
+\end{figure}
+
+% =========================================================================
+\section{Estructura de directorios}
+
+\begin{verbatim}
+LatencyTester/
++-- main.cpp                 (punto de entrada)
++-- LatencyTester.pro        (proyecto qmake)
++-- Core/
+|   +-- dataModel.hpp        (estructuras de datos compartidas)
+|   +-- Helpers/             (stubs y wrappers de hardware)
+|   +-- AppSettings/         (singleton de configuracion)
+|   +-- JsonOperator/        (persistencia JSON)
+|   +-- SensorOperator/      (control LED + fotosensor)
++-- GUI/
+|   +-- MainWindow/          (navegacion QStackedWidget)
+|   +-- HomeScreen/          (menu principal)
+|   +-- MeasureScreen/       (calibracion y medicion)
+|   +-- SettingsScreen/      (ajustes de usuario)
+|   +-- HelpScreen/          (menu de ayuda)
+|   +-- HelpInfoScreen/      (visor HTML de ayuda)
+|   +-- RegistryScreen/      (historial de mediciones)
+|   +-- RegistryDisplayScreen/ (visualizacion de medicion)
++-- Resources/               (recursos embebidos: manuales HTML)
++-- Scripts/                 (automatizacion de compilacion)
++-- Tests/                   (pruebas unitarias QTest)
++-- Libs/                    (QCustomPlot, rpi_ads1115)
++-- Translations/            (.ts para i18n)
+\end{verbatim}
+
+% =========================================================================
+\section{Capa Core}
+
+\subsection{dataModel.hpp --- Estructuras de datos}
+
+Define las estructuras compartidas entre capas:
+
+\begin{table}[H]
+\centering
+\caption{Estructuras de datos principales}
+\label{tab:dev_datamodel}
+\begin{tabular}{|p{4.5cm}|p{9cm}|}
+\hline
+\textbf{Estructura} & \textbf{Descripción} \\ \hline
+\texttt{Languages} & Enum: SPANISH(0), ENGLISH(1), POLISH(2). \\ \hline
+\texttt{GeneralConfigSettings} & Idioma, tamaño de fuente, modos daltónico y nocturno. \\ \hline
+\texttt{Colors} & Par de hojas de estilo (botón atrás + widgets generales). \\ \hline
+\texttt{Measures} & Contenedor de una medición: nombre, fecha, duración, intervalo, vector de latencias y media calculada. \\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{AppSettings --- Gestión de configuración}
+
+Singleton que centraliza la carga, guardado y notificación de cambios de configuración.
+
+\begin{table}[H]
+\centering
+\caption{API pública de AppSettings}
+\label{tab:dev_appsettings}
+\begin{tabular}{|p{4.5cm}|p{8.5cm}|}
+\hline
+\textbf{Método} & \textbf{Descripción} \\ \hline
+\texttt{instance()} & Devuelve la instancia única (patrón Singleton). \\ \hline
+\texttt{load()} & Carga la configuración desde \texttt{QSettings} (registro Windows / fichero ini Linux). \\ \hline
+\texttt{save()} & Persiste la configuración actual en disco. \\ \hline
+\texttt{applySettings(config)} & Aplica un nuevo bloque de configuración, emitiendo señales solo para los valores que hayan cambiado. \\ \hline
+\texttt{currentStylesheet()} & Devuelve la hoja de estilo Qt completa según el modo activo (light/dark). \\ \hline
+\texttt{setLanguage(lang)} & Cambia el idioma y emite \texttt{languageChanged}. \\ \hline
+\texttt{setFontSize(size)} & Cambia la fuente y emite \texttt{fontSizeChanged}. \\ \hline
+\texttt{setDarkMode(enabled)} & Activa/desactiva modo oscuro y emite \texttt{themeChanged}. \\ \hline
+\texttt{setDaltonicMode(enabled)} & Activa/desactiva modo daltónico y emite \texttt{daltonicModeChanged}. \\ \hline
+\end{tabular}
+\end{table}
+
+\textbf{Señales emitidas}: \texttt{themeChanged}, \texttt{fontSizeChanged}, \texttt{languageChanged}, \texttt{daltonicModeChanged}, \texttt{settingsApplied}.
+
+\subsection{JsonOperator --- Persistencia de mediciones}
+
+Gestiona la serialización y deserialización de mediciones en formato JSON.
+
+\begin{table}[H]
+\centering
+\caption{API pública de JsonOperator}
+\label{tab:dev_jsonoperator}
+\begin{tabular}{|p{4.5cm}|p{8.5cm}|}
+\hline
+\textbf{Método} & \textbf{Descripción} \\ \hline
+\texttt{loadFileFromDisk(path)} & Abre un fichero .json, lo parsea y almacena el documento interno. Devuelve \texttt{true} si el fichero existe y se abre correctamente. \\ \hline
+\texttt{saveMeasureToDisk(measures)} & Serializa una estructura \texttt{Measures} a JSON y la escribe en disco. El nombre del fichero se genera automáticamente a partir de la fecha ISO (con colons reemplazados por guiones para compatibilidad Windows). \\ \hline
+\texttt{parseJsonToStruct(measures)} & Transfiere los datos del documento JSON interno a una estructura \texttt{Measures}. Calcula automáticamente la latencia media. \\ \hline
+\texttt{setPath(path)} & Establece el directorio base para lectura/escritura de ficheros. \\ \hline
+\end{tabular}
+\end{table}
+
+\textbf{Formato del fichero JSON}:
+\begin{verbatim}
+{
+    "Name": "Nombre_medición",
+    "Date": "2026-07-10T14:22:30",
+    "TimeFactor": 500,
+    "Duration": 10000,
+    "Latencies": [45, 42, 48, 44, ...]
+}
+\end{verbatim}
+
+\subsection{SensorOperator --- Control del hardware}
+
+Controla el LED estimulador (GPIO 24) y el fotosensor (ADS1115 ADC vía I2C). En plataformas Desktop, se utilizan stubs que simulan las operaciones sin hardware real.
+
+\begin{table}[H]
+\centering
+\caption{API pública de SensorOperator}
+\label{tab:dev_sensoroperator}
+\begin{tabular}{|p{4.5cm}|p{8.5cm}|}
+\hline
+\textbf{Método} & \textbf{Descripción} \\ \hline
+\texttt{takeMeasure(registry)} & Ejecuta un ciclo completo de medición. Para cada pulso: apaga LED (50ms estabilización), enciende LED, espera detección del fotosensor (timeout 5s), registra latencia. Repite según \texttt{duration/timeFactor}. Devuelve \texttt{true} si al menos una medición fue válida (latencia $>$ 0). \\ \hline
+\texttt{calibrateSensor()} & Realiza 4 ciclos de parpadeo LED (500ms on + 500ms off). Durante la fase off, muestrea la lectura del fotosensor para establecer un baseline ambiental. Devuelve \texttt{true} si se obtuvieron lecturas válidas. \\ \hline
+\texttt{stopMeasure()} & Establece un flag atómico que interrumpe la medición o calibración en curso en la siguiente iteración del bucle. \\ \hline
+\texttt{isTakingMeasure()} & Devuelve \texttt{true} si hay una operación de medición en progreso. \\ \hline
+\end{tabular}
+\end{table}
+
+\textbf{Métodos privados relevantes}:
+\begin{itemize}
+    \item \texttt{switchOnLed()} / \texttt{switchOffLed()}: controlan GPIO 24.
+    \item \texttt{switchOnSensor()} / \texttt{switchOffSensor()}: inician/detienen la adquisición del ADS1115 a 860 Hz, canal AIN0, rango 2.048V.
+    \item \texttt{readFromSensor()}: devuelve la última lectura en milivoltios (thread-safe vía \texttt{std::atomic}).
+    \item \texttt{meanLatency(latencies)}: calcula la media ignorando valores -1 (mediciones fallidas).
+    \item \texttt{quickBlink(n, ms)}: feedback visual rápido al usuario (n parpadeos de ms milisegundos).
+\end{itemize}
+
+% =========================================================================
+\section{Capa GUI}
+
+\subsection{MainWindow --- Controlador de navegación}
+
+Clase raíz que contiene un \texttt{QStackedWidget} con 7 pantallas indexadas. Gestiona:
+\begin{itemize}
+    \item Navegación entre pantallas mediante signals/slots.
+    \item Aplicación global de temas (stylesheet), fuentes y modo daltónico al recibir \texttt{settingsApplied} de \texttt{AppSettings}.
+    \item Exclusión del botón de retroceso del cambio de fuente global (mantiene siempre 24pt bold).
+\end{itemize}
+
+\subsection{Pantallas}
+
+Cada pantalla es un \texttt{QWidget} independiente con su propio \texttt{.ui} (Qt Designer), \texttt{.h} y \texttt{.cpp}. Patrón común:
+
+\begin{enumerate}
+    \item El constructor llama a \texttt{setupUi(this)} y configura estado inicial.
+    \item Se emiten señales (\texttt{backRequested}, etc.) al pulsar botones.
+    \item Se implementa \texttt{changeEvent(QEvent::LanguageChange)} para retranslateUi.
+\end{enumerate}
+
+\begin{table}[H]
+\centering
+\caption{Responsabilidades de cada pantalla}
+\label{tab:dev_screens}
+\begin{tabular}{|p{4.5cm}|p{9cm}|}
+\hline
+\textbf{Pantalla} & \textbf{Responsabilidad} \\ \hline
+\texttt{HomeScreen} & 4 botones de navegación. Sin estado interno. \\ \hline
+\texttt{MeasureScreen} & Calibración y medición asíncronas (\texttt{QtConcurrent::run}). Flash visual no-bloqueante con \texttt{QTimer}. Gráfica con paralelización para datasets $>$ 100 puntos. \\ \hline
+\texttt{SettingsScreen} & Widgets sincronizados con \texttt{AppSettings}. Bloquea señales durante carga para evitar efectos secundarios. \\ \hline
+\texttt{HelpScreen} & Botón ``Manual de usuario'' se habilita/deshabilita según exista el recurso HTML embebido para el idioma activo. \\ \hline
+\texttt{HelpInfoScreen} & \texttt{QTextBrowser} que renderiza HTML embebido vía \texttt{qrc:/} o texto plano. \\ \hline
+\texttt{RegistryScreen} & \texttt{QFileSystemModel} sobre la carpeta \texttt{Measures/}. Acciones: comprobar, borrar, renombrar. \\ \hline
+\texttt{RegistryDisplayScreen} & Muestra datos de una medición guardada + gráfica con la misma lógica de \texttt{plotMeasure}. \\ \hline
+\end{tabular}
+\end{table}
+
+% =========================================================================
+\section{Sistema de compilación}
+
+\subsection{qmake}
+
+El proyecto utiliza \texttt{qmake} con un fichero \texttt{.pro} que:
+\begin{itemize}
+    \item Detecta automáticamente la plataforma (ARM vs Desktop) y condiciona las dependencias.
+    \item Define \texttt{RASPBERRY\_PI} solo en ARM para activar \texttt{pigpio} y \texttt{libgpiod}.
+    \item Incluye la directiva \texttt{QT\_NO\_CONSTEXPR\_METAOBJECT\_DATA} como workaround temporal para QCustomPlot con Qt 6.8+.
+    \item Gestiona traducciones embebidas con \texttt{CONFIG += lrelease embed\_translations}.
+    \item Embebe recursos HTML con \texttt{RESOURCES += help.qrc}.
+\end{itemize}
+
+\subsection{Compilación desde línea de comandos}
+
+\begin{verbatim}
+# Windows (PowerShell)
+.\LatencyTester\Scripts\Windows\build.ps1
+
+# Linux (Bash)
+./LatencyTester/Scripts/Linux/build.sh
+
+# Manual
+cd LatencyTester
+qmake LatencyTester.pro "CONFIG+=release"
+make -j8    # o mingw32-make -j8 en Windows
+\end{verbatim}
+
+% =========================================================================
+\section{Pruebas unitarias}
+
+El proyecto incluye una batería de pruebas unitarias basadas en \textbf{QTest}. Se compilan como un binario independiente (\texttt{LatencyTesterTests}) que ejerce tanto la capa Core como la capa GUI.
+
+\begin{table}[H]
+\centering
+\caption{Cobertura de pruebas unitarias}
+\label{tab:dev_tests}
+\begin{tabular}{|p{3.5cm}|p{1cm}|p{6cm}|}
+\hline
+\textbf{Suite} & \textbf{Tests} & \textbf{Ámbito} \\ \hline
+\texttt{tst\_datamodel} & 17 & Valores por defecto, edge cases de structs. \\ \hline
+\texttt{tst\_appsettings} & 23 & Singleton, load/save, señales, stylesheets. \\ \hline
+\texttt{tst\_jsonoperator} & 14 & Parse, save, round-trip, ficheros corruptos. \\ \hline
+\texttt{tst\_sensoroperator} & 14 & Validación parámetros, stop, calibración con stubs. \\ \hline
+\texttt{tst\_homescreen} & 10 & Botones, señales de navegación. \\ \hline
+\texttt{tst\_measurescreen} & 14 & Botones, sliders, estados, gráfica. \\ \hline
+\texttt{tst\_settingsscreen} & 20 & Apply/cancel, sincronización widgets-settings. \\ \hline
+\texttt{tst\_helpscreen} & 11 & Botón manual habilitado por idioma. \\ \hline
+\texttt{tst\_registryscreen} & 10 & TreeView, botones, señales. \\ \hline
+\texttt{tst\_registrydisplayscreen} & 14 & displayMeasure, ploteo, edge cases. \\ \hline
+\hline
+\textbf{Total} & \textbf{147} & \\ \hline
+\end{tabular}
+\end{table}
+
+\textbf{Ejecución}:
+\begin{verbatim}
+cd build/Tests/debug
+./LatencyTesterTests              # todos
+./LatencyTesterTests test_nombre  # uno específico
+./LatencyTesterTests -v1          # verbose
+\end{verbatim}
+
+% =========================================================================
+\section{Internacionalización (i18n)}
+
+El sistema de traducciones utiliza el mecanismo estándar de Qt:
+
+\begin{enumerate}
+    \item Las cadenas traducibles se marcan con \texttt{tr("texto")} en el código.
+    \item Los ficheros \texttt{.ts} (XML) contienen las traducciones para cada contexto (clase).
+    \item \texttt{lrelease} compila los \texttt{.ts} en ficheros binarios \texttt{.qm}.
+    \item \texttt{embed\_translations} embebe los \texttt{.qm} como recursos Qt dentro del binario.
+    \item Al cambiar de idioma, \texttt{SettingsScreen} instala un \texttt{QTranslator} y Qt envía \texttt{QEvent::LanguageChange} a todos los widgets.
+\end{enumerate}
+
+\textbf{Ficheros de traducción}:
+\begin{itemize}
+    \item \texttt{LatencyTester\_es\_ES.ts} --- Español (traducción identidad para forzar el evento LanguageChange).
+    \item \texttt{LatencyTester\_en\_EN.ts} --- Inglés.
+    \item \texttt{LatencyTester\_pl\_PL.ts} --- Polaco.
+\end{itemize}
+
+Para añadir un nuevo idioma:
+\begin{enumerate}
+    \item Crear \texttt{LatencyTester\_XX\_XX.ts} con las traducciones.
+    \item Añadirlo a \texttt{TRANSLATIONS} en el \texttt{.pro}.
+    \item Añadir el HTML del manual en \texttt{Resources/help/manual\_xx.html}.
+    \item Añadir la entrada al enum \texttt{Languages} y al \texttt{QComboBox} de \texttt{SettingsScreen}.
+\end{enumerate}
+
+% =========================================================================
+\section{Documentación del código}
+
+Se genera documentación automática del código fuente mediante \textbf{Doxygen}. La configuración se encuentra en \texttt{Scripts/Doxyfile} y produce:
+
+\begin{itemize}
+    \item HTML navegable con diagramas de clases y grafos de llamadas (requiere Graphviz).
+    \item Salida en \texttt{LatencyTester/Documentation/html/index.html}.
+\end{itemize}
+
+Para regenerarla:
+\begin{verbatim}
+# Windows
+.\LatencyTester\Scripts\Windows\build.ps1 -DocsOnly
+
+# Linux
+./LatencyTester/Scripts/Linux/build.sh --docs-only
+\end{verbatim}
+
+% =========================================================================
+\section{Despliegue en Raspberry Pi}
+
+\begin{enumerate}
+    \item Configurar la toolchain de compilación cruzada ARM (ver \texttt{toolchain\_setup.md}).
+    \item Compilar con el kit ARM en Qt Creator o vía:
+    \begin{verbatim}
+qmake LatencyTester.pro  # con kit ARM seleccionado
+make -j4
+    \end{verbatim}
+    \item Transferir el binario a la Raspberry Pi:
+    \begin{verbatim}
+scp LatencyTester pi@<ip>:/home/pi/LatencyTester/bin/
+    \end{verbatim}
+    \item El script de arranque del sistema (\texttt{/etc/rc.local} o systemd) ejecuta la aplicación automáticamente al encender el dispositivo.
+\end{enumerate}
+
+% =========================================================================
+\section{Convenciones de código}
+
+\begin{itemize}
+    \item \textbf{Estándar}: C++17.
+    \item \textbf{Naming}: clases en PascalCase, métodos en camelCase, miembros con prefijo \texttt{m} (e.g., \texttt{mMeasure}).
+    \item \textbf{Includes}: nombres cortos sin ruta (las rutas se gestionan vía \texttt{INCLUDEPATH} en el \texttt{.pro}).
+    \item \textbf{Señales/Slots}: sin macros legacy; sintaxis de puntero a miembro (\texttt{\&Clase::señal}).
+    \item \textbf{Ownership}: widgets hijos pertenecen a su padre Qt (destrucción automática). Punteros crudos para UI (gestionados por \texttt{setupUi}/\texttt{delete ui}).
+    \item \textbf{Threading}: operaciones bloqueantes (medición, calibración) se lanzan con \texttt{QtConcurrent::run} y se recogen con \texttt{QFutureWatcher}.
+    \item \textbf{Range-for sobre contenedores Qt}: usar \texttt{std::as\_const()} para evitar detach implícito.
+\end{itemize}
+
 \bibliographystyle{splncs03}
 {\sloppy
 \bibliography{referencias}

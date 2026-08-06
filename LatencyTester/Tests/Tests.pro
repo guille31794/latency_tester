@@ -33,6 +33,13 @@ win32-g++|win32-g++-*|mingw {
     QMAKE_CXXFLAGS += -Wa,-mbig-obj
 }
 
+# --- AddressSanitizer ---
+# Only on Linux (GCC ships libasan). MinGW from Qt does not include it.
+linux {
+    QMAKE_CXXFLAGS += -fsanitize=address -fno-omit-frame-pointer
+    QMAKE_LFLAGS += -fsanitize=address
+}
+
 DEFINES += QT_NO_CONSTEXPR_METAOBJECT_DATA
 
 # --- Desktop stubs ---
