@@ -2,6 +2,7 @@
 #include <QtTest>
 #include "Core/tst_datamodel.h"
 #include "Core/tst_appsettings.h"
+#include "Core/tst_jsonoperator.h"
 
 int main(int argc, char *argv[])
 {
@@ -16,6 +17,10 @@ int main(int argc, char *argv[])
     }
     {
         TestAppSettings tst;
+        status |= QTest::qExec(&tst, argc, argv);
+    }
+    {
+        TestJsonOperator tst;
         status |= QTest::qExec(&tst, argc, argv);
     }
 

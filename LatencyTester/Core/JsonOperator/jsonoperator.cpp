@@ -43,9 +43,11 @@ bool JsonOperator::saveMeasureToDisk(const Measures &registry)
 
     parseStructToJson(registry);
 
-    mFile = new QFile(mPath + registry.date.toString(Qt::ISODate) + MEASURE);
+    // Replace colons in ISO date (invalid in Windows filenames)
+    QString safeDate = registry.date.toString(Qt::ISODate).replace(":", "-");
+    mFile = new QFile(mPath + safeDate + MEASURE);
 
-    if(!mFile->open(QIODevice::OpenModeFlag::WriteOnly))
+    if(mFile->open(QIODevice::OpenModeFlag::WriteOnly))
     {
         mFile->write(mJsonDocument.toJson());
         mFile->close();

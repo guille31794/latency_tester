@@ -97,10 +97,12 @@ RESOURCES += \
 # --- Test sources ---
 HEADERS += \
     Core/tst_datamodel.h \
-    Core/tst_appsettings.h
+    Core/tst_appsettings.h \
+    Core/tst_jsonoperator.h
 
 SOURCES += \
     main.cpp \
     Core/tst_datamodel.cpp \
-    Core/tst_appsettings.cpp
+    Core/tst_appsettings.cpp \
+    Core/tst_jsonoperator.cpp
 
