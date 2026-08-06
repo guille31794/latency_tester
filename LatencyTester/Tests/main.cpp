@@ -9,6 +9,7 @@
 #include "GUI/tst_settingsscreen.h"
 #include "GUI/tst_helpscreen.h"
 #include "GUI/tst_registryscreen.h"
+#include "GUI/tst_registrydisplayscreen.h"
 
 int main(int argc, char *argv[])
 {
@@ -53,6 +54,10 @@ int main(int argc, char *argv[])
     }
     {
         TestRegistryScreen tst;
+        status |= QTest::qExec(&tst, argc, argv);
+    }
+    {
+        TestRegistryDisplayScreen tst;
         status |= QTest::qExec(&tst, argc, argv);
     }
 
