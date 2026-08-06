@@ -96,9 +96,11 @@ RESOURCES += \
 
 # --- Test sources ---
 HEADERS += \
-    Core/tst_datamodel.h
+    Core/tst_datamodel.h \
+    Core/tst_appsettings.h
 
 SOURCES += \
     main.cpp \
-    Core/tst_datamodel.cpp
+    Core/tst_datamodel.cpp \
+    Core/tst_appsettings.cpp
 
