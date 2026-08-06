@@ -9,7 +9,7 @@
 #include "registryscreen.h"
 #include "registrydisplayscreen.h"
 #include "settingsscreen.h"
-#include "startscreen.h"
+#include "measurescreen.h"
 
 /**
  * @brief The MainWindow class is the top-level window that manages navigation
@@ -38,9 +38,9 @@ private:
     HelpInfoScreen *mHelpInfoScreen;
     RegistryScreen *mRegistryScreen;
     RegistryDisplayScreen *mRegistryDisplayScreen;
-    StartScreen *mStartScreen;
+    MeasureScreen *mMeasureScreen;
 
-    enum ScreenIndex { HOME = 0, SETTINGS = 1, HELP = 2, HELP_INFO = 3, REGISTRY = 4, REGISTRY_DISPLAY = 5, LEGACY = 6 };
+    enum ScreenIndex { HOME = 0, SETTINGS = 1, HELP = 2, HELP_INFO = 3, REGISTRY = 4, REGISTRY_DISPLAY = 5, MEASURE = 6 };
 };
 
 #endif // MAINWINDOW_H

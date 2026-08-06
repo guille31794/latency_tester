@@ -7,18 +7,6 @@
 #include <QMetaType>
 #include <QDate>
 
-enum class MenuScreen
-{
-    START_SCREEN,
-    START_MEASURE_SCREEN,
-    MEASURES_REGISTRY_SCREEN,
-    SETTINGS_SCREEN,
-    HELP_SCREEN,
-    GENERAL_INFO_SCREEN,
-    USERS_MANUAL_SCREEN,
-    REGISTRY_DISPLAYER_SCREEN
-};
-
 enum class Languages
 {
     SPANISH = 0,

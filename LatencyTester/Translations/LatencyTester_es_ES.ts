@@ -96,4 +96,35 @@
         <translation>Intervalo (ms):</translation>
     </message>
 </context>
+<context>
+    <name>MeasureScreen</name>
+    <message>
+        <source>Calibrar</source>
+        <translation>Calibrar</translation>
+    </message>
+    <message>
+        <source>Comenzar</source>
+        <translation>Comenzar</translation>
+    </message>
+    <message>
+        <source>Detener</source>
+        <translation>Detener</translation>
+    </message>
+    <message>
+        <source>Intérvalo entre mediciones (ms)</source>
+        <translation>Intérvalo entre mediciones (ms)</translation>
+    </message>
+    <message>
+        <source>Intérvalo entre mediciones: %1 ms</source>
+        <translation>Intérvalo entre mediciones: %1 ms</translation>
+    </message>
+    <message>
+        <source>Duración (s)</source>
+        <translation>Duración (s)</translation>
+    </message>
+    <message>
+        <source>Duración: %1 s</source>
+        <translation>Duración: %1 s</translation>
+    </message>
+</context>
 </TS>

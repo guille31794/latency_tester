@@ -298,4 +298,35 @@ All rights reserved.</translation>
         <translation>Interval (ms):</translation>
     </message>
 </context>
+<context>
+    <name>MeasureScreen</name>
+    <message>
+        <source>Calibrar</source>
+        <translation>Calibrate</translation>
+    </message>
+    <message>
+        <source>Comenzar</source>
+        <translation>Start</translation>
+    </message>
+    <message>
+        <source>Detener</source>
+        <translation>Stop</translation>
+    </message>
+    <message>
+        <source>Intérvalo entre mediciones (ms)</source>
+        <translation>Interval between measures (ms)</translation>
+    </message>
+    <message>
+        <source>Intérvalo entre mediciones: %1 ms</source>
+        <translation>Interval between measures: %1 ms</translation>
+    </message>
+    <message>
+        <source>Duración (s)</source>
+        <translation>Duration (s)</translation>
+    </message>
+    <message>
+        <source>Duración: %1 s</source>
+        <translation>Duration: %1 s</translation>
+    </message>
+</context>
 </TS>

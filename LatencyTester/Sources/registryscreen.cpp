@@ -113,7 +113,7 @@ void RegistryScreen::changedName(const QString& name)
 
     QString currentNameWithExtension = model->fileName(ui->registryTreeView->currentIndex());
     QString path = model->rootPath();
-    QFile::rename(path + "/" + currentNameWithExtension, path + "/" + name + ".json");
+    QFile::rename(path + "/" + currentNameWithExtension, path + "/" + name);
     reEnableRegistryButtons();
 }
 

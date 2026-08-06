@@ -50,12 +50,12 @@ SOURCES += \
     Sources/jsonoperator.cpp \
     Sources/main.cpp \
     Sources/mainwindow.cpp \
+    Sources/measurescreen.cpp \
     Sources/registrydisplayscreen.cpp \
     Sources/registryscreen.cpp \
     Sources/renamepopup.cpp \
     Sources/sensoroperator.cpp \
     Sources/settingsscreen.cpp \
-    Sources/startscreen.cpp \
     Libs/QCustomPlot/Sources/qcustomplot.cpp
 
 HEADERS += \
@@ -69,13 +69,13 @@ HEADERS += \
     Headers/homescreen.h \
     Headers/jsonoperator.h \
     Headers/mainwindow.h \
+    Headers/measurescreen.h \
     Headers/pigpio_stub.h \
     Headers/registrydisplayscreen.h \
     Headers/registryscreen.h \
     Headers/renamepopup.h \
     Headers/sensoroperator.h \
     Headers/settingsscreen.h \
-    Headers/startscreen.h \
     Libs/QCustomPlot/Headers/qcustomplot.h
 
 FORMS += \
@@ -83,11 +83,11 @@ FORMS += \
     Forms/helpinfoscreen.ui \
     Forms/helpscreen.ui \
     Forms/homescreen.ui \
+    Forms/measurescreen.ui \
     Forms/registrydisplayscreen.ui \
     Forms/registryscreen.ui \
     Forms/renamepopup.ui \
-    Forms/settingsscreen.ui \
-    Forms/startscreen.ui
+    Forms/settingsscreen.ui
 
 # --- Translations ---
 # Qt 6: lrelease + embed_translations generates and embeds .qm automatically from .ts files.

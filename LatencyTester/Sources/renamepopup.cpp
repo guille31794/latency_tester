@@ -1,5 +1,4 @@
 #include "renamepopup.h"
-#include "startscreen.h"
 #include "ui_renamepopup.h"
 
 RenamePopUp::RenamePopUp(QWidget *parent) :
@@ -8,8 +7,6 @@ RenamePopUp::RenamePopUp(QWidget *parent) :
 {
     // Hide close button
     setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
-    connect(this, &RenamePopUp::nameSaved, (StartScreen*)this->parentWidget(), &StartScreen::changedName);
-    connect(this, &RenamePopUp::reEnableRegistryButtons, (StartScreen*)this->parentWidget(), &StartScreen::reEnableRegistryButtons);
     ui->setupUi(this);
     ui->renameText->setAttribute(Qt::WA_AcceptTouchEvents);
 }

@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
     , mHelpInfoScreen(new HelpInfoScreen(this))
     , mRegistryScreen(new RegistryScreen(this))
     , mRegistryDisplayScreen(new RegistryDisplayScreen(this))
-    , mStartScreen(new StartScreen(this))
+    , mMeasureScreen(new MeasureScreen(this))
 {
     // Load settings FIRST (before any UI painting)
     AppSettings::instance().load();
@@ -19,13 +19,13 @@ MainWindow::MainWindow(QWidget *parent)
     setCentralWidget(mStackedWidget);
 
     // Add screens to the stack
-    mStackedWidget->addWidget(mHomeScreen);      // Index 0: Home
-    mStackedWidget->addWidget(mSettingsScreen);   // Index 1: Settings
-    mStackedWidget->addWidget(mHelpScreen);       // Index 2: Help menu
-    mStackedWidget->addWidget(mHelpInfoScreen);   // Index 3: Help info display
-    mStackedWidget->addWidget(mRegistryScreen);   // Index 4: Registry
+    mStackedWidget->addWidget(mHomeScreen);            // Index 0: Home
+    mStackedWidget->addWidget(mSettingsScreen);        // Index 1: Settings
+    mStackedWidget->addWidget(mHelpScreen);            // Index 2: Help menu
+    mStackedWidget->addWidget(mHelpInfoScreen);        // Index 3: Help info display
+    mStackedWidget->addWidget(mRegistryScreen);        // Index 4: Registry
     mStackedWidget->addWidget(mRegistryDisplayScreen); // Index 5: Registry display
-    mStackedWidget->addWidget(mStartScreen);      // Index 6: Legacy (measure only)
+    mStackedWidget->addWidget(mMeasureScreen);         // Index 6: Measure
 
     // Apply theme from settings to the top-level window before showing
     this->setStyleSheet(AppSettings::instance().currentStylesheet());
@@ -51,7 +51,6 @@ MainWindow::MainWindow(QWidget *parent)
         {
             QString daltonicSheet = AppSettings::instance().currentStylesheet()
                 + " * { background-color: rgb(82, 183, 136); }";
-            // Keep back buttons untouched (they have inline style with higher specificity)
             this->setStyleSheet(daltonicSheet);
         }
     });
@@ -109,8 +108,8 @@ MainWindow::MainWindow(QWidget *parent)
         mStackedWidget->setCurrentIndex(REGISTRY);
     });
 
-    // Connect StartScreen back-to-home signal
-    connect(mStartScreen, &StartScreen::backToHome, this, &MainWindow::showHomeScreen);
+    // Connect MeasureScreen back signal
+    connect(mMeasureScreen, &MeasureScreen::backRequested, this, &MainWindow::showHomeScreen);
 
     // Set window size for the target display
     setFixedSize(800, 480);
@@ -138,8 +137,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::showMeasureScreen()
 {
-    mStackedWidget->setCurrentIndex(LEGACY);
-    mStartScreen->navigateTo(MenuScreen::START_MEASURE_SCREEN);
+    mStackedWidget->setCurrentIndex(MEASURE);
 }
 
 void MainWindow::showHistoryScreen()
