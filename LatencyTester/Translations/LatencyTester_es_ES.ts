@@ -77,4 +77,23 @@
         <translation>Renombrar</translation>
     </message>
 </context>
+<context>
+    <name>RegistryDisplayScreen</name>
+    <message>
+        <source>Nombre:</source>
+        <translation>Nombre:</translation>
+    </message>
+    <message>
+        <source>Fecha:</source>
+        <translation>Fecha:</translation>
+    </message>
+    <message>
+        <source>Latencia (ms):</source>
+        <translation>Latencia (ms):</translation>
+    </message>
+    <message>
+        <source>Intervalo (ms):</source>
+        <translation>Intervalo (ms):</translation>
+    </message>
+</context>
 </TS>

@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
     , mHelpScreen(new HelpScreen(this))
     , mHelpInfoScreen(new HelpInfoScreen(this))
     , mRegistryScreen(new RegistryScreen(this))
+    , mRegistryDisplayScreen(new RegistryDisplayScreen(this))
     , mStartScreen(new StartScreen(this))
 {
     // Load settings FIRST (before any UI painting)
@@ -23,7 +24,8 @@ MainWindow::MainWindow(QWidget *parent)
     mStackedWidget->addWidget(mHelpScreen);       // Index 2: Help menu
     mStackedWidget->addWidget(mHelpInfoScreen);   // Index 3: Help info display
     mStackedWidget->addWidget(mRegistryScreen);   // Index 4: Registry
-    mStackedWidget->addWidget(mStartScreen);      // Index 5: Legacy (measure only)
+    mStackedWidget->addWidget(mRegistryDisplayScreen); // Index 5: Registry display
+    mStackedWidget->addWidget(mStartScreen);      // Index 6: Legacy (measure only)
 
     // Apply theme from settings to the top-level window before showing
     this->setStyleSheet(AppSettings::instance().currentStylesheet());
@@ -98,10 +100,13 @@ MainWindow::MainWindow(QWidget *parent)
     // Connect RegistryScreen
     connect(mRegistryScreen, &RegistryScreen::backRequested, this, &MainWindow::showHomeScreen);
     connect(mRegistryScreen, &RegistryScreen::measureSelected, this, [this](const Measures& measure) {
-        // Navigate to legacy StartScreen to display the measure graph
-        mStackedWidget->setCurrentIndex(LEGACY);
-        mStartScreen->navigateTo(MenuScreen::REGISTRY_DISPLAYER_SCREEN);
-        // TODO: pass measure data to display screen when fully refactored
+        mRegistryDisplayScreen->displayMeasure(measure);
+        mStackedWidget->setCurrentIndex(REGISTRY_DISPLAY);
+    });
+
+    // Connect RegistryDisplayScreen back to registry
+    connect(mRegistryDisplayScreen, &RegistryDisplayScreen::backRequested, this, [this]() {
+        mStackedWidget->setCurrentIndex(REGISTRY);
     });
 
     // Connect StartScreen back-to-home signal

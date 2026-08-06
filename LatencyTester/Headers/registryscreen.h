@@ -2,6 +2,7 @@
 #define REGISTRYSCREEN_H
 
 #include "dataModel.hpp"
+#include "dialog.h"
 #include "jsonoperator.h"
 #include <QWidget>
 #include <QPointer>
@@ -47,6 +48,7 @@ private:
     JsonOperator mJsonOperator;
     Measures mMeasure;
     QPointer<RenamePopUp> mRenameWindow;
+    QPointer<Dialog> mDialog;
 };
 
 #endif // REGISTRYSCREEN_H

@@ -13,6 +13,7 @@ RegistryScreen::RegistryScreen(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::RegistryScreen)
     , mRenameWindow(new RenamePopUp(this))
+    , mDialog(new Dialog(this))
 {
     ui->setupUi(this);
     loadRegistry();
@@ -72,6 +73,11 @@ void RegistryScreen::on_checkRegistryEntryButton_released()
     {
         mJsonOperator.parseJsonToStruct(mMeasure);
         emit measureSelected(mMeasure);
+    }
+    else
+    {
+        mDialog->setFileNameText(model->fileName(ui->registryTreeView->currentIndex()));
+        mDialog->show();
     }
 }
 

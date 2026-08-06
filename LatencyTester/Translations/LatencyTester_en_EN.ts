@@ -279,4 +279,23 @@ All rights reserved.</translation>
         <translation>Rename</translation>
     </message>
 </context>
+<context>
+    <name>RegistryDisplayScreen</name>
+    <message>
+        <source>Nombre:</source>
+        <translation>Name:</translation>
+    </message>
+    <message>
+        <source>Fecha:</source>
+        <translation>Date:</translation>
+    </message>
+    <message>
+        <source>Latencia (ms):</source>
+        <translation>Latency (ms):</translation>
+    </message>
+    <message>
+        <source>Intervalo (ms):</source>
+        <translation>Interval (ms):</translation>
+    </message>
+</context>
 </TS>

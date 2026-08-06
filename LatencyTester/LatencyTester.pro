@@ -50,6 +50,7 @@ SOURCES += \
     Sources/jsonoperator.cpp \
     Sources/main.cpp \
     Sources/mainwindow.cpp \
+    Sources/registrydisplayscreen.cpp \
     Sources/registryscreen.cpp \
     Sources/renamepopup.cpp \
     Sources/sensoroperator.cpp \
@@ -69,6 +70,7 @@ HEADERS += \
     Headers/jsonoperator.h \
     Headers/mainwindow.h \
     Headers/pigpio_stub.h \
+    Headers/registrydisplayscreen.h \
     Headers/registryscreen.h \
     Headers/renamepopup.h \
     Headers/sensoroperator.h \
@@ -81,6 +83,7 @@ FORMS += \
     Forms/helpinfoscreen.ui \
     Forms/helpscreen.ui \
     Forms/homescreen.ui \
+    Forms/registrydisplayscreen.ui \
     Forms/registryscreen.ui \
     Forms/renamepopup.ui \
     Forms/settingsscreen.ui \

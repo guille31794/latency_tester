@@ -279,4 +279,23 @@ Wszelkie prawa zastrzeżone.</translation>
         <translation>Zmień nazwę</translation>
     </message>
 </context>
+<context>
+    <name>RegistryDisplayScreen</name>
+    <message>
+        <source>Nombre:</source>
+        <translation>Nazwa:</translation>
+    </message>
+    <message>
+        <source>Fecha:</source>
+        <translation>Data:</translation>
+    </message>
+    <message>
+        <source>Latencia (ms):</source>
+        <translation>Opóźnienie (ms):</translation>
+    </message>
+    <message>
+        <source>Intervalo (ms):</source>
+        <translation>Interwał (ms):</translation>
+    </message>
+</context>
 </TS>
