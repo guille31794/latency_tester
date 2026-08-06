@@ -102,7 +102,8 @@ HEADERS += \
     Core/tst_sensoroperator.h \
     GUI/tst_homescreen.h \
     GUI/tst_measurescreen.h \
-    GUI/tst_settingsscreen.h
+    GUI/tst_settingsscreen.h \
+    GUI/tst_helpscreen.h
 
 SOURCES += \
     main.cpp \
@@ -112,5 +113,6 @@ SOURCES += \
     Core/tst_sensoroperator.cpp \
     GUI/tst_homescreen.cpp \
     GUI/tst_measurescreen.cpp \
-    GUI/tst_settingsscreen.cpp
+    GUI/tst_settingsscreen.cpp \
+    GUI/tst_helpscreen.cpp
 
