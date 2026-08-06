@@ -15,6 +15,8 @@ JsonOperator::JsonOperator(const QString &path): mPath{path}
 bool JsonOperator::loadFileFromDisk(const QString &fileName, QIODevice::OpenModeFlag openMode)
 {
     bool loadSuccess{true};
+
+    delete mFile;
     mFile = new QFile(fileName);
 
     if(!mFile->exists())
@@ -45,6 +47,8 @@ bool JsonOperator::saveMeasureToDisk(const Measures &registry)
 
     // Replace colons in ISO date (invalid in Windows filenames)
     QString safeDate = registry.date.toString(Qt::ISODate).replace(":", "-");
+
+    delete mFile;
     mFile = new QFile(mPath + safeDate + MEASURE);
 
     if(mFile->open(QIODevice::OpenModeFlag::WriteOnly))
