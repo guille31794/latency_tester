@@ -153,7 +153,7 @@ Para comenzar, se dice que un sistema de videovigilancia es aquel que permite a 
  
 A su vez, un sistema de videovigilancia es crítico cuando tiene que funcionar “en tiempo real”, es decir, ser capaz de captar una imagen, y mostrarla en un monitor con un tiempo de latencia suficientemente bajo como para que el operador de cámaras no tenga sensación de disonancia entre las entradas que recibe la cámara y el tiempo que tarda ésta en dar una respuesta a dichas entradas.
 
-Se vuelve importante este hecho en entornos donde se conjugan un altísimo nivel de seguridad, con la necesidad de una respuesta muy rápida a cualquier evento que se produzca y pueda afectar a la mísma.
+Se vuelve importante este hecho en entornos donde se conjugan un altísimo nivel de seguridad, con la necesidad de una respuesta muy rápida a cualquier evento que se produzca y pueda afectar a la misma.
 
 Se contextualiza este concepto, en el hecho que se conoce como revolución digital, cuyo avance ha afectado enormemente a los dispositivos y medios de captación de imágenes y su posterior tratamiento y adecuación al medio en el que serán utilizadas.
  
@@ -221,7 +221,7 @@ El objetivo de este proyecto es el desarrollo del software embebido que controla
 
 \begin{itemize}
     \item Describir las pautas y comportamientos que tiene un sistema de videovigilancia crítico.
-    \item Estudiar como afectan los distintos componentes de un sistema de videovigilancia a su latencia.
+    \item Estudiar cómo afectan los distintos componentes de un sistema de videovigilancia a su latencia.
     \item Establecer el proceso a seguir a la hora de medir distintos sistemas de videovigilancia con distintas características.
     \item Desarrollar el software capaz de coordinar los componentes del equipo de medición, calcular las latencias de un sistema de videovigilancia y representarlas gráficamente a través de una interfaz de usuario.
     \item Desplegar e instalar el software desarrollado en el dispositivo hardware de destino, verificando su correcto funcionamiento.
@@ -469,7 +469,7 @@ Otro hito de esta generación es la inclusión de una película de iones, que ac
     \label{fig:second_gen_example}
 \end{figure}
 
-Los dispositivos de visión nocturna de de tercera generación típicos, ven resoluciones de aproximadamente 64 a 72 pares de lineas por milímetro y se benefician de una fuente de alimentación de alto voltaje. Los más actuales, también utilizan una fuente de alimentación cerrada, comúnmente conocida como Autogating. Esta fuente provee de rendimiento aumentado en entornos urbanos donde existen condiciones excesivas de luz ambiental, la cuales, crean lo que comúnmente se conoce como efecto blooming o halo. Este efecto consiste en la pérdida de porciones o de la mísma imagen completa, debido a sobrecargas por una fuente de luz brillante, que blanquean la imagen.
+Los dispositivos de visión nocturna de tercera generación típicos, ven resoluciones de aproximadamente 64 a 72 pares de lineas por milímetro y se benefician de una fuente de alimentación de alto voltaje. Los más actuales, también utilizan una fuente de alimentación cerrada, comúnmente conocida como Autogating. Esta fuente provee de rendimiento aumentado en entornos urbanos donde existen condiciones excesivas de luz ambiental, la cuales, crean lo que comúnmente se conoce como efecto blooming o halo. Este efecto consiste en la pérdida de porciones o de la misma imagen completa, debido a sobrecargas por una fuente de luz brillante, que blanquean la imagen.
 El autogating minimiza las interferencias de estas luces brillantes encendiéndose y apagándose a un ritmo que es indetectable para el usuario incrementando así la efectividad de estos dispositivos en entornos urbanos. Ver Figura \ref{fig:third_gen}.
 
 \begin{figure}[H]
@@ -581,7 +581,7 @@ Todo proyecto tiene una duración, y necesita de una organización y una gestió
 Se ha organizado el desarrollo del proyecto en fases bien diferenciadas que son las que irán marcando la pauta de actuación. Son:
 
 \begin{enumerate}
-    \item \textcolor{OliveGreen}{Fase de reunión de información}: recavar sobre como comenzar el proyecto. Hacer acopio de bibliografía que pueda ser útil.
+    \item \textcolor{OliveGreen}{Fase de reunión de información}: recabar sobre cómo comenzar el proyecto. Hacer acopio de bibliografía que pueda ser útil.
     \item \textcolor{Gray}{Fase de acopio de materiales}: momento de recopilación de materiales físicos, placas programables, sensores, e instalaciones de software necesarias para el desarrollo del proyecto.
     \item \textcolor{Blue}{Fase de prototipado de idea}: desarrollo de un prototipo semifuncional a bajísimo coste y pequeña escala que demuestre que la idea es viable para el proyecto.
     \item \textcolor{RoyalPurple}{Fase de redacción introductoria}: comienzo del documento científico del proyecto.
@@ -661,7 +661,7 @@ Se comienza trabajando en el entorno de la optrónica militar, en el sector defe
 
 Descubierta la necesidad, se plantea darle una solución lo más económica posible, pero que a su vez sea funcional. Acaba de surgir la propuesta de este documento, la creación de un equipo de medición de latencias para sistemas de videovigilancia críticos y en general, cualquier dispositivo analógico o digital susceptible de tomar una imagen en movimiento y retransmitirla a una pantalla monitora.
 
-Es en este punto cuando se dedican esfuerzos a recavar información sobre como afrontar el problema y que propuestas pueden ser viables. 
+Es en este punto cuando se dedican esfuerzos a recabar información sobre cómo afrontar el problema y qué propuestas pueden ser viables.
 Se parte de la base de que la medición de latencias no es un concepto nuevo en la industria y puede resumirse de manera sencilla en un dispositivo que emite un estímulo de entrada al dispositivo al que se tomarán las medidas, y con un sensor se capta la salida de dicho dispositivo ya procesada. La diferencia entre el tiempo transcurrido desde que se emite el estímulo hasta que se capta la salida, es la latencia. En el caso de nuestro equipo de medición, el funcionamiento será exactamente igual. 
 
 Nuestra placa tomará un tiempo de inicio y emitirá una señal de encendido a una bombilla LED que hará de estimulador lumínico para la cámara. Esta, procesará la imagen y la retransmitirá a un monitor donde será proyectado el estímulo. En ese momento, un fotosensor captará el cambio de luz en la pantalla y enviará una señal a la placa para tomar el tiempo final. En última instancia, la placa realizará el calculo de la latencia y lo mostrará por pantalla. Este mismo proceso será realizado varias veces, para maximizar la efectividad del experimento y promediar un tiempo de latencia con mayor exactitud. Se ejemplifica en la Figura \ref{fig:latency_tester}.
@@ -696,8 +696,8 @@ Durante las etapas de gestación y propuesta de este mismo proyecto, se ha reali
 
 \subsection{Entorno del producto}
 
-El producto nace bajo el paraguas de la optrónica para ser utilizado en entornos empresariales e industriales, a fin de poder los rendimientos de equipos militares de videovigilancia militares, pero lo cierto es que su aplicación puede extenderse a cualquier equipo de grabación de vídeos que lo requiera, y generalizarse su utilización al ámbito doméstico sin problemas.
-Por ejemplo, dándonos una medición de cuanto tarda un una imagen desde que es captada por la lente de nuestro teléfono, hasta que esta es proyectada en la pantalla del mismo, o cuanto retardo tienen una cámara ip o webcam al retransmitir a través de una red local o directamente en streaming a través de una conexión al exterior teniendo en cuenta procesados intermedios, latencias de la red, e incluso de tiempos de respuesta y refresco del monitor.
+El producto nace bajo el paraguas de la optrónica para ser utilizado en entornos empresariales e industriales, a fin de poder medir los rendimientos de equipos de videovigilancia militares, pero lo cierto es que su aplicación puede extenderse a cualquier equipo de grabación de vídeos que lo requiera, y generalizarse su utilización al ámbito doméstico sin problemas.
+Por ejemplo, dándonos una medición de cuánto tarda una imagen desde que es captada por la lente de nuestro teléfono, hasta que esta es proyectada en la pantalla del mismo, o cuánto retardo tienen una cámara ip o webcam al retransmitir a través de una red local o directamente en streaming a través de una conexión al exterior teniendo en cuenta procesados intermedios, latencias de la red, e incluso de tiempos de respuesta y refresco del monitor.
 
 \section{Funciones}
 
@@ -728,7 +728,7 @@ Entre las posibles restricciones que se han encontrado a la hora de crear el equ
 
 \subsection{Tecnologías empleadas}
 
-Se llevará a cabo el desarrollo e implementación del software del equipo de medición de latencias utilizando las siguientes herraminetas de programación que serán citados y descritos a continuación:
+Se llevará a cabo el desarrollo e implementación del software del equipo de medición de latencias utilizando las siguientes herramientas de programación que serán citadas y descritas a continuación:
 
 \begin{itemize}
     \item Lenguaje de programación C++ \cite{c++}. En su estándar 2020, utilizando su compilador GNU g++, en su versión 11. Será el lenguaje elegido por preferencia personal del autor, y al ser un lenguaje más cercano al entorno hardware que a menudo proporciona un rendimiento de ejecución superior en todas las aplicaciones.
@@ -746,7 +746,7 @@ Se llevará a cabo el desarrollo e implementación del software del equipo de me
 
 Respecto a la gestión de dependencias externas, se ha optado por la utilización de submódulos de Git para incorporar al repositorio del proyecto aquellas bibliotecas de terceros que se mantienen en repositorios externos. En concreto, la biblioteca rpi\_ads1115 se gestiona como un submódulo Git que referencia el repositorio original de su autor. Este enfoque permite mantener un vínculo directo con la fuente original, facilitar las actualizaciones futuras de la dependencia y mantener separado el código propio del código de terceros. La biblioteca QCustomPlot, por su parte, se incluye directamente en el repositorio al haber sido parcheada para garantizar su compatibilidad con Qt 6.
 
-Tras la comparativa técnica realizada en \ref{hardware}, a continuación se mostrará otra tabla comparativa que, al final, acabará desembocando la conclusión de porqué se ha elegido la Raspberry Pi Model 3B en lugar del Arduino Uno u otras posibles alternativas. Ver tabla \ref{tab:hardware2}.
+Tras la comparativa técnica realizada en \ref{hardware}, a continuación se mostrará otra tabla comparativa que, al final, acabará desembocando en la conclusión de por qué se ha elegido la Raspberry Pi Model 3B en lugar del Arduino Uno u otras posibles alternativas. Ver tabla \ref{tab:hardware2}.
 
 \begin{table}[H]
 \caption{Comparativa de placas programables II}
@@ -1106,7 +1106,7 @@ Excepciones               & \tabitem \hyperref[ex1]{Paso 4}. Si el usuario pulsa
                           & el almacenamiento. \\ \hline
 Comentarios               & El número máximo de mediciones a guardar dependerá \\
                           & del almacenamiento disponible en la tarjeta sd y de \\
-                          & la longitud de las mísmas. El tiempo máximo de una \\
+                          & la longitud de las mismas. El tiempo máximo de una \\
                           & medición será de 60 minutos. \\ \hline
 
 \end{longtable}
