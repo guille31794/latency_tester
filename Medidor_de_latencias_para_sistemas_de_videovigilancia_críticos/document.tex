@@ -1970,6 +1970,171 @@ Para finalizar la instalación se instalara la tarjeta micro sd con el software 
 
 \section{Implementación}
 
+En esta sección se describe el proceso de implementación del software del medidor de latencias, detallando las decisiones técnicas tomadas, los problemas encontrados y las soluciones aplicadas durante el desarrollo de cada módulo.
+
+\subsection{Entorno de desarrollo y configuración inicial}
+
+El desarrollo se ha realizado sobre Windows 11 con Qt Creator 16 como entorno de desarrollo integrado, utilizando Qt 6.11.1 con el compilador MinGW 13.1.0 (64 bits) para la compilación Desktop. Paralelamente, se ha verificado la compilación en Linux (Ubuntu) con Clang y GCC para garantizar la portabilidad del código.
+
+La elección de \textbf{qmake} como sistema de construcción se debe a su integración nativa con Qt Creator y su capacidad para gestionar automáticamente el preprocesador de meta-objetos (MOC), la compilación de formularios (.ui), la generación de traducciones (.qm) y la detección condicional de plataforma (ARM vs x86-64).
+
+Se configuró un proyecto SUBDIRS con dos sub-proyectos: la aplicación principal (\texttt{LatencyTester.pro}) y la batería de pruebas (\texttt{Tests.pro}), permitiendo al desarrollador elegir qué compilar en cada momento.
+
+\subsubsection{Compilación cruzada para Raspberry Pi}
+
+Se configuró un kit de compilación cruzada ARM GNU Toolchain que permite generar binarios para la Raspberry Pi directamente desde la máquina de desarrollo x86-64. El fichero \texttt{.pro} detecta automáticamente la arquitectura de destino y condiciona las dependencias:
+\begin{itemize}
+    \item En ARM: define \texttt{RASPBERRY\_PI}, enlaza \texttt{pigpio} y \texttt{libgpiod}, incluye el driver real del ADS1115.
+    \item En Desktop: utiliza stubs que simulan las operaciones GPIO y ADC sin hardware real.
+\end{itemize}
+
+\subsubsection{Workaround para QCustomPlot con Qt 6.8+}
+
+La biblioteca QCustomPlot 2.1.0 utiliza \texttt{Q\_GADGET} dentro de un namespace, lo cual es incompatible con la generación constexpr de metaobjetos introducida en Qt 6.8. Se resolvió definiendo \texttt{QT\_NO\_CONSTEXPR\_METAOBJECT\_DATA} en el \texttt{.pro} y parcheando manualmente el fichero \texttt{qcustomplot.h} para evitar el truco de la clase falsa que QCustomPlot usa para registrar enums en el sistema de meta-tipos. Además, se actualizaron las APIs deprecadas: \texttt{mirrored()} por \texttt{flipped()}, \texttt{toTimeSpec()} por \texttt{toTimeZone()}, y \texttt{startOfDay(Qt::TimeSpec)} por \texttt{startOfDay(QTimeZone)}.
+
+\subsection{Arquitectura Core/GUI}
+
+Se adoptó una arquitectura de separación estricta entre lógica de negocio (Core) y presentación (GUI). La motivación principal fue:
+\begin{itemize}
+    \item Facilitar las pruebas unitarias de la lógica sin necesidad de instanciar interfaz gráfica.
+    \item Permitir la reutilización del Core en futuras versiones del producto (por ejemplo, una interfaz web).
+    \item Reducir el acoplamiento entre módulos, mejorando la mantenibilidad.
+\end{itemize}
+
+Inicialmente, toda la funcionalidad residía en una única clase monolítica (\texttt{StartScreen}) que gestionaba las 8 pantallas, la navegación, la configuración, las traducciones y el control del sensor. Este diseño, heredado de la primera versión del prototipo, fue refactorizado completamente en la siguiente fase.
+
+\subsection{Refactorización: de StartScreen monolítico a pantallas independientes}
+
+El mayor esfuerzo de ingeniería del proyecto consistió en descomponer los más de 600 líneas de \texttt{startscreen.cpp} en clases independientes. El proceso se realizó de forma incremental:
+
+\begin{enumerate}
+    \item \textbf{HomeScreen}: extracción de los 4 botones de navegación del menú principal.
+    \item \textbf{SettingsScreen}: extracción de los widgets de configuración (idioma, fuente, modos) con su lógica de Apply/Cancel.
+    \item \textbf{HelpScreen} + \textbf{HelpInfoScreen}: separación del menú de ayuda y el visor de contenido.
+    \item \textbf{RegistryScreen}: extracción del historial de mediciones (TreeView + acciones).
+    \item \textbf{RegistryDisplayScreen}: visualización de mediciones guardadas con gráfica.
+    \item \textbf{MeasureScreen}: extracción de la pantalla de mediciones con toda su lógica asíncrona.
+    \item Eliminación completa de \texttt{StartScreen} y del enum \texttt{MenuScreen}.
+\end{enumerate}
+
+La clase \textbf{MainWindow} se creó como controlador central de navegación, utilizando un \texttt{QStackedWidget} con 7 pantallas indexadas. La comunicación entre pantallas se realiza exclusivamente mediante signals/slots de Qt, eliminando cualquier dependencia directa entre widgets.
+
+\subsubsection{Dificultades encontradas}
+
+\begin{itemize}
+    \item \textbf{Dependencia circular RenamePopUp/StartScreen}: el popup de renombrar conectaba sus señales directamente al \texttt{StartScreen} en el constructor mediante un cast al padre. Se resolvió moviendo las conexiones al \texttt{RegistryScreen} que instancia el popup, desacoplando completamente ambas clases.
+    \item \textbf{Traducción inglés→español al arranque}: al iniciar la aplicación en inglés y cambiar a español, la traducción no se aplicaba. El problema era que \texttt{removeTranslator} no disparaba \texttt{LanguageChange} si no había un translator instalado previamente. La solución fue crear un fichero de traducción identidad para español (donde source = translation) e instalarlo siempre, garantizando que el evento se emite en todos los casos.
+    \item \textbf{Bloqueo de señales durante carga de ajustes}: al restaurar los valores de los widgets desde \texttt{AppSettings}, cada \texttt{setValue}/\texttt{setChecked} disparaba las señales de cambio, habilitando prematuramente el \texttt{QDialogButtonBox}. Se resolvió bloqueando las señales de los widgets durante la carga y restaurándolas después.
+\end{itemize}
+
+\subsection{Módulo AppSettings (Singleton de configuración)}
+
+Se implementó como un singleton (\texttt{static AppSettings\& instance()}) que centraliza:
+\begin{itemize}
+    \item Carga y guardado de configuración mediante \texttt{QSettings} (registro en Windows, fichero ini en Linux).
+    \item Almacenamiento de hojas de estilo (light/dark) y colores de modo daltónico.
+    \item Emisión de señales granulares: solo se emite la señal del parámetro que realmente cambió al llamar a \texttt{applySettings()}.
+\end{itemize}
+
+El \texttt{MainWindow} escucha la señal \texttt{settingsApplied()} para re-aplicar temas, fuentes y modo daltónico de forma global a todos los hijos, excluyendo expresamente el botón de retroceso (que mantiene siempre 24pt bold amarillo).
+
+\subsection{Módulo JsonOperator (Persistencia de mediciones)}
+
+Gestiona la serialización de mediciones a formato JSON y su almacenamiento en disco. El formato elegido es sencillo y legible:
+\begin{verbatim}
+{ "Name": "...", "Date": "ISO8601",
+  "TimeFactor": N, "Duration": N, "Latencies": [...] }
+\end{verbatim}
+
+\subsubsection{Bugs detectados y corregidos}
+
+\begin{enumerate}
+    \item \textbf{Lógica if invertida}: la función \texttt{saveMeasureToDisk()} tenía un \texttt{if(!mFile->open(...))} que provocaba que la escritura se intentase dentro del bloque de error. El fichero nunca se creaba realmente. Detectado por los tests unitarios.
+    \item \textbf{Caracteres ilegales en nombres de fichero}: \texttt{QDateTime::toString(Qt::ISODate)} produce colons (e.g., \texttt{T08:00:00}) que Windows rechaza en nombres de fichero. Corregido reemplazando \texttt{:} por \texttt{-} antes de construir la ruta.
+    \item \textbf{Memory leak}: cada llamada a \texttt{loadFileFromDisk()} o \texttt{saveMeasureToDisk()} creaba un nuevo \texttt{QFile} con \texttt{new} sin liberar el anterior. Detectado por AddressSanitizer en Linux. Corregido añadiendo \texttt{delete mFile;} antes de cada nueva asignación.
+\end{enumerate}
+
+\subsection{Módulo SensorOperator (Control del hardware)}
+
+Controla el LED estimulador (GPIO 24) y el fotosensor (ADS1115 ADC vía I2C). La lógica implementada incluye:
+
+\begin{description}
+    \item[Calibración] 4 ciclos de parpadeo LED (500ms on/off). Durante la fase off se muestrean lecturas del fotosensor para establecer un baseline ambiental. El umbral de detección se fija en baseline + 20\%.
+    \item[Medición] Para cada pulso: LED off (50ms estabilización), LED on, polling del sensor hasta superar el umbral (timeout 5s). La diferencia temporal es la latencia. Se registra -1 para mediciones fallidas.
+    \item[Interrupción] Un flag atómico (\texttt{mStopMeasure}) permite interrumpir cualquier operación en curso desde el hilo de la GUI.
+\end{description}
+
+Las operaciones de calibración y medición se ejecutan en hilos background mediante \texttt{QtConcurrent::run()}, evitando bloquear la interfaz gráfica. Un \texttt{QFutureWatcher} notifica la finalización y dispara la actualización de la UI.
+
+\subsubsection{Stubs para desarrollo Desktop}
+
+Se crearon ficheros stub (\texttt{pigpio\_stub.h}, \texttt{ads1115rpi\_stub.h}) que implementan las mismas interfaces que las bibliotecas de hardware reales, pero con operaciones no-op. Esto permite compilar y probar toda la aplicación en un ordenador sin Raspberry Pi ni sensores conectados.
+
+\subsection{Interfaz gráfica: pantalla de mediciones (MeasureScreen)}
+
+La pantalla de mediciones es la más compleja de la aplicación. Incluye:
+
+\begin{itemize}
+    \item \textbf{Gráfica en tiempo real}: implementada con QCustomPlot. La función \texttt{plotMeasure()} utiliza paralelización mediante \texttt{QtConcurrent::run()} para datasets superiores a 100 puntos, dividiendo el filtrado de datos entre todos los núcleos disponibles.
+    \item \textbf{Flash visual no-bloqueante}: un \texttt{QTimer} cicla colores en el botón activo (verde/oscuro durante operación, verde/rojo al finalizar). No utiliza busy-wait, preservando la responsividad de la interfaz.
+    \item \textbf{Deshabilitación selectiva de widgets}: durante calibración o medición, todos los botones y sliders se deshabilitan excepto el botón Detener, que permite interrumpir la operación.
+    \item \textbf{Sliders con valor numérico}: las etiquetas muestran en tiempo real el valor configurado con su unidad (\texttt{tr("Intervalo entre mediciones: \%1 ms")}), y se actualizan también al cambiar de idioma.
+\end{itemize}
+
+\subsection{Modos de visualización}
+
+Se implementaron dos modos ortogonales de visualización:
+
+\begin{description}
+    \item[Modo nocturno (Dark Mode)] Hoja de estilo completa con fondo oscuro (\texttt{rgb(35,35,50)}), botones con bordes semitransparentes, combos, checkboxes y sliders con estilos coherentes. Se aplica a nivel de \texttt{MainWindow} (herencia CSS).
+    \item[Modo daltónico] Paleta de alto contraste (fondo verde \texttt{rgb(82,183,136)}, botón atrás rojo \texttt{rgb(157,2,8)}). Tiene prioridad sobre el modo nocturno: se aplica después, sobreescribiendo los colores afectados.
+\end{description}
+
+Ambos modos persisten entre sesiones vía \texttt{QSettings}.
+
+\subsection{Sistema de internacionalización (i18n)}
+
+La aplicación soporta tres idiomas (español, inglés, polaco) mediante el sistema estándar de traducciones de Qt:
+
+\begin{enumerate}
+    \item Todas las cadenas visibles se marcan con \texttt{tr()}.
+    \item Ficheros \texttt{.ts} (XML) contienen las traducciones organizadas por contexto (nombre de clase).
+    \item La directiva \texttt{embed\_translations} de Qt 6 compila e incrusta los ficheros \texttt{.qm} directamente en el binario sin necesidad de ficheros \texttt{.qrc} adicionales.
+    \item Cada pantalla implementa \texttt{changeEvent(QEvent::LanguageChange)} para llamar a \texttt{retranslateUi(this)} y actualizar textos dinámicos.
+\end{enumerate}
+
+\subsection{Manual de usuario integrado (HTML embebido)}
+
+Se desarrolló una versión condensada del manual de usuario en formato HTML (uno por idioma) que se embebe en el binario mediante un fichero \texttt{.qrc}. La pantalla \texttt{HelpInfoScreen} utiliza un \texttt{QTextBrowser} para renderizar el HTML con navegación por anclas internas. El botón ``Manual de usuario'' en \texttt{HelpScreen} se habilita o deshabilita automáticamente según exista el recurso HTML para el idioma activo, verificado mediante \texttt{QFile::exists()} sobre la ruta \texttt{qrc:/}.
+
+\subsection{Scripts de automatización}
+
+Se desarrollaron scripts para Windows (PowerShell) y Linux (Bash) que automatizan:
+\begin{itemize}
+    \item Compilación en modo Release con paralelización (\texttt{-j8} / \texttt{-j\$(nproc)}).
+    \item Generación de documentación Doxygen con diagramas SVG (Graphviz).
+    \item Limpieza de artefactos de compilación.
+\end{itemize}
+
+Los scripts detectan automáticamente la presencia de las herramientas necesarias (\texttt{qmake}, \texttt{make}/\texttt{mingw32-make}, \texttt{doxygen}) e informan al usuario si alguna no está disponible.
+
+\subsection{Detección de errores de memoria (AddressSanitizer)}
+
+Se integró AddressSanitizer (ASan) en las compilaciones Debug sobre Linux. Los flags \texttt{-fsanitize=address -fno-omit-frame-pointer} se activan condicionalmente en el \texttt{.pro} mediante la directiva \texttt{linux \{\}}. En Windows con MinGW no se activa al no disponer de la librería \texttt{libasan}.
+
+El análisis con ASan reveló una fuga de memoria real en \texttt{JsonOperator}: cada llamada a \texttt{loadFileFromDisk()} asignaba un nuevo \texttt{QFile} sin liberar el anterior, acumulando 448 bytes por operación. El resto de alertas correspondieron a falsos positivos de fontconfig (cache de fuentes del sistema) y pools internos de Qt.
+
+\subsection{Pruebas unitarias}
+
+Se implementó una batería completa de 147 tests unitarios distribuidos en 10 suites, cubriendo tanto la capa Core como la capa GUI:
+
+\begin{itemize}
+    \item \textbf{Core}: verificación de valores por defecto de estructuras de datos, persistencia de configuración con señales, serialización/deserialización JSON (incluyendo ficheros corruptos y campos faltantes), y validación de parámetros del sensor.
+    \item \textbf{GUI}: instanciación de widgets, existencia y estado de botones/sliders, emisión de señales al interactuar con la interfaz (\texttt{QTest::mouseClick} + \texttt{QSignalSpy}), y verificación de la lógica Apply/Cancel en ajustes.
+\end{itemize}
+
+Las pruebas no requieren hardware ni display físico (se ejecutan offscreen) y detectaron tres bugs reales en producción que se corrigieron antes de la entrega.
+
 \section{Pruebas y validación}
 
 \chapter{Resumen}
@@ -1985,7 +2150,7 @@ Para finalizar la instalación se instalara la tarjeta micro sd con el software 
 Son muchas las personas que han contribuido tanto con aportaciones físicas, como con ideas a la realización de este proyecto de Medición de latencias para sistemas de videovigilancia críticos y es por ello que quiero dedicar estas líneas del documento para una mención y muestra de gratitud.
 
 En primer lugar, a Arturo Hernandez Rico, mi jefe de proyectos en GTD Defense \& Security, por la idea de llevar a término este aparato y una serie de alternativas ofrecidas. A continuación agradezco al Dr. Andrés Yañez Escolano de la Escuela Superior de Ingeniería del Campus de Puerto Real, el prestamo de una placa Raspberry Pi 3 Model B junto con una tarjeta de memoria durante la crisis de los semiconductores acaecida en los últimos meses, la cual ha convertido en una auténtica odisea y a precios desorbitados conseguir una pieza de hardware como la mencionada anteriormente para poder comenzar con el proyecto. Agradecer también a mi tutor Dr. Gabriel Guerrero Contreras por todos los buenos consejos, recomendaciones y disponibilidad facilitadas durante este ejercicio. 
-Aunque sin participación directa, me gustaría agradecer a mi familia y amigos por los ánimos proporcionados para acabar el proyecto.
+Aunque sin participación directa, me gustaría agradecer a mi familia y amigos por los ánimos proporcionados para acabar el proyecto. Al Dr. Alberto Paramio Leiva por realizarme una revisión con una opinión sincera del proyecto una vez terminado el documento y la implementación. En especial, a mi prometida, Ana Pastor Muñoz, que ha aguantado sin poder disfrutar completamente sus vacaciones para que pueda sentarme a desarrollarlo y estudiar, por la paciencia que ha tenido conmigo, el esfuerzo realizado y todo el apoyo que me ha brindado, gracias de corazón.
 
 En último lugar, y aunque no les conozca en persona, quiero agradecer a Jim, miembro del foro de Raspberry Pi, toda su asistencia a la hora de ayudarme a conseguir una compilación cruzada para el proyecto alineada con mis deseos, y a todos esos programadores de bibliotecas de funciones anónimos en muchos casos de los que he podido tomar parte de su altruista trabajo para incorporar a este proyecto. A todos vosotros, sinceramente, gracias.
 
