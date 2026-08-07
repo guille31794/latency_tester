@@ -2137,6 +2137,219 @@ Las pruebas no requieren hardware ni display físico (se ejecutan offscreen) y d
 
 \section{Pruebas y validación}
 
+En esta sección se describe la infraestructura de pruebas establecida para validar el correcto funcionamiento del software del medidor de latencias. Se detallan las herramientas utilizadas, las distintas aproximaciones exploradas para emular el hardware destino, las dificultades encontradas y la configuración final adoptada.
+
+\subsection{Estrategia de pruebas}
+
+Se adoptó una estrategia de validación en tres niveles complementarios:
+
+\begin{enumerate}
+    \item \textbf{Pruebas unitarias} (automatizadas, sin hardware): verificación funcional de cada módulo de forma aislada, ejecutables en cualquier máquina de desarrollo.
+    \item \textbf{Análisis de memoria} (automatizado, sin hardware): detección de fugas de memoria y accesos inválidos mediante instrumentación del binario.
+    \item \textbf{Validación sobre plataforma destino} (o emulación de la misma): ejecución del binario ARM64 completo en un entorno equivalente a la Raspberry Pi para verificar el correcto funcionamiento gráfico y la integración de componentes.
+\end{enumerate}
+
+\subsection{Pruebas unitarias con QTest}
+
+Se eligió QTest (Qt Test) como framework de pruebas unitarias por las siguientes razones:
+\begin{itemize}
+    \item Todo el código del proyecto depende de tipos Qt (\texttt{QString}, \texttt{QVector}, \texttt{QSettings}, signals/slots), lo que hace innecesaria la introducción de un framework externo como Google Test.
+    \item QTest se integra nativamente con el event loop de Qt, permitiendo probar comportamientos asíncronos y señales.
+    \item \texttt{QSignalSpy} permite verificar la emisión de señales de forma determinista.
+    \item \texttt{QTest::mouseClick} y \texttt{QTest::keyClick} permiten simular interacción de usuario sobre widgets sin necesidad de display físico (ejecución offscreen).
+\end{itemize}
+
+\subsubsection{Arquitectura del sub-proyecto de tests}
+
+Los tests se compilan como un binario independiente (\texttt{LatencyTesterTests}) mediante un sub-proyecto qmake (\texttt{Tests.pro}) que comparte las fuentes del proyecto principal pero añade las suites de test. La compilación de los tests se condiciona a la configuración Debug mediante un proyecto SUBDIRS en la raíz:
+
+\begin{verbatim}
+SUBDIRS += LatencyTester
+CONFIG(debug, debug|release) {
+    SUBDIRS += Tests
+    Tests.depends = LatencyTester
+}
+\end{verbatim}
+
+\subsubsection{Cobertura de pruebas}
+
+Se implementaron 147 tests distribuidos en 10 suites, cubriendo ambas capas de la arquitectura:
+
+\begin{table}[H]
+\centering
+\caption{Resumen de suites de pruebas unitarias}
+\label{tab:test_suites}
+\begin{tabular}{|p{4.5cm}|p{1cm}|p{7cm}|}
+\hline
+\textbf{Suite} & \textbf{Tests} & \textbf{Cobertura} \\ \hline
+tst\_datamodel & 17 & Valores por defecto de structs, edge cases (duration=0, timeFactor negativo). \\ \hline
+tst\_appsettings & 23 & Singleton, load/save QSettings, emisión de señales, stylesheets light/dark/daltonic. \\ \hline
+tst\_jsonoperator & 14 & Parse JSON valido/invalido, save/load round-trip, ficheros corruptos, campos faltantes. \\ \hline
+tst\_sensoroperator & 14 & Validación parametros, interrupción con stop, calibración con stubs, timeout. \\ \hline
+tst\_homescreen & 10 & Botones de navegación, emisión de señales, existencia de widgets. \\ \hline
+tst\_measurescreen & 14 & Botones, sliders (rango, labels), gráfica, estado stopButton deshabilitado. \\ \hline
+tst\_settingsscreen & 20 & Apply/cancel, sincronización widgets-settings, habilitación buttonBox. \\ \hline
+tst\_helpscreen & 11 & Botón manual habilitado/deshabilitado según recurso HTML del idioma. \\ \hline
+tst\_registryscreen & 10 & TreeView con modelo, botones de acción, señales. \\ \hline
+tst\_registrydisplayscreen & 14 & displayMeasure con datos mock, ploteo, edge case latencies vacías. \\ \hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Ejecución de los tests}
+
+\begin{verbatim}
+# Todos los tests
+./LatencyTesterTests
+
+# Un test especifico por nombre de funcion
+./LatencyTesterTests test_saveMeasure_roundTrip
+
+# Verbose (muestra cada test)
+./LatencyTesterTests -v1
+
+# Exportar resultados en XML
+./LatencyTesterTests -o results.xml,xml
+\end{verbatim}
+
+\subsection{Análisis de memoria con AddressSanitizer}
+
+Para la detección de fugas de memoria, desbordamientos de buffer y accesos a memoria liberada, se integró AddressSanitizer (ASan) en las compilaciones Debug sobre Linux. Los flags de compilación se activan condicionalmente en el fichero \texttt{.pro}:
+
+\begin{verbatim}
+linux {
+    QMAKE_CXXFLAGS += -fsanitize=address -fno-omit-frame-pointer
+    QMAKE_LFLAGS += -fsanitize=address
+}
+\end{verbatim}
+
+En Windows con MinGW no se activa al no disponer de la librería \texttt{libasan} en la distribución de MinGW que empaqueta Qt.
+
+\subsubsection{Limitación en Windows}
+
+La versión de MinGW 13.1.0 incluida con Qt 6.11 no distribuye \texttt{libasan}. El intento de compilar con \texttt{-fsanitize=address} en Windows produce el error:
+\begin{verbatim}
+ld.exe: cannot find -lasan: No such file or directory
+\end{verbatim}
+
+Se resolvió condicionando los flags a la plataforma Linux, donde GCC/Clang sí incluyen ASan de serie.
+
+\subsection{Entorno de emulación: aproximaciones exploradas}
+
+Para validar el binario ARM64 sin disponer permanentemente de la Raspberry Pi física, se exploraron tres aproximaciones de emulación, cada una con distinto nivel de fidelidad y complejidad.
+
+\subsubsection{Aproximación 1: QEMU con máquina raspi3b}
+
+Se intentó emular directamente la Raspberry Pi 3 Model B con QEMU utilizando la máquina \texttt{raspi3b}:
+
+\begin{verbatim}
+qemu-system-aarch64 -machine raspi3b -cpu cortex-a53 -m 1024 \
+  -kernel kernel8.img -dtb bcm2710-rpi-3-b.dtb \
+  -drive file=imagen.img,format=raw,if=sd ...
+\end{verbatim}
+
+\textbf{Dificultades encontradas}:
+\begin{itemize}
+    \item La extracción del kernel de la imagen requiere montar la partición boot con offset calculado manualmente (\texttt{mount -o loop,offset=\$((Start*512))}). Los comandos \texttt{losetup --partscan} no funcionaban correctamente en todas las distribuciones.
+    \item Las imágenes recientes de Raspi OS utilizan sectores de 4096 bytes en lugar de 512, generando warnings de \texttt{fdisk} y offsets incorrectos si no se tiene en cuenta.
+    \item El formato qcow2 no es compatible con la interfaz SD emulada de la máquina \texttt{raspi3b}: se requiere formato raw con tamaño potencia de 2.
+    \item La máquina \texttt{raspi3b} de QEMU es altamente inestable con kernels recientes: el proceso QEMU finalizaba inmediatamente sin mostrar salida ni error, al no ser compatible el \texttt{kernel8.img} de imágenes Raspi OS modernas con la emulación limitada del hardware (GPU VideoCore no emulada).
+    \item No emula GPU, por lo que las aplicaciones gráficas no pueden renderizarse de forma nativa.
+\end{itemize}
+
+Se descartó esta aproximación por su inestabilidad y la imposibilidad de ejecutar la interfaz gráfica.
+
+\subsubsection{Aproximación 2: QEMU con máquina virt}
+
+Se exploró la máquina genérica \texttt{virt} de QEMU, más estable que \texttt{raspi3b}:
+
+\begin{verbatim}
+qemu-system-aarch64 -machine virt -cpu cortex-a72 -m 2048 \
+  -drive file=imagen.img,format=raw ...
+\end{verbatim}
+
+Aunque más estable, presentaba las mismas limitaciones gráficas: para ver la GUI se requiere configurar un dispositivo VNC (\texttt{-device virtio-gpu-pci -display vnc=:0}), convirtiendo la configuración en algo equivalente a la solución Docker pero con mayor complejidad de setup.
+
+\subsubsection{Aproximación 3: Docker con emulación multiarch (solución adoptada)}
+
+Finalmente se adoptó Docker con emulación ARM64 vía \texttt{qemu-user-static} como entorno de pruebas, por su simplicidad, reproducibilidad y capacidad de soportar GUI vía VNC:
+
+\begin{itemize}
+    \item \textbf{Emulación transparente}: Docker utiliza \texttt{binfmt\_misc} del kernel Linux para ejecutar binarios ARM64 de forma transparente mediante QEMU user-mode, sin necesidad de emular una máquina completa.
+    \item \textbf{Reproducible}: un \texttt{Dockerfile} define exactamente el entorno de ejecución (Debian Bookworm ARM64 con las librerías Qt 6 de runtime).
+    \item \textbf{GUI via VNC}: el contenedor ejecuta Xvfb (framebuffer virtual a 800x480) + x11vnc, permitiendo visualizar la aplicación desde cualquier cliente VNC conectado a \texttt{localhost:5900}.
+    \item \textbf{Valgrind integrado}: disponible directamente dentro del contenedor para análisis de memoria sobre el binario ARM64.
+\end{itemize}
+
+\subsubsection{Scripts de automatización del entorno Docker}
+
+Se creó el script \texttt{docker-rpi.sh} que automatiza toda la gestión del contenedor:
+
+\begin{verbatim}
+./docker-rpi.sh setup      # Instala Docker + habilita ARM64
+./docker-rpi.sh build      # Construye la imagen del contenedor
+./docker-rpi.sh run        # Lanza con VNC en puerto 5900
+./docker-rpi.sh shell      # Abre bash en el contenedor
+./docker-rpi.sh valgrind   # Ejecuta Valgrind sobre el binario
+./docker-rpi.sh stop       # Detiene el contenedor
+./docker-rpi.sh clean      # Elimina contenedor e imagen
+\end{verbatim}
+
+El \texttt{Dockerfile} incluye:
+\begin{itemize}
+    \item Librerías Qt 6 runtime (Widgets, Concurrent, PrintSupport, GUI, OpenGL).
+    \item Xvfb configurado a 800x480x24 (resolución de la pantalla táctil del dispositivo).
+    \item x11vnc como servidor VNC sin contraseña (entorno de desarrollo local).
+    \item Valgrind para análisis de memoria.
+    \item Punto de entrada (\texttt{docker-entrypoint.sh}) que arranca automáticamente el framebuffer y el servidor VNC al iniciar el contenedor.
+\end{itemize}
+
+\subsubsection{Pasos para establecer el entorno}
+
+\begin{enumerate}
+    \item Instalar Docker en la máquina Linux de desarrollo:
+    \begin{verbatim}
+    curl -fsSL https://get.docker.com | sh
+    sudo usermod -aG docker $USER
+    \end{verbatim}
+    \item Habilitar la emulación ARM64:
+    \begin{verbatim}
+    docker run --rm --privileged \
+      multiarch/qemu-user-static --reset -p yes
+    \end{verbatim}
+    \item Construir la imagen:
+    \begin{verbatim}
+    cd LatencyTester/Scripts/Linux
+    ./docker-rpi.sh build
+    \end{verbatim}
+    \item Lanzar el contenedor con VNC:
+    \begin{verbatim}
+    ./docker-rpi.sh run
+    \end{verbatim}
+    \item Conectar un cliente VNC a \texttt{localhost:5900} para visualizar la pantalla emulada de 800x480.
+    \item Dentro del contenedor, ejecutar el binario ARM64 compilado con cross-toolchain:
+    \begin{verbatim}
+    cd /app
+    ./LatencyTester
+    \end{verbatim}
+\end{enumerate}
+
+\subsection{Resumen del entorno de validación}
+
+\begin{table}[H]
+\centering
+\caption{Herramientas de validación utilizadas}
+\label{tab:validation_tools}
+\begin{tabular}{|p{3.5cm}|p{3cm}|p{6.5cm}|}
+\hline
+\textbf{Herramienta} & \textbf{Plataforma} & \textbf{Propósito} \\ \hline
+QTest & Windows + Linux & Pruebas unitarias automatizadas (147 tests, Core + GUI) \\ \hline
+AddressSanitizer & Linux & Detección de fugas de memoria y accesos inválidos \\ \hline
+Docker + qemu-user & Linux & Emulación ARM64 para ejecución del binario destino \\ \hline
+Xvfb + x11vnc & Docker ARM64 & Visualización gráfica de la aplicación vía VNC \\ \hline
+Valgrind & Docker ARM64 & Análisis profundo de memoria sobre el binario ARM \\ \hline
+\end{tabular}
+\end{table}
+
 \chapter{Resumen}
 
 \chapter{Conclusiones y trabajo futuro}
