@@ -1,0 +1,44 @@
+# Dockerfile - LatencyTester ARM64 test environment with VNC
+# Emulates Raspberry Pi runtime for testing the application graphically.
+#
+# Build:  docker build --platform linux/arm64 -t latencytester-arm64 .
+# Run:    docker run --platform linux/arm64 -p 5900:5900 -it latencytester-arm64
+
+FROM arm64v8/debian:bookworm
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV QT_QPA_PLATFORM=vnc
+ENV DISPLAY=:0
+
+# Install Qt 6 runtime libraries + VNC + tools
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libqt6widgets6 \
+    libqt6concurrent6 \
+    libqt6printsupport6 \
+    libqt6gui6 \
+    libqt6core6 \
+    libqt6network6 \
+    libqt6opengl6 \
+    qt6-qpa-plugins \
+    libgl1-mesa-dri \
+    libgles2 \
+    libegl1 \
+    x11vnc \
+    xvfb \
+    valgrind \
+    procps \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create working directory for the application
+WORKDIR /app
+
+# Copy the start script
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Expose VNC port
+EXPOSE 5900
+
+# Default entrypoint starts Xvfb + VNC server
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["bash"]
