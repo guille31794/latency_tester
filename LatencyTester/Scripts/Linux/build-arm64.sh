@@ -19,6 +19,7 @@ PROJECT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 BUILD_DIR="$PROJECT_DIR/build_arm64"
 SYSROOT="${HOME}/ARM64-sysroot"
 JOBS=$(nproc 2>/dev/null || echo 4)
+QMAKE_PATH=""
 
 # Colors
 CYAN='\033[0;36m'
@@ -37,6 +38,7 @@ while [[ $# -gt 0 ]]; do
         --clean)   CLEAN=true; shift ;;
         --sysroot) SYSROOT="$2"; shift 2 ;;
         --jobs|-j) JOBS="$2"; shift 2 ;;
+        --qmake)   QMAKE_PATH="$2"; shift 2 ;;
         *)         echo "Unknown argument: $1"; exit 1 ;;
     esac
 done
@@ -56,10 +58,16 @@ command -v aarch64-linux-gnu-g++ >/dev/null 2>&1 || \
     err "aarch64-linux-gnu-g++ not found. Install with: sudo apt install g++-aarch64-linux-gnu"
 echo "  Cross-compiler: $(which aarch64-linux-gnu-g++)"
 
-command -v qmake6 >/dev/null 2>&1 && QMAKE=qmake6 || \
-    { command -v qmake >/dev/null 2>&1 && QMAKE=qmake; } || \
-    err "Neither qmake6 nor qmake found. Install with: sudo apt install qt6-base-dev-tools"
-echo "  qmake: $(which $QMAKE)"
+# Resolve qmake: explicit path > qmake6 > qmake
+if [[ -n "$QMAKE_PATH" ]]; then
+    QMAKE="$QMAKE_PATH"
+    [[ -x "$QMAKE" ]] || err "qmake not found at $QMAKE"
+else
+    command -v qmake6 >/dev/null 2>&1 && QMAKE=qmake6 || \
+        { command -v qmake >/dev/null 2>&1 && QMAKE=qmake; } || \
+        err "Neither qmake6 nor qmake found. Use --qmake /path/to/qmake or install qt6-base-dev-tools"
+fi
+echo "  qmake: $QMAKE"
 
 if [[ ! -d "$SYSROOT/usr/lib/aarch64-linux-gnu" ]]; then
     err "Sysroot not found at $SYSROOT. Extract it from Docker with:\n  docker cp latencytester-rpi:/usr/lib/aarch64-linux-gnu $SYSROOT/usr/lib/aarch64-linux-gnu\n  docker cp latencytester-rpi:/usr/include $SYSROOT/usr/include\n  docker cp latencytester-rpi:/lib/aarch64-linux-gnu $SYSROOT/lib/aarch64-linux-gnu"
