@@ -72,16 +72,18 @@ mkdir -p "$SYSROOT/lib"
 
 # --- Copy libraries ---
 step "Copying ARM64 libraries..."
-docker cp "$CONTAINER_NAME:/usr/lib/aarch64-linux-gnu" "$SYSROOT/usr/lib/aarch64-linux-gnu"
-docker cp "$CONTAINER_NAME:/lib/aarch64-linux-gnu" "$SYSROOT/lib/aarch64-linux-gnu"
+docker cp "$CONTAINER_NAME:/usr/lib/aarch64-linux-gnu" "$SYSROOT/usr/lib/"
+docker cp "$CONTAINER_NAME:/lib/aarch64-linux-gnu" "$SYSROOT/lib/"
 
 # --- Copy headers ---
 step "Copying system headers..."
-docker cp "$CONTAINER_NAME:/usr/include/." "$SYSROOT/usr/include/"
+# Remove any existing include to avoid nested include/include
+rm -rf "$SYSROOT/usr/include"
+docker cp "$CONTAINER_NAME:/usr/include" "$SYSROOT/usr/"
 
 # --- Copy Qt6 specific files (mkspecs, cmake configs) ---
 step "Copying Qt6 files..."
-docker cp "$CONTAINER_NAME:/usr/lib/aarch64-linux-gnu/qt6" "$SYSROOT/usr/lib/aarch64-linux-gnu/qt6" 2>/dev/null || true
+docker cp "$CONTAINER_NAME:/usr/lib/aarch64-linux-gnu/qt6" "$SYSROOT/usr/lib/aarch64-linux-gnu/" 2>/dev/null || true
 
 # --- Symlinks for ld (some libs expect /usr/lib/ paths) ---
 step "Creating compatibility symlinks..."
