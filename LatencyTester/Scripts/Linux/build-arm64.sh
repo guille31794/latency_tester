@@ -56,9 +56,10 @@ command -v aarch64-linux-gnu-g++ >/dev/null 2>&1 || \
     err "aarch64-linux-gnu-g++ not found. Install with: sudo apt install g++-aarch64-linux-gnu"
 echo "  Cross-compiler: $(which aarch64-linux-gnu-g++)"
 
-command -v qmake6 >/dev/null 2>&1 || \
-    err "qmake6 not found. Install with: sudo apt install qt6-base-dev-tools"
-echo "  qmake6: $(which qmake6)"
+command -v qmake6 >/dev/null 2>&1 && QMAKE=qmake6 || \
+    { command -v qmake >/dev/null 2>&1 && QMAKE=qmake; } || \
+    err "Neither qmake6 nor qmake found. Install with: sudo apt install qt6-base-dev-tools"
+echo "  qmake: $(which $QMAKE)"
 
 if [[ ! -d "$SYSROOT/usr/lib/aarch64-linux-gnu" ]]; then
     err "Sysroot not found at $SYSROOT. Extract it from Docker with:\n  docker cp latencytester-rpi:/usr/lib/aarch64-linux-gnu $SYSROOT/usr/lib/aarch64-linux-gnu\n  docker cp latencytester-rpi:/usr/include $SYSROOT/usr/include\n  docker cp latencytester-rpi:/lib/aarch64-linux-gnu $SYSROOT/lib/aarch64-linux-gnu"
@@ -70,8 +71,8 @@ step "Creating build directory"
 mkdir -p "$BUILD_DIR"
 cd "$BUILD_DIR"
 
-step "Running qmake6 (ARM64 cross-compilation)"
-qmake6 "$PROJECT_DIR/LatencyTester.pro" \
+step "Running $QMAKE (ARM64 cross-compilation)"
+$QMAKE "$PROJECT_DIR/LatencyTester.pro" \
     "QMAKE_CC=aarch64-linux-gnu-gcc" \
     "QMAKE_CXX=aarch64-linux-gnu-g++" \
     "QMAKE_LINK=aarch64-linux-gnu-g++" \
