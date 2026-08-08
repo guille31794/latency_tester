@@ -10,7 +10,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV QT_QPA_PLATFORM=vnc
 ENV DISPLAY=:0
 
-# Install Qt 6 runtime libraries + VNC + tools
+# Install Qt 6 runtime libraries + VNC + tools + dev headers for cross-compilation
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libqt6widgets6 \
     libqt6concurrent6 \
@@ -21,6 +21,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libqt6opengl6 \
     qt6-qpa-plugins \
     libgl1-mesa-dri \
+    libgl-dev \
+    libegl-dev \
+    libgles-dev \
     libgles2 \
     libegl1 \
     x11vnc \

@@ -58,14 +58,35 @@ command -v aarch64-linux-gnu-g++ >/dev/null 2>&1 || \
     err "aarch64-linux-gnu-g++ not found. Install with: sudo apt install g++-aarch64-linux-gnu"
 echo "  Cross-compiler: $(which aarch64-linux-gnu-g++)"
 
-# Resolve qmake: explicit path > qmake6 > qmake
+# Resolve qmake: explicit path > Qt Online Installer > system qmake6 > system qmake
 if [[ -n "$QMAKE_PATH" ]]; then
     QMAKE="$QMAKE_PATH"
     [[ -x "$QMAKE" ]] || err "qmake not found at $QMAKE"
 else
-    command -v qmake6 >/dev/null 2>&1 && QMAKE=qmake6 || \
-        { command -v qmake >/dev/null 2>&1 && QMAKE=qmake; } || \
-        err "Neither qmake6 nor qmake found. Use --qmake /path/to/qmake or install qt6-base-dev-tools"
+    # Search for Qt Online Installer qmake (common paths)
+    QT_INSTALLER_QMAKE=""
+    for candidate in \
+        "$HOME/Qt/6.11.1/gcc_64/bin/qmake" \
+        "$HOME/Qt/6.*/gcc_64/bin/qmake" \
+        "/opt/Qt/6.*/gcc_64/bin/qmake"; do
+        # shellcheck disable=SC2086
+        for match in $candidate; do
+            if [[ -x "$match" ]]; then
+                QT_INSTALLER_QMAKE="$match"
+                break 2
+            fi
+        done
+    done
+
+    if [[ -n "$QT_INSTALLER_QMAKE" ]]; then
+        QMAKE="$QT_INSTALLER_QMAKE"
+    elif command -v qmake6 >/dev/null 2>&1; then
+        QMAKE=qmake6
+    elif command -v qmake >/dev/null 2>&1; then
+        QMAKE=qmake
+    else
+        err "No qmake found. Install Qt via Online Installer or: sudo apt install qt6-base-dev-tools"
+    fi
 fi
 echo "  qmake: $QMAKE"
 
