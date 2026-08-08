@@ -35,6 +35,8 @@ bool JsonOperator::loadFileFromDisk(const QString &fileName, QIODevice::OpenMode
     }
 
     delete mFile;
+    mFile = nullptr;
+
     return loadSuccess;
 }
 
@@ -59,6 +61,7 @@ bool JsonOperator::saveMeasureToDisk(const Measures &registry)
     }
 
     delete mFile;
+    mFile = nullptr;
 
     return saveSuccess;
 }
