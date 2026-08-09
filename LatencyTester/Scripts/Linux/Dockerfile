@@ -19,6 +19,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libqt6core6 \
     libqt6network6 \
     libqt6opengl6 \
+    libqt6qml6 \
+    libqt6quick6 \
     qt6-qpa-plugins \
     libgl1-mesa-dri \
     libgl-dev \
