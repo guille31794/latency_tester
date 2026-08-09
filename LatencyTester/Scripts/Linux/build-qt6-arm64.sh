@@ -113,8 +113,9 @@ set(ENV{PKG_CONFIG_SYSROOT_DIR} "${SYSROOT}")
 include_directories(SYSTEM "${SYSROOT}/usr/lib/aarch64-linux-gnu/glib-2.0/include")
 
 # Ensure linker uses the sysroot's libc (avoids GLIBC version mismatch)
-set(CMAKE_EXE_LINKER_FLAGS "\${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath-link,${SYSROOT}/lib/aarch64-linux-gnu")
-set(CMAKE_SHARED_LINKER_FLAGS "\${CMAKE_SHARED_LINKER_FLAGS} -Wl,-rpath-link,${SYSROOT}/lib/aarch64-linux-gnu")
+# Use lld instead of ld.bfd to avoid GLIBC version resolution issues
+set(CMAKE_EXE_LINKER_FLAGS "\${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=lld -Wl,-rpath-link,${SYSROOT}/usr/lib/aarch64-linux-gnu")
+set(CMAKE_SHARED_LINKER_FLAGS "\${CMAKE_SHARED_LINKER_FLAGS} -fuse-ld=lld -Wl,-rpath-link,${SYSROOT}/usr/lib/aarch64-linux-gnu")
 TOOLCHAIN_EOF
 ok "Toolchain file: $TOOLCHAIN_FILE"
 
