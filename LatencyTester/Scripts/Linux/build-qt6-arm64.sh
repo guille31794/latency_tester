@@ -90,7 +90,7 @@ echo "  Sysroot: $SYSROOT"
 
 # --- Generate CMake toolchain file ---
 step "Generating CMake toolchain file"
-cat > "$TOOLCHAIN_FILE" << EOF
+cat > "$TOOLCHAIN_FILE" << TOOLCHAIN_EOF
 # Auto-generated CMake toolchain for ARM64 cross-compilation
 set(CMAKE_SYSTEM_NAME Linux)
 set(CMAKE_SYSTEM_PROCESSOR aarch64)
@@ -113,9 +113,9 @@ set(ENV{PKG_CONFIG_SYSROOT_DIR} "${SYSROOT}")
 include_directories(SYSTEM "${SYSROOT}/usr/lib/aarch64-linux-gnu/glib-2.0/include")
 
 # Ensure linker uses the sysroot's libc (avoids GLIBC version mismatch)
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath-link,${SYSROOT}/lib/aarch64-linux-gnu")
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-rpath-link,${SYSROOT}/lib/aarch64-linux-gnu")
-EOF
+set(CMAKE_EXE_LINKER_FLAGS "\${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath-link,${SYSROOT}/lib/aarch64-linux-gnu")
+set(CMAKE_SHARED_LINKER_FLAGS "\${CMAKE_SHARED_LINKER_FLAGS} -Wl,-rpath-link,${SYSROOT}/lib/aarch64-linux-gnu")
+TOOLCHAIN_EOF
 ok "Toolchain file: $TOOLCHAIN_FILE"
 
 # --- Download Qt source ---
