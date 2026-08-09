@@ -107,9 +107,15 @@ $QMAKE "$PROJECT_DIR/LatencyTester.pro" \
     "QMAKE_LINK=aarch64-linux-gnu-g++" \
     "QMAKE_CFLAGS+=--sysroot=$SYSROOT" \
     "QMAKE_CXXFLAGS+=--sysroot=$SYSROOT" \
-    "QMAKE_LFLAGS+=--sysroot=$SYSROOT -L$SYSROOT/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$SYSROOT/usr/lib/aarch64-linux-gnu" \
-    "QMAKE_LIBDIR=$SYSROOT/usr/lib/aarch64-linux-gnu" \
-    "QMAKE_LIBDIR_QT=$SYSROOT/usr/lib/aarch64-linux-gnu"
+    "QMAKE_LFLAGS+=--sysroot=$SYSROOT -L$SYSROOT/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$SYSROOT/usr/lib/aarch64-linux-gnu"
+
+# Fix: qmake hardcodes x86 Qt lib paths. Replace them with sysroot ARM64 paths.
+step "Patching Makefile: replacing x86 Qt libs with ARM64 sysroot libs"
+QT_X86_LIB=$($QMAKE -query QT_INSTALL_LIBS)
+sed -i "s|${QT_X86_LIB}|${SYSROOT}/usr/lib/aarch64-linux-gnu|g" Makefile
+# Also remove -rpath to x86 Qt (not needed for cross-compile)
+sed -i "s|-Wl,-rpath,${QT_X86_LIB}||g" Makefile
+sed -i "s|-Wl,-rpath-link,${QT_X86_LIB}||g" Makefile
 
 step "Compiling ($JOBS parallel jobs)"
 make -j"$JOBS"
