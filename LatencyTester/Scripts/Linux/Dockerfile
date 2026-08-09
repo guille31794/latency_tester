@@ -25,6 +25,23 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     qt6-virtualkeyboard-plugin \
     libhunspell-dev \
     libudev-dev \
+    libbrotli-dev \
+    libdbus-1-dev \
+    libfontconfig-dev \
+    libfreetype-dev \
+    libharfbuzz-dev \
+    libicu-dev \
+    libinput-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libssl-dev \
+    libxkbcommon-dev \
+    libmtdev-dev \
+    libsystemd-dev \
+    libatspi2.0-dev \
+    libdrm-dev \
+    libgbm-dev \
+    zlib1g-dev \
     libgl1-mesa-dri \
     libgl-dev \
     libegl-dev \
