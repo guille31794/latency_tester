@@ -27,6 +27,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libudev-dev \
     libbrotli-dev \
     libdbus-1-dev \
+    libdbus-1-3 \
     libfontconfig-dev \
     libfreetype-dev \
     libharfbuzz-dev \

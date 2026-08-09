@@ -88,16 +88,9 @@ docker cp "$CONTAINER_NAME:/usr/lib/aarch64-linux-gnu/qt6" "$SYSROOT/usr/lib/aar
 # --- Create .so symlinks for linker (distro packages only ship versioned .so.6.x.y) ---
 step "Creating .so symlinks for cross-linker..."
 cd "$SYSROOT/usr/lib/aarch64-linux-gnu"
-for lib in libQt6*.so.*; do
+for lib in *.so.*; do
     [ -e "$lib" ] || continue
-    base=$(echo "$lib" | sed 's/\.so\..*/\.so/')
-    if [ ! -e "$base" ]; then
-        ln -sf "$lib" "$base"
-    fi
-done
-# Also create symlinks for non-Qt libs that may be versioned
-for lib in libGL.so.* libEGL.so.* libGLESv2.so.*; do
-    [ -e "$lib" ] || continue
+    # Extract base name: libfoo.so.1.2.3 -> libfoo.so
     base=$(echo "$lib" | sed 's/\.so\..*/\.so/')
     if [ ! -e "$base" ]; then
         ln -sf "$lib" "$base"
