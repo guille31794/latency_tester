@@ -66,6 +66,8 @@ else
     # Search for Qt Online Installer qmake (common paths)
     QT_INSTALLER_QMAKE=""
     for candidate in \
+        "/opt/Qt/6.11.1/arm64/bin/qmake" \
+        "/opt/Qt/6.*/arm64/bin/qmake" \
         "$HOME/Qt/6.11.1/gcc_64/bin/qmake" \
         "$HOME/Qt/6.*/gcc_64/bin/qmake" \
         "/opt/Qt/6.*/gcc_64/bin/qmake"; do
@@ -100,24 +102,8 @@ step "Creating build directory"
 mkdir -p "$BUILD_DIR"
 cd "$BUILD_DIR"
 
-step "Running $QMAKE (ARM64 cross-compilation)"
-$QMAKE "$PROJECT_DIR/LatencyTester.pro" \
-    "QMAKE_CC=aarch64-linux-gnu-gcc" \
-    "QMAKE_CXX=aarch64-linux-gnu-g++" \
-    "QMAKE_LINK=aarch64-linux-gnu-g++" \
-    "QMAKE_CFLAGS+=--sysroot=$SYSROOT" \
-    "QMAKE_CXXFLAGS+=--sysroot=$SYSROOT" \
-    "QMAKE_LFLAGS+=--sysroot=$SYSROOT -L$SYSROOT/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$SYSROOT/usr/lib/aarch64-linux-gnu"
-
-# Fix: qmake hardcodes x86 Qt lib paths. Replace them with sysroot ARM64 paths.
-# Only patch the LIBS line, not uic/moc/rcc tool paths.
-step "Patching Makefile: replacing x86 Qt libs with ARM64 sysroot libs"
-QT_X86_LIB=$($QMAKE -query QT_INSTALL_LIBS)
-# Only replace in lines containing .so (library references), not tool paths
-sed -i "/\.so/s|${QT_X86_LIB}|${SYSROOT}/usr/lib/aarch64-linux-gnu|g" Makefile
-# Remove -rpath to x86 Qt in LFLAGS line
-sed -i "s|-Wl,-rpath,${QT_X86_LIB}||g" Makefile
-sed -i "s|-Wl,-rpath-link,${QT_X86_LIB}||g" Makefile
+step "Running $QMAKE (ARM64)"
+$QMAKE "$PROJECT_DIR/LatencyTester.pro"
 
 step "Compiling ($JOBS parallel jobs)"
 make -j"$JOBS"
