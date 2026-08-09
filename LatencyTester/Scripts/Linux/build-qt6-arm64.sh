@@ -145,13 +145,12 @@ if ! $INSTALL_ONLY; then
         -device-option CROSS_COMPILE=aarch64-linux-gnu- \
         -nomake examples \
         -nomake tests \
+        -submodules qtbase,qtdeclarative,qtvirtualkeyboard,qtsvg,qtshadertools \
         -- \
         -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE" \
         -DCMAKE_SYSROOT="$SYSROOT" \
         -DQT_BUILD_EXAMPLES=OFF \
         -DQT_BUILD_TESTS=OFF \
-        -DFEATURE_opengl=OFF \
-        -DFEATURE_opengles2=ON \
         -GNinja
 
     ok "Configuration complete."
