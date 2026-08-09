@@ -111,6 +111,10 @@ set(ENV{PKG_CONFIG_SYSROOT_DIR} "${SYSROOT}")
 
 # GLib stores glibconfig.h in a non-standard location
 include_directories(SYSTEM "${SYSROOT}/usr/lib/aarch64-linux-gnu/glib-2.0/include")
+
+# Ensure linker uses the sysroot's libc (avoids GLIBC version mismatch)
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath-link,${SYSROOT}/lib/aarch64-linux-gnu")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-rpath-link,${SYSROOT}/lib/aarch64-linux-gnu")
 EOF
 ok "Toolchain file: $TOOLCHAIN_FILE"
 
