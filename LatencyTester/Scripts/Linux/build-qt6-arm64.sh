@@ -108,6 +108,9 @@ set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 # Ensure pkg-config looks in the sysroot
 set(ENV{PKG_CONFIG_PATH} "${SYSROOT}/usr/lib/aarch64-linux-gnu/pkgconfig")
 set(ENV{PKG_CONFIG_SYSROOT_DIR} "${SYSROOT}")
+
+# GLib stores glibconfig.h in a non-standard location
+include_directories(SYSTEM "${SYSROOT}/usr/lib/aarch64-linux-gnu/glib-2.0/include")
 EOF
 ok "Toolchain file: $TOOLCHAIN_FILE"
 
