@@ -22,6 +22,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libqt6qml6 \
     libqt6quick6 \
     qt6-qpa-plugins \
+    qt6-virtualkeyboard-plugin \
     libgl1-mesa-dri \
     libgl-dev \
     libegl-dev \
