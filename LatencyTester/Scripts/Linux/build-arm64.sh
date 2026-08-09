@@ -110,10 +110,12 @@ $QMAKE "$PROJECT_DIR/LatencyTester.pro" \
     "QMAKE_LFLAGS+=--sysroot=$SYSROOT -L$SYSROOT/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$SYSROOT/usr/lib/aarch64-linux-gnu"
 
 # Fix: qmake hardcodes x86 Qt lib paths. Replace them with sysroot ARM64 paths.
+# Only patch the LIBS line, not uic/moc/rcc tool paths.
 step "Patching Makefile: replacing x86 Qt libs with ARM64 sysroot libs"
 QT_X86_LIB=$($QMAKE -query QT_INSTALL_LIBS)
-sed -i "s|${QT_X86_LIB}|${SYSROOT}/usr/lib/aarch64-linux-gnu|g" Makefile
-# Also remove -rpath to x86 Qt (not needed for cross-compile)
+# Only replace in lines containing .so (library references), not tool paths
+sed -i "/\.so/s|${QT_X86_LIB}|${SYSROOT}/usr/lib/aarch64-linux-gnu|g" Makefile
+# Remove -rpath to x86 Qt in LFLAGS line
 sed -i "s|-Wl,-rpath,${QT_X86_LIB}||g" Makefile
 sed -i "s|-Wl,-rpath-link,${QT_X86_LIB}||g" Makefile
 
