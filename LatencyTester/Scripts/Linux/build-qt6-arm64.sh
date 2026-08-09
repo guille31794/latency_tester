@@ -151,6 +151,7 @@ if ! $INSTALL_ONLY; then
         -DCMAKE_SYSROOT="$SYSROOT" \
         -DQT_BUILD_EXAMPLES=OFF \
         -DQT_BUILD_TESTS=OFF \
+        -DFEATURE_hunspell=OFF \
         -GNinja
 
     ok "Configuration complete."
