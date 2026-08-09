@@ -39,6 +39,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libmtdev-dev \
     libsystemd-dev \
     libatspi2.0-dev \
+    libglib2.0-dev \
     libdrm-dev \
     libgbm-dev \
     zlib1g-dev \
