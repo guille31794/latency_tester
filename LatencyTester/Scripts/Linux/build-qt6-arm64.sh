@@ -115,14 +115,19 @@ ok "Toolchain file: $TOOLCHAIN_FILE"
 if ! $SKIP_DOWNLOAD && ! $INSTALL_ONLY; then
     if [[ -d "$QT_SOURCE_DIR" ]]; then
         warn "Source directory already exists: $QT_SOURCE_DIR"
-        echo "  Use --skip-download to reuse it."
+        echo "  Reusing existing source."
     else
-        step "Downloading Qt ${QT_VERSION} source (~900 MB)"
-        cd "$HOME"
-        wget -q --show-progress "$QT_SOURCE_URL" -O "qt-everywhere-src-${QT_VERSION}.tar.xz"
-        
+        TARBALL="$HOME/qt-everywhere-src-${QT_VERSION}.tar.xz"
+        if [[ -f "$TARBALL" ]]; then
+            ok "Tarball already downloaded: $TARBALL"
+        else
+            step "Downloading Qt ${QT_VERSION} source (~900 MB)"
+            wget -q --show-progress "$QT_SOURCE_URL" -O "$TARBALL"
+        fi
+
         step "Extracting source (this takes a few minutes)..."
-        tar xf "qt-everywhere-src-${QT_VERSION}.tar.xz"
+        cd "$HOME"
+        tar xf "$TARBALL"
         ok "Source extracted to: $QT_SOURCE_DIR"
     fi
 fi
@@ -140,13 +145,13 @@ if ! $INSTALL_ONLY; then
         -device-option CROSS_COMPILE=aarch64-linux-gnu- \
         -nomake examples \
         -nomake tests \
-        -no-opengl \
-        -opengles2 \
         -- \
         -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE" \
         -DCMAKE_SYSROOT="$SYSROOT" \
         -DQT_BUILD_EXAMPLES=OFF \
         -DQT_BUILD_TESTS=OFF \
+        -DFEATURE_opengl=OFF \
+        -DFEATURE_opengles2=ON \
         -GNinja
 
     ok "Configuration complete."
