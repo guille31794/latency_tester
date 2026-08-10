@@ -23,19 +23,30 @@ INCLUDEPATH += Libs/QCustomPlot/Headers
 INCLUDEPATH += Libs/rpi_ads1115
 
 # --- Platform-specific configuration ---
+#
+# Build modes (controlled via qmake variable USE_STUBS):
+#   qmake USE_STUBS=1    → ARM64 cross-compile with stubs (for Docker testing)
+#   qmake USE_STUBS=0    → ARM64 cross-compile with real drivers (production RPi)
+#   qmake (desktop)      → Desktop build with stubs (default)
+#
+# Detection: ARM target is identified by QT_ARCH or QMAKE_HOST.arch
 
-# Detect Raspberry Pi target: defined when using ARM cross-compiler kit
 contains(QMAKE_HOST.arch, arm.*) | contains(QT_ARCH, arm.*) | contains(QMAKE_PLATFORM, linux-rasp-pi*) {
-    message("Building for Raspberry Pi (ARM)")
     DEFINES += RASPBERRY_PI
-    LIBS += -L/usr/local/lib -lpigpio -lrt -lgpiod
-    SOURCES += Libs/rpi_ads1115/ads1115rpi.cpp
-    HEADERS += Libs/rpi_ads1115/ads1115rpi.h
     target.path = /home/pi/$${TARGET}/bin
     INSTALLS += target
+
+    equals(USE_STUBS, 1) {
+        message("Building for ARM64 with STUBS (cross-compile / Docker testing)")
+        HEADERS += Core/Helpers/ads1115rpi_stub.h
+    } else {
+        message("Building for ARM64 with REAL DRIVERS (production)")
+        LIBS += -L/usr/local/lib -lpigpio -lrt -lgpiod
+        SOURCES += Libs/rpi_ads1115/ads1115rpi.cpp
+        HEADERS += Libs/rpi_ads1115/ads1115rpi.h
+    }
 } else {
     message("Building for Desktop (local development)")
-    # No pigpio/ads1115 linkage - using stub headers
     HEADERS += Core/Helpers/ads1115rpi_stub.h
 }
 

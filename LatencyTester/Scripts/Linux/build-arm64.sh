@@ -106,7 +106,8 @@ step "Running $QMAKE (ARM64)"
 $QMAKE "$PROJECT_DIR/LatencyTester.pro" -spec linux-aarch64-gnu-g++ \
     "QMAKE_CC=aarch64-linux-gnu-gcc-13" \
     "QMAKE_CXX=aarch64-linux-gnu-g++-13" \
-    "QMAKE_LINK=aarch64-linux-gnu-g++-13"
+    "QMAKE_LINK=aarch64-linux-gnu-g++-13" \
+    "USE_STUBS=1"
 
 step "Compiling ($JOBS parallel jobs)"
 make -j"$JOBS"
