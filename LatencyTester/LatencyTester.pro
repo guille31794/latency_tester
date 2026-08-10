@@ -32,15 +32,16 @@ INCLUDEPATH += Libs/rpi_ads1115
 # Detection: ARM target is identified by QT_ARCH or QMAKE_HOST.arch
 
 contains(QMAKE_HOST.arch, arm.*) | contains(QT_ARCH, arm.*) | contains(QMAKE_PLATFORM, linux-rasp-pi*) {
-    DEFINES += RASPBERRY_PI
     target.path = /home/pi/$${TARGET}/bin
     INSTALLS += target
 
     equals(USE_STUBS, 1) {
         message("Building for ARM64 with STUBS (cross-compile / Docker testing)")
+        # No RASPBERRY_PI define → uses pigpio_stub.h and ads1115rpi_stub.h
         HEADERS += Core/Helpers/ads1115rpi_stub.h
     } else {
         message("Building for ARM64 with REAL DRIVERS (production)")
+        DEFINES += RASPBERRY_PI
         LIBS += -L/usr/local/lib -lpigpio -lrt -lgpiod
         SOURCES += Libs/rpi_ads1115/ads1115rpi.cpp
         HEADERS += Libs/rpi_ads1115/ads1115rpi.h
