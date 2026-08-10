@@ -26,6 +26,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libhunspell-dev \
     libudev-dev \
     libgpiod-dev \
+    libgpiod2 \
     libbrotli-dev \
     libdbus-1-dev \
     libdbus-1-3 \
