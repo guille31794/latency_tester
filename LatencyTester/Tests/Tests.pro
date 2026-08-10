@@ -34,8 +34,8 @@ win32-g++|win32-g++-*|mingw {
 }
 
 # --- AddressSanitizer ---
-# Only on Linux (GCC ships libasan). MinGW from Qt does not include it.
-linux {
+# Only on Linux (GCC ships libasan). Disabled when cross-compiling for Valgrind.
+linux:!contains(CONFIG, no_sanitize) {
     QMAKE_CXXFLAGS += -fsanitize=address -fno-omit-frame-pointer
     QMAKE_LFLAGS += -fsanitize=address
 }

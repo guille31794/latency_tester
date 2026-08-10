@@ -120,7 +120,8 @@ cd "$TESTS_BUILD_DIR"
 $QMAKE "$PROJECT_DIR/Tests/Tests.pro" -spec linux-aarch64-gnu-g++ \
     "QMAKE_CC=aarch64-linux-gnu-gcc-13" \
     "QMAKE_CXX=aarch64-linux-gnu-g++-13" \
-    "QMAKE_LINK=aarch64-linux-gnu-g++-13"
+    "QMAKE_LINK=aarch64-linux-gnu-g++-13" \
+    "CONFIG+=no_sanitize"
 make -j"$JOBS"
 cd "$BUILD_DIR"
 
