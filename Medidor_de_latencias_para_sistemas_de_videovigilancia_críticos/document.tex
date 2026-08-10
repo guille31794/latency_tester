@@ -2135,6 +2135,66 @@ Se implementó una batería completa de 147 tests unitarios distribuidos en 10 s
 
 Las pruebas no requieren hardware ni display físico (se ejecutan offscreen) y detectaron tres bugs reales en producción que se corrigieron antes de la entrega.
 
+\subsection{Configuración de la toolchain de compilación cruzada}
+
+La configuración de la cadena de herramientas para compilación cruzada ARM64 resultó ser el mayor contratiempo técnico del proyecto. Se documentan a continuación las distintas aproximaciones intentadas y las dificultades encontradas en cada una.
+
+\subsubsection{Aproximación 1: qmake con cross-compiler y sysroot de Docker}
+
+El primer intento consistió en utilizar el \texttt{qmake} del Qt Online Installer (x86-64) pasando los compiladores cruzados como variables:
+
+\begin{verbatim}
+qmake LatencyTester.pro \
+  "QMAKE_CC=aarch64-linux-gnu-gcc" \
+  "QMAKE_CXX=aarch64-linux-gnu-g++" \
+  "QMAKE_LINK=aarch64-linux-gnu-g++" \
+  "QMAKE_CFLAGS+=--sysroot=$SYSROOT" \
+  "QMAKE_LFLAGS+=--sysroot=$SYSROOT"
+\end{verbatim}
+
+\textbf{Problema}: qmake genera las rutas de las librerías Qt apuntando siempre a la instalación x86-64 del host (\texttt{gcc\_64/lib/}). El enlazador ARM64 rechaza estas librerías con el error \texttt{file in wrong format}. Se parcheó el Makefile con \texttt{sed} para reemplazar las rutas, pero al enlazar contra las librerías Qt 6.7 del sysroot (extraídas de los repositorios Debian ARM64) con las cabeceras de Qt 6.11 (del Online Installer), se produjeron cientos de \texttt{undefined reference} a funciones inexistentes en Qt 6.7.
+
+\textbf{Conclusión}: la compilación cruzada con qmake requiere que la versión de Qt de las cabeceras y la de las librerías de enlace sean idénticas. No es viable mezclar versiones.
+
+\subsubsection{Aproximación 2: compilación nativa dentro del contenedor Docker}
+
+Se intentó compilar directamente dentro del contenedor Docker ARM64 (emulado con QEMU user-mode), que sí dispone de Qt 6.7 ARM64 coherente (headers + libs misma versión).
+
+\textbf{Problema}: qmake ejecuta internamente \texttt{g++ -E -dM} para extraer las macros del compilador. Bajo emulación QEMU user-mode, la salida estándar del subproceso se altera, impidiendo que qmake parsee correctamente las macros. El error resultante es:
+\begin{verbatim}
+Variable QMAKE_CXX.COMPILER_MACROS is not defined.
+Project ERROR: failed to parse default search paths
+\end{verbatim}
+
+\textbf{Conclusión}: qmake no funciona bajo emulación QEMU user-mode. Descartado.
+
+\subsubsection{Aproximación 3 (adoptada): compilar Qt 6.11 desde fuente para ARM64}
+
+La solución definitiva consiste en compilar la misma versión de Qt que se usa en el host (6.11.1) pero targeting ARM64. Esto garantiza coherencia total entre cabeceras y librerías. El proceso se automatizó mediante el script \texttt{build-qt6-arm64.sh} que:
+
+\begin{enumerate}
+    \item Descarga el código fuente completo de Qt 6.11.1 ($\sim$900 MB comprimido).
+    \item Genera un fichero \texttt{CMake toolchain} que apunta al cross-compiler y al sysroot ARM64.
+    \item Configura la build con CMake + Ninja, reutilizando las host tools del Online Installer.
+    \item Compila todas las librerías Qt para ARM64 ($\sim$1--2 horas en un procesador de 4 núcleos).
+    \item Instala en \texttt{/opt/Qt/6.11.1/arm64/} proporcionando un \texttt{qt-cmake} y \texttt{qmake} nativos para cross-compilación.
+\end{enumerate}
+
+Una vez instalada, la compilación del proyecto se reduce a:
+\begin{verbatim}
+/opt/Qt/6.11.1/arm64/bin/qmake LatencyTester.pro
+make -j$(nproc)
+\end{verbatim}
+
+\subsubsection{Lecciones aprendidas}
+
+\begin{itemize}
+    \item La compilación cruzada de aplicaciones Qt requiere una versión de Qt compilada específicamente para la arquitectura destino. No es posible reutilizar las librerías de los repositorios de la distribución si la versión no coincide exactamente con las cabeceras del host.
+    \item Las herramientas como \texttt{moc}, \texttt{uic}, \texttt{rcc} y \texttt{lrelease} deben ser las nativas del host (x86-64), mientras que las librerías de enlace deben ser ARM64.
+    \item QEMU user-mode es útil para ejecutar binarios ARM64, pero no para compilar con qmake (problemas con la captura de stdout de subprocesos).
+    \item El proceso de compilar Qt desde fuente, aunque largo, es determinista y solo debe realizarse una vez por versión de Qt utilizada.
+\end{itemize}
+
 \section{Pruebas y validación}
 
 En esta sección se describe la infraestructura de pruebas establecida para validar el correcto funcionamiento del software del medidor de latencias. Se detallan las herramientas utilizadas, las distintas aproximaciones exploradas para emular el hardware destino, las dificultades encontradas y la configuración final adoptada.
@@ -2370,6 +2430,250 @@ En último lugar, y aunque no les conozca en persona, quiero agradecer a Jim, mi
 \appendix
 
 \chapter{Manual de instalación}
+
+Este apéndice describe los procedimientos necesarios para compilar, instalar y desplegar el software del medidor de latencias en las distintas plataformas soportadas. Se detallan tres escenarios: compilación para desarrollo local (Desktop), compilación y ejecución en el entorno Docker ARM64, y despliegue en la Raspberry Pi física.
+
+% =========================================================================
+\section{Requisitos previos}
+
+\begin{table}[H]
+\centering
+\caption{Requisitos de software por plataforma}
+\label{tab:install_requirements}
+\begin{tabular}{|p{4cm}|p{4cm}|p{5cm}|}
+\hline
+\textbf{Componente} & \textbf{Windows} & \textbf{Linux} \\ \hline
+Qt Framework & 6.11+ (MinGW 64-bit) & 6.11+ (GCC/Clang) \\ \hline
+Compilador & MinGW 13+ (incluido con Qt) & GCC 11+ o Clang 15+ \\ \hline
+Git & 2.40+ & 2.40+ \\ \hline
+Docker & --- (no necesario) & 24+ (para emulación ARM64) \\ \hline
+Doxygen & 1.9+ (opcional, docs) & 1.9+ (opcional, docs) \\ \hline
+Graphviz & 8+ (opcional, diagramas) & 8+ (opcional, diagramas) \\ \hline
+\end{tabular}
+\end{table}
+
+% =========================================================================
+\section{Compilación Desktop (desarrollo local)}
+
+La compilación Desktop utiliza stubs que simulan el hardware (GPIO, ADC), permitiendo desarrollar y probar la interfaz completa sin dispositivo físico.
+
+\subsection{Windows}
+
+\begin{enumerate}
+    \item Instalar Qt 6.11 con el componente MinGW 64-bit mediante Qt Online Installer.
+    \item Clonar el repositorio con submódulos:
+    \begin{verbatim}
+    git clone --recurse-submodules <url-repositorio>
+    \end{verbatim}
+    \item Abrir \texttt{latency\_tester.pro} (el de la raíz) en Qt Creator.
+    \item Seleccionar el kit \texttt{Desktop Qt 6.11 MinGW 64-bit}.
+    \item Build $\rightarrow$ Build All.
+\end{enumerate}
+
+Alternativamente, desde línea de comandos (PowerShell):
+\begin{verbatim}
+cd LatencyTester
+qmake LatencyTester.pro "CONFIG+=release"
+mingw32-make -j8
+\end{verbatim}
+
+\subsection{Linux}
+
+\begin{enumerate}
+    \item Instalar Qt 6.11 y las dependencias de desarrollo:
+    \begin{verbatim}
+    sudo apt install qt6-base-dev qt6-tools-dev-tools \
+      qt6-virtualkeyboard-dev libqt6printsupport6 \
+      libgl1-mesa-dev make g++
+    \end{verbatim}
+    \item Clonar y compilar:
+    \begin{verbatim}
+    git clone --recurse-submodules <url-repositorio>
+    cd latency_tester/LatencyTester
+    qmake LatencyTester.pro "CONFIG+=release"
+    make -j$(nproc)
+    \end{verbatim}
+\end{enumerate}
+
+El binario resultante se encuentra en el directorio de build (e.g., \texttt{release/LatencyTester} en Linux o \texttt{release\textbackslash LatencyTester.exe} en Windows).
+
+% =========================================================================
+\section{Entorno Docker ARM64 (emulación Raspberry Pi)}
+
+Docker con emulación multiarch permite compilar y ejecutar el binario ARM64 en cualquier máquina Linux x86-64, sin necesidad de hardware Raspberry Pi.
+
+\subsection{Principio de funcionamiento}
+
+Docker utiliza \texttt{binfmt\_misc} del kernel Linux junto con QEMU en modo usuario (\texttt{qemu-user-static}) para interceptar la ejecución de binarios ARM64 y traducir las instrucciones a x86-64 de forma transparente. Esto permite que un contenedor Docker ARM64 se ejecute nativamente sobre un host x86-64.
+
+\subsection{Instalación del entorno}
+
+\begin{enumerate}
+    \item \textbf{Instalar Docker} (si no está instalado):
+    \begin{verbatim}
+    curl -fsSL https://get.docker.com | sh
+    sudo usermod -aG docker $USER
+    # Cerrar sesión y volver a entrar
+    \end{verbatim}
+    
+    \item \textbf{Habilitar emulación ARM64} (solo una vez por reinicio del host):
+    \begin{verbatim}
+    docker run --rm --privileged \
+      multiarch/qemu-user-static --reset -p yes
+    \end{verbatim}
+    
+    \item \textbf{Construir la imagen del contenedor}:
+    \begin{verbatim}
+    cd LatencyTester/Scripts/Linux
+    ./docker-rpi.sh build
+    \end{verbatim}
+    
+    Este comando construye una imagen basada en Debian Bookworm ARM64 que incluye:
+    \begin{itemize}
+        \item Librerías Qt 6 de runtime (Widgets, Concurrent, PrintSupport, GUI, OpenGL).
+        \item Xvfb configurado a 800$\times$480 (resolución de la pantalla del dispositivo).
+        \item x11vnc como servidor VNC para visualización remota.
+        \item Valgrind para análisis de memoria.
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Compilación para ARM64 (cross-compilation en el host)}
+
+Debido a una limitación conocida de qmake bajo emulación QEMU user-mode (qmake no puede parsear la salida de macros del compilador cuando \texttt{g++} se ejecuta a través de QEMU), la compilación debe realizarse en el host Linux nativo utilizando un compilador cruzado. El contenedor Docker se utiliza exclusivamente para la ejecución y las pruebas del binario resultante.
+
+\begin{enumerate}
+    \item Instalar el compilador cruzado ARM64 en el host:
+    \begin{verbatim}
+    sudo apt install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+    \end{verbatim}
+    
+    \item Compilar el proyecto indicando a qmake los compiladores cruzados:
+    \begin{verbatim}
+    cd latency_tester/LatencyTester
+    qmake6 LatencyTester.pro \
+      "QMAKE_CC=aarch64-linux-gnu-gcc" \
+      "QMAKE_CXX=aarch64-linux-gnu-g++" \
+      "QMAKE_LINK=aarch64-linux-gnu-g++"
+    make -j$(nproc)
+    \end{verbatim}
+    
+    El binario resultante (\texttt{LatencyTester}) es un ejecutable ELF nativo ARM64.
+\end{enumerate}
+
+\subsection{Ejecución en el contenedor Docker con interfaz gráfica (VNC)}
+
+Una vez compilado el binario ARM64 en el host, se ejecuta dentro del contenedor Docker que proporciona las librerías Qt de runtime y el entorno gráfico emulado:
+
+\begin{verbatim}
+./docker-rpi.sh run
+
+# Dentro del contenedor:
+cd /app
+./LatencyTester
+\end{verbatim}
+
+Conectar un cliente VNC (TigerVNC, Remmina, RealVNC) a \texttt{localhost:5900} para visualizar la pantalla emulada de 800$\times$480 píxeles.
+
+\textbf{Nota sobre la limitación de qmake bajo QEMU}: el error \texttt{Variable QMAKE\_CXX.COMPILER\_MACROS is not defined} se produce porque qmake ejecuta internamente \texttt{g++ -E -dM} para extraer las macros del compilador. Cuando \texttt{g++} se ejecuta a través de QEMU user-mode, la emulación altera sutilmente la salida estándar del subproceso, impidiendo que qmake la parsee correctamente. La solución adoptada (compilar en el host con cross-compiler y ejecutar en el contenedor) evita este problema al no invocar qmake bajo emulación.
+
+\subsection{Script de gestión docker-rpi.sh}
+
+El script \texttt{docker-rpi.sh} automatiza todas las operaciones del contenedor:
+
+\begin{table}[H]
+\centering
+\caption{Comandos del script docker-rpi.sh}
+\label{tab:docker_commands}
+\begin{tabular}{|l|p{9cm}|}
+\hline
+\textbf{Comando} & \textbf{Descripción} \\ \hline
+\texttt{setup} & Instala Docker y habilita la emulación ARM64 mediante qemu-user-static. \\ \hline
+\texttt{build} & Construye la imagen Docker ARM64 a partir del Dockerfile. \\ \hline
+\texttt{run} & Lanza el contenedor con servidor VNC en el puerto 5900 y monta el proyecto en \texttt{/app}. \\ \hline
+\texttt{shell} & Abre una sesión Bash interactiva dentro del contenedor (sin VNC). \\ \hline
+\texttt{valgrind} & Ejecuta Valgrind con \texttt{--leak-check=full} sobre el binario en modo offscreen. \\ \hline
+\texttt{stop} & Detiene el contenedor en ejecución. \\ \hline
+\texttt{clean} & Elimina el contenedor y la imagen Docker del sistema. \\ \hline
+\end{tabular}
+\end{table}
+
+% =========================================================================
+\section{Despliegue en Raspberry Pi (producción)}
+
+Para la instalación en el hardware de destino se requiere una compilación cruzada o una compilación nativa en la propia Raspberry Pi.
+
+\subsection{Compilación cruzada desde Linux}
+
+\begin{enumerate}
+    \item Instalar el compilador cruzado ARM:
+    \begin{verbatim}
+    sudo apt install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+    \end{verbatim}
+    
+    \item Obtener el sysroot de la Raspberry Pi (bibliotecas y cabeceras del sistema):
+    \begin{verbatim}
+    rsync -avz pi@<ip-rpi>:/usr/lib /opt/rpi-sysroot/usr/
+    rsync -avz pi@<ip-rpi>:/usr/include /opt/rpi-sysroot/usr/
+    rsync -avz pi@<ip-rpi>:/lib /opt/rpi-sysroot/
+    \end{verbatim}
+    
+    \item Configurar un kit de compilación en Qt Creator:
+    \begin{itemize}
+        \item Compilador C: \texttt{/usr/bin/aarch64-linux-gnu-gcc}
+        \item Compilador C++: \texttt{/usr/bin/aarch64-linux-gnu-g++}
+        \item Sysroot: \texttt{/opt/rpi-sysroot}
+        \item Qt version: Qt 6 compilado para ARM (necesario compilar Qt desde fuente o usar distribución precompilada)
+    \end{itemize}
+    
+    \item Compilar con el kit ARM seleccionado en Qt Creator, o desde la línea de comandos con el qmake ARM.
+\end{enumerate}
+
+\subsection{Transferencia a la Raspberry Pi}
+
+\begin{verbatim}
+scp LatencyTester pi@<ip-rpi>:/home/pi/LatencyTester/bin/
+\end{verbatim}
+
+\subsection{Configuración de arranque automático}
+
+Para que la aplicación se ejecute al encender el dispositivo, se configura un servicio systemd:
+
+\begin{verbatim}
+# /etc/systemd/system/latencytester.service
+[Unit]
+Description=LatencyTester Application
+After=multi-user.target
+
+[Service]
+Type=simple
+User=pi
+Environment=QT_QPA_PLATFORM=linuxfb
+ExecStart=/home/pi/LatencyTester/bin/LatencyTester
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+\end{verbatim}
+
+Activar el servicio:
+\begin{verbatim}
+sudo systemctl enable latencytester
+sudo systemctl start latencytester
+\end{verbatim}
+
+La variable \texttt{QT\_QPA\_PLATFORM=linuxfb} indica a Qt que renderice directamente sobre el framebuffer de la pantalla táctil, sin necesidad de X11 ni Wayland.
+
+% =========================================================================
+\section{Verificación de la instalación}
+
+Tras la instalación, verificar:
+\begin{enumerate}
+    \item La aplicación arranca y muestra la pantalla de inicio.
+    \item La pantalla táctil responde a la interacción.
+    \item Los ajustes se persisten entre reinicios.
+    \item El LED y el fotosensor responden a la calibración.
+    \item Las mediciones se almacenan correctamente en la carpeta \texttt{Measures/}.
+\end{enumerate}
 
 \chapter{Manual de usuario}
 
