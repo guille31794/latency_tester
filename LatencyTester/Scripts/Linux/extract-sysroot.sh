@@ -111,6 +111,16 @@ if [[ -d "/opt/Qt/6.11.1/arm64" ]]; then
     ok "Linked /opt/Qt/6.11.1 -> $SYSROOT/opt/Qt/6.11.1"
 fi
 
+# --- Download pigpio header (not in Debian repos, RPi-specific) ---
+step "Ensuring pigpio.h is in sysroot..."
+if [[ ! -f "$SYSROOT/usr/include/pigpio.h" ]]; then
+    wget -q https://raw.githubusercontent.com/joan2937/pigpio/master/pigpio.h \
+        -O "$SYSROOT/usr/include/pigpio.h"
+    ok "Downloaded pigpio.h"
+else
+    ok "pigpio.h already present"
+fi
+
 # --- Cleanup ---
 step "Removing temporary container..."
 docker rm -f "$CONTAINER_NAME" >/dev/null

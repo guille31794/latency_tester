@@ -3,7 +3,7 @@
 
 QT += core gui widgets printsupport concurrent virtualkeyboard
 
-CONFIG += c++17
+CONFIG += c++20
 
 # --- Directory layout ---
 INCLUDEPATH += Core
