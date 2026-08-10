@@ -84,13 +84,33 @@ cmd_valgrind() {
         docker run --platform linux/arm64 \
             --rm \
             -v "$PROJECT_DIR:/app" \
+            -v "/opt/Qt/6.11.1/arm64:/opt/Qt/6.11.1/arm64:ro" \
+            -e "LD_LIBRARY_PATH=/opt/Qt/6.11.1/arm64/lib" \
             "$IMAGE_NAME" \
-            bash -c "cd /app && valgrind --leak-check=full --show-leak-kinds=definite ./LatencyTester -platform offscreen"
+            bash -c "cd /app/build_arm64 && valgrind --leak-check=full --show-leak-kinds=definite ./LatencyTester -platform offscreen"
     else
         # Exec valgrind in the running container
         step "Running Valgrind in existing container..."
         docker exec "$CONTAINER_NAME" \
-            bash -c "cd /app && valgrind --leak-check=full --show-leak-kinds=definite ./LatencyTester -platform offscreen"
+            bash -c "cd /app/build_arm64 && LD_LIBRARY_PATH=/opt/Qt/6.11.1/arm64/lib valgrind --leak-check=full --show-leak-kinds=definite ./LatencyTester -platform offscreen"
+    fi
+}
+
+# --- TESTS ---
+cmd_tests() {
+    if ! docker ps -q -f name="$CONTAINER_NAME" | grep -q .; then
+        step "Starting temporary container for tests..."
+        docker run --platform linux/arm64 \
+            --rm \
+            -v "$PROJECT_DIR:/app" \
+            -v "/opt/Qt/6.11.1/arm64:/opt/Qt/6.11.1/arm64:ro" \
+            -e "LD_LIBRARY_PATH=/opt/Qt/6.11.1/arm64/lib" \
+            "$IMAGE_NAME" \
+            bash -c "cd /app/build_arm64 && valgrind --leak-check=full --show-leak-kinds=definite ./LatencyTesterTests -platform offscreen"
+    else
+        step "Running tests with Valgrind in existing container..."
+        docker exec "$CONTAINER_NAME" \
+            bash -c "cd /app/build_arm64 && LD_LIBRARY_PATH=/opt/Qt/6.11.1/arm64/lib valgrind --leak-check=full --show-leak-kinds=definite ./LatencyTesterTests -platform offscreen"
     fi
 }
 
@@ -128,6 +148,7 @@ case "${1:-help}" in
     build)    cmd_build ;;
     run)      cmd_run ;;
     valgrind) cmd_valgrind ;;
+    tests)    cmd_tests ;;
     shell)    cmd_shell ;;
     stop)     cmd_stop ;;
     clean)    cmd_clean ;;
@@ -140,7 +161,8 @@ case "${1:-help}" in
         echo "  setup      Install Docker + enable ARM64 emulation"
         echo "  build      Build the ARM64 container image"
         echo "  run        Start container with VNC (connect to localhost:$VNC_PORT)"
-        echo "  valgrind   Run Valgrind memory analysis (offscreen)"
+        echo "  valgrind   Run Valgrind memory analysis on the app (offscreen)"
+        echo "  tests      Run unit tests with Valgrind (offscreen)"
         echo "  shell      Open a bash shell inside the container"
         echo "  stop       Stop the running container"
         echo "  clean      Remove container and image"

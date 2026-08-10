@@ -112,6 +112,18 @@ $QMAKE "$PROJECT_DIR/LatencyTester.pro" -spec linux-aarch64-gnu-g++ \
 step "Compiling ($JOBS parallel jobs)"
 make -j"$JOBS"
 
+# --- Also compile tests (stubs mode only) ---
+step "Compiling tests for ARM64..."
+TESTS_BUILD_DIR="$BUILD_DIR/Tests"
+mkdir -p "$TESTS_BUILD_DIR"
+cd "$TESTS_BUILD_DIR"
+$QMAKE "$PROJECT_DIR/Tests/Tests.pro" -spec linux-aarch64-gnu-g++ \
+    "QMAKE_CC=aarch64-linux-gnu-gcc-13" \
+    "QMAKE_CXX=aarch64-linux-gnu-g++-13" \
+    "QMAKE_LINK=aarch64-linux-gnu-g++-13"
+make -j"$JOBS"
+cd "$BUILD_DIR"
+
 # --- Result ---
 BINARY="$BUILD_DIR/LatencyTester"
 if [[ -f "$BINARY" ]]; then
@@ -121,25 +133,32 @@ if [[ -f "$BINARY" ]]; then
 
     # --- Deploy to Docker container ---
     CONTAINER_NAME="latencytester-rpi"
+    TESTS_BINARY="$TESTS_BUILD_DIR/LatencyTesterTests"
     if docker ps -q -f name="$CONTAINER_NAME" 2>/dev/null | grep -q .; then
-        step "Copying binary to running container..."
+        step "Copying binaries to running container..."
         docker cp "$BINARY" "$CONTAINER_NAME:/app/LatencyTester"
-        ok "Binary deployed to container at /app/LatencyTester"
+        [[ -f "$TESTS_BINARY" ]] && docker cp "$TESTS_BINARY" "$CONTAINER_NAME:/app/LatencyTesterTests"
+        ok "Binaries deployed to container at /app/"
         echo ""
-        echo "  To run: docker exec -it $CONTAINER_NAME /app/LatencyTester"
+        echo "  To run app:   docker exec -it $CONTAINER_NAME /app/LatencyTester"
+        echo "  To run tests: docker exec -it $CONTAINER_NAME /app/LatencyTesterTests"
     else
-        step "Starting container and deploying binary..."
+        step "Starting container and deploying binaries..."
         docker run --platform linux/arm64 \
             --name "$CONTAINER_NAME" \
             -p 5900:5900 \
+            -v "/opt/Qt/6.11.1/arm64:/opt/Qt/6.11.1/arm64:ro" \
+            -e "LD_LIBRARY_PATH=/opt/Qt/6.11.1/arm64/lib" \
             -d latencytester-arm64 2>/dev/null || \
             docker start "$CONTAINER_NAME" 2>/dev/null
         sleep 2
         docker cp "$BINARY" "$CONTAINER_NAME:/app/LatencyTester"
-        ok "Binary deployed to container at /app/LatencyTester"
+        [[ -f "$TESTS_BINARY" ]] && docker cp "$TESTS_BINARY" "$CONTAINER_NAME:/app/LatencyTesterTests"
+        ok "Binaries deployed to container at /app/"
         echo ""
         echo "  Container running with VNC on port 5900"
-        echo "  To run: docker exec -it $CONTAINER_NAME /app/LatencyTester"
+        echo "  To run app:   docker exec -it $CONTAINER_NAME /app/LatencyTester"
+        echo "  To run tests: docker exec -it $CONTAINER_NAME /app/LatencyTesterTests"
     fi
 else
     err "Build completed but binary not found."
