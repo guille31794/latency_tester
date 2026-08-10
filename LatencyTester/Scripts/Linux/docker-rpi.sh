@@ -106,11 +106,11 @@ cmd_tests() {
             -v "/opt/Qt/6.11.1/arm64:/opt/Qt/6.11.1/arm64:ro" \
             -e "LD_LIBRARY_PATH=/opt/Qt/6.11.1/arm64/lib" \
             "$IMAGE_NAME" \
-            bash -c "cd /app/build_arm64 && valgrind --leak-check=full --show-leak-kinds=definite ./LatencyTesterTests -platform offscreen"
+            bash -c "cd /app/build_arm64/Tests && valgrind --leak-check=full --show-leak-kinds=definite ./LatencyTesterTests -platform offscreen"
     else
         step "Running tests with Valgrind in existing container..."
         docker exec "$CONTAINER_NAME" \
-            bash -c "cd /app/build_arm64 && LD_LIBRARY_PATH=/opt/Qt/6.11.1/arm64/lib valgrind --leak-check=full --show-leak-kinds=definite ./LatencyTesterTests -platform offscreen"
+            bash -c "cd /app/build_arm64/Tests && LD_LIBRARY_PATH=/opt/Qt/6.11.1/arm64/lib valgrind --leak-check=full --show-leak-kinds=definite ./LatencyTesterTests -platform offscreen"
     fi
 }
 
