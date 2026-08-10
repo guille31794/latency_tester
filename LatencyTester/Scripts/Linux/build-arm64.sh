@@ -103,7 +103,7 @@ mkdir -p "$BUILD_DIR"
 cd "$BUILD_DIR"
 
 step "Running $QMAKE (ARM64)"
-$QMAKE "$PROJECT_DIR/LatencyTester.pro"
+$QMAKE "$PROJECT_DIR/LatencyTester.pro" -spec linux-aarch64-gnu-g++
 
 step "Compiling ($JOBS parallel jobs)"
 make -j"$JOBS"
