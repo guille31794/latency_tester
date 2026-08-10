@@ -78,40 +78,26 @@ cmd_run() {
 
 # --- VALGRIND ---
 cmd_valgrind() {
-    if ! docker ps -q -f name="$CONTAINER_NAME" | grep -q .; then
-        # Start a temporary container for valgrind
-        step "Starting temporary container for Valgrind..."
-        docker run --platform linux/arm64 \
-            --rm \
-            -v "$PROJECT_DIR:/app" \
-            -v "/opt/Qt/6.11.1/arm64:/opt/Qt/6.11.1/arm64:ro" \
-            -e "LD_LIBRARY_PATH=/opt/Qt/6.11.1/arm64/lib" \
-            "$IMAGE_NAME" \
-            bash -c "cd /app/build_arm64 && valgrind --leak-check=full --show-leak-kinds=definite ./LatencyTester -platform offscreen"
-    else
-        # Exec valgrind in the running container
-        step "Running Valgrind in existing container..."
-        docker exec "$CONTAINER_NAME" \
-            bash -c "cd /app/build_arm64 && LD_LIBRARY_PATH=/opt/Qt/6.11.1/arm64/lib valgrind --leak-check=full --show-leak-kinds=definite ./LatencyTester -platform offscreen"
-    fi
+    step "Running app with Valgrind (offscreen)..."
+    docker run --platform linux/arm64 \
+        --rm \
+        -v "$PROJECT_DIR:/app" \
+        -v "/opt/Qt/6.11.1/arm64:/opt/Qt/6.11.1/arm64:ro" \
+        -e "LD_LIBRARY_PATH=/opt/Qt/6.11.1/arm64/lib" \
+        "$IMAGE_NAME" \
+        bash -c "cd /app/build_arm64 && valgrind --leak-check=full --show-leak-kinds=definite ./LatencyTester -platform offscreen"
 }
 
 # --- TESTS ---
 cmd_tests() {
-    if ! docker ps -q -f name="$CONTAINER_NAME" | grep -q .; then
-        step "Starting temporary container for tests..."
-        docker run --platform linux/arm64 \
-            --rm \
-            -v "$PROJECT_DIR:/app" \
-            -v "/opt/Qt/6.11.1/arm64:/opt/Qt/6.11.1/arm64:ro" \
-            -e "LD_LIBRARY_PATH=/opt/Qt/6.11.1/arm64/lib" \
-            "$IMAGE_NAME" \
-            bash -c "cd /app/build_arm64/Tests && valgrind --leak-check=full --show-leak-kinds=definite ./LatencyTesterTests -platform offscreen"
-    else
-        step "Running tests with Valgrind in existing container..."
-        docker exec "$CONTAINER_NAME" \
-            bash -c "cd /app/build_arm64/Tests && LD_LIBRARY_PATH=/opt/Qt/6.11.1/arm64/lib valgrind --leak-check=full --show-leak-kinds=definite ./LatencyTesterTests -platform offscreen"
-    fi
+    step "Running tests with Valgrind (offscreen)..."
+    docker run --platform linux/arm64 \
+        --rm \
+        -v "$PROJECT_DIR:/app" \
+        -v "/opt/Qt/6.11.1/arm64:/opt/Qt/6.11.1/arm64:ro" \
+        -e "LD_LIBRARY_PATH=/opt/Qt/6.11.1/arm64/lib" \
+        "$IMAGE_NAME" \
+        bash -c "cd /app/build_arm64/Tests && ./LatencyTesterTests -platform offscreen"
 }
 
 # --- SHELL ---

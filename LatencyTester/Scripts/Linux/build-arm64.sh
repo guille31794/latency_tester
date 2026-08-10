@@ -131,36 +131,11 @@ if [[ -f "$BINARY" ]]; then
     ok "Build successful: $BINARY"
     echo ""
     file "$BINARY"
-
-    # --- Deploy to Docker container ---
-    CONTAINER_NAME="latencytester-rpi"
-    TESTS_BINARY="$TESTS_BUILD_DIR/LatencyTesterTests"
-    if docker ps -q -f name="$CONTAINER_NAME" 2>/dev/null | grep -q .; then
-        step "Copying binaries to running container..."
-        docker cp "$BINARY" "$CONTAINER_NAME:/app/LatencyTester"
-        [[ -f "$TESTS_BINARY" ]] && docker cp "$TESTS_BINARY" "$CONTAINER_NAME:/app/LatencyTesterTests"
-        ok "Binaries deployed to container at /app/"
-        echo ""
-        echo "  To run app:   docker exec -it $CONTAINER_NAME /app/LatencyTester"
-        echo "  To run tests: docker exec -it $CONTAINER_NAME /app/LatencyTesterTests"
-    else
-        step "Starting container and deploying binaries..."
-        docker run --platform linux/arm64 \
-            --name "$CONTAINER_NAME" \
-            -p 5900:5900 \
-            -v "/opt/Qt/6.11.1/arm64:/opt/Qt/6.11.1/arm64:ro" \
-            -e "LD_LIBRARY_PATH=/opt/Qt/6.11.1/arm64/lib" \
-            -d latencytester-arm64 2>/dev/null || \
-            docker start "$CONTAINER_NAME" 2>/dev/null
-        sleep 2
-        docker cp "$BINARY" "$CONTAINER_NAME:/app/LatencyTester"
-        [[ -f "$TESTS_BINARY" ]] && docker cp "$TESTS_BINARY" "$CONTAINER_NAME:/app/LatencyTesterTests"
-        ok "Binaries deployed to container at /app/"
-        echo ""
-        echo "  Container running with VNC on port 5900"
-        echo "  To run app:   docker exec -it $CONTAINER_NAME /app/LatencyTester"
-        echo "  To run tests: docker exec -it $CONTAINER_NAME /app/LatencyTesterTests"
-    fi
+    echo ""
+    echo "  The project is mounted as /app inside Docker containers."
+    echo "  Run with VNC:    ./docker-rpi.sh run    → then: cd /app/build_arm64 && ./LatencyTester"
+    echo "  Run tests:       ./docker-rpi.sh tests"
+    echo "  Run Valgrind:    ./docker-rpi.sh valgrind"
 else
     err "Build completed but binary not found."
 fi
