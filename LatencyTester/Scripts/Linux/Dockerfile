@@ -25,6 +25,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     qt6-virtualkeyboard-plugin \
     libhunspell-dev \
     libudev-dev \
+    libgpiod-dev \
     libbrotli-dev \
     libdbus-1-dev \
     libdbus-1-3 \

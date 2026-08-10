@@ -101,8 +101,15 @@ cd - >/dev/null
 # --- Symlinks for ld (some libs expect /usr/lib/ paths) ---
 step "Creating compatibility symlinks..."
 mkdir -p "$SYSROOT/usr/lib/aarch64-linux-gnu"
-# Link the dynamic linker path
 ln -sf "$SYSROOT/lib/aarch64-linux-gnu" "$SYSROOT/lib/aarch64-linux-gnu" 2>/dev/null || true
+
+# --- Link Qt ARM64 installation into sysroot (compiler uses --sysroot prefix) ---
+if [[ -d "/opt/Qt/6.11.1/arm64" ]]; then
+    step "Linking Qt ARM64 installation into sysroot..."
+    mkdir -p "$SYSROOT/opt/Qt"
+    ln -sfn /opt/Qt/6.11.1 "$SYSROOT/opt/Qt/6.11.1"
+    ok "Linked /opt/Qt/6.11.1 -> $SYSROOT/opt/Qt/6.11.1"
+fi
 
 # --- Cleanup ---
 step "Removing temporary container..."
