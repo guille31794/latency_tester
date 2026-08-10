@@ -118,10 +118,29 @@ if [[ -f "$BINARY" ]]; then
     ok "Build successful: $BINARY"
     echo ""
     file "$BINARY"
-    echo ""
-    echo "To run in Docker:"
-    echo "  ./docker-rpi.sh run"
-    echo "  cd /app/build_arm64 && ./LatencyTester"
+
+    # --- Deploy to Docker container ---
+    CONTAINER_NAME="latencytester-rpi"
+    if docker ps -q -f name="$CONTAINER_NAME" 2>/dev/null | grep -q .; then
+        step "Copying binary to running container..."
+        docker cp "$BINARY" "$CONTAINER_NAME:/app/LatencyTester"
+        ok "Binary deployed to container at /app/LatencyTester"
+        echo ""
+        echo "  To run: docker exec -it $CONTAINER_NAME /app/LatencyTester"
+    else
+        step "Starting container and deploying binary..."
+        docker run --platform linux/arm64 \
+            --name "$CONTAINER_NAME" \
+            -p 5900:5900 \
+            -d latencytester-arm64 2>/dev/null || \
+            docker start "$CONTAINER_NAME" 2>/dev/null
+        sleep 2
+        docker cp "$BINARY" "$CONTAINER_NAME:/app/LatencyTester"
+        ok "Binary deployed to container at /app/LatencyTester"
+        echo ""
+        echo "  Container running with VNC on port 5900"
+        echo "  To run: docker exec -it $CONTAINER_NAME /app/LatencyTester"
+    fi
 else
     err "Build completed but binary not found."
 fi

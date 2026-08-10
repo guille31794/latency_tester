@@ -4,7 +4,7 @@
 # Build:  docker build --platform linux/arm64 -t latencytester-arm64 .
 # Run:    docker run --platform linux/arm64 -p 5900:5900 -it latencytester-arm64
 
-FROM arm64v8/debian:bookworm
+FROM arm64v8/ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV QT_QPA_PLATFORM=vnc

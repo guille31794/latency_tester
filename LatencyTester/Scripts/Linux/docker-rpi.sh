@@ -68,6 +68,8 @@ cmd_run() {
         --name "$CONTAINER_NAME" \
         -p ${VNC_PORT}:5900 \
         -v "$PROJECT_DIR:/app" \
+        -v "/opt/Qt/6.11.1/arm64:/opt/Qt/6.11.1/arm64:ro" \
+        -e "LD_LIBRARY_PATH=/opt/Qt/6.11.1/arm64/lib" \
         -it "$IMAGE_NAME"
 
     # Note: the entrypoint starts Xvfb + x11vnc automatically.
