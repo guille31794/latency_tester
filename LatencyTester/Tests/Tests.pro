@@ -34,12 +34,9 @@ win32-g++|win32-g++-*|mingw {
 }
 
 # --- AddressSanitizer ---
-# Only when host and target are the same architecture (native build).
-# Disabled for cross-compilation (use Valgrind in Docker instead).
-linux:contains(QMAKE_HOST.arch, $$QT_ARCH) {
-    QMAKE_CXXFLAGS += -fsanitize=address -fno-omit-frame-pointer
-    QMAKE_LFLAGS += -fsanitize=address
-}
+# ASan is used only for native Linux Desktop builds (via Qt Creator or build.sh).
+# Cross-compiled ARM64 binaries are validated with Valgrind in Docker instead.
+# To enable ASan natively: qmake "QMAKE_CXXFLAGS+=-fsanitize=address -fno-omit-frame-pointer" "QMAKE_LFLAGS+=-fsanitize=address"
 
 DEFINES += QT_NO_CONSTEXPR_METAOBJECT_DATA
 
