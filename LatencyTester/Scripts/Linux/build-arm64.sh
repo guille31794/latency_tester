@@ -54,9 +54,9 @@ fi
 # --- Verify prerequisites ---
 step "Checking prerequisites"
 
-command -v aarch64-linux-gnu-g++-12 >/dev/null 2>&1 || \
-    err "aarch64-linux-gnu-g++-12 not found. Install with: sudo apt install g++-12-aarch64-linux-gnu"
-echo "  Cross-compiler: $(aarch64-linux-gnu-g++-12 --version | head -1)"
+command -v aarch64-linux-gnu-g++-13 >/dev/null 2>&1 || \
+    err "aarch64-linux-gnu-g++-13 not found. Install with: sudo apt install g++-13-aarch64-linux-gnu"
+echo "  Cross-compiler: $(aarch64-linux-gnu-g++-13 --version | head -1)"
 
 # Resolve qmake: explicit path > Qt Online Installer > system qmake6 > system qmake
 if [[ -n "$QMAKE_PATH" ]]; then
@@ -104,9 +104,9 @@ cd "$BUILD_DIR"
 
 step "Running $QMAKE (ARM64)"
 $QMAKE "$PROJECT_DIR/LatencyTester.pro" -spec linux-aarch64-gnu-g++ \
-    "QMAKE_CC=aarch64-linux-gnu-gcc-12" \
-    "QMAKE_CXX=aarch64-linux-gnu-g++-12" \
-    "QMAKE_LINK=aarch64-linux-gnu-g++-12"
+    "QMAKE_CC=aarch64-linux-gnu-gcc-13" \
+    "QMAKE_CXX=aarch64-linux-gnu-g++-13" \
+    "QMAKE_LINK=aarch64-linux-gnu-g++-13"
 
 step "Compiling ($JOBS parallel jobs)"
 make -j"$JOBS"
