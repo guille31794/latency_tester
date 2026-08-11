@@ -134,6 +134,16 @@ cp -P "$TEMP_INSTALL$INSTALL_PREFIX/lib"/libgpiod*.a "$SYSROOT/usr/lib/aarch64-l
 mkdir -p "$SYSROOT/usr/include"
 cp -f "$TEMP_INSTALL$INSTALL_PREFIX/include/gpiod.h" "$SYSROOT/usr/include/" 2>/dev/null || true
 cp -f "$TEMP_INSTALL$INSTALL_PREFIX/include/gpiod.hpp" "$SYSROOT/usr/include/" 2>/dev/null || true
+# Copy the gpiodcxx/ subdirectory (v2 C++ bindings split headers)
+if [[ -d "$TEMP_INSTALL$INSTALL_PREFIX/include/gpiodcxx" ]]; then
+    cp -rf "$TEMP_INSTALL$INSTALL_PREFIX/include/gpiodcxx" "$SYSROOT/usr/include/"
+    ok "Copied gpiodcxx/ headers directory"
+fi
+# Also check for gpiod-cxx/ variant
+if [[ -d "$TEMP_INSTALL$INSTALL_PREFIX/include/gpiod-cxx" ]]; then
+    cp -rf "$TEMP_INSTALL$INSTALL_PREFIX/include/gpiod-cxx" "$SYSROOT/usr/include/"
+    ok "Copied gpiod-cxx/ headers directory"
+fi
 
 # Copy pkgconfig
 mkdir -p "$SYSROOT/usr/lib/aarch64-linux-gnu/pkgconfig"
