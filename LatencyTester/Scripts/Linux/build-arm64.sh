@@ -7,7 +7,8 @@
 #   Sysroot extracted from Docker container at ~/ARM64-sysroot
 #
 # Usage:
-#   ./build-arm64.sh              Build for ARM64
+#   ./build-arm64.sh              Build for ARM64 (stubs mode, Docker testing)
+#   ./build-arm64.sh --production Build for ARM64 (real drivers, Raspberry Pi)
 #   ./build-arm64.sh --clean      Remove ARM64 build directory
 #   ./build-arm64.sh --sysroot /path/to/sysroot   Custom sysroot path
 # =============================================================================
@@ -25,21 +26,25 @@ QMAKE_PATH=""
 CYAN='\033[0;36m'
 GREEN='\033[0;32m'
 RED='\033[0;31m'
+YELLOW='\033[1;33m'
 NC='\033[0m'
 
 step() { echo -e "${CYAN}>> $1${NC}"; }
 ok()   { echo -e "${GREEN}   $1${NC}"; }
+warn() { echo -e "${YELLOW}   WARNING: $1${NC}"; }
 err()  { echo -e "${RED}ERROR: $1${NC}" >&2; exit 1; }
 
 # --- Parse arguments ---
 CLEAN=false
+PRODUCTION=false
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --clean)   CLEAN=true; shift ;;
-        --sysroot) SYSROOT="$2"; shift 2 ;;
-        --jobs|-j) JOBS="$2"; shift 2 ;;
-        --qmake)   QMAKE_PATH="$2"; shift 2 ;;
-        *)         echo "Unknown argument: $1"; exit 1 ;;
+        --clean)       CLEAN=true; shift ;;
+        --production)  PRODUCTION=true; shift ;;
+        --sysroot)     SYSROOT="$2"; shift 2 ;;
+        --jobs|-j)     JOBS="$2"; shift 2 ;;
+        --qmake)       QMAKE_PATH="$2"; shift 2 ;;
+        *)             echo "Unknown argument: $1"; exit 1 ;;
     esac
 done
 
@@ -103,27 +108,46 @@ mkdir -p "$BUILD_DIR"
 cd "$BUILD_DIR"
 
 step "Running $QMAKE (ARM64)"
-$QMAKE "$PROJECT_DIR/LatencyTester.pro" -spec linux-aarch64-gnu-g++ \
-    "QMAKE_CC=aarch64-linux-gnu-gcc-13" \
-    "QMAKE_CXX=aarch64-linux-gnu-g++-13" \
-    "QMAKE_LINK=aarch64-linux-gnu-g++-13" \
-    "USE_STUBS=1"
+if $PRODUCTION; then
+    step "MODE: PRODUCTION (real drivers, USE_STUBS=0)"
+    # Verify pigpio is in sysroot
+    if [[ ! -f "$SYSROOT/usr/local/lib/libpigpio.so" && ! -f "$SYSROOT/usr/lib/aarch64-linux-gnu/libpigpio.so" ]]; then
+        warn "libpigpio.so not found in sysroot. Run ./build-pigpio-arm64.sh first."
+        warn "Attempting build anyway (will fail at link stage if pigpio symbols are unresolved)."
+    fi
+    $QMAKE "$PROJECT_DIR/LatencyTester.pro" -spec linux-aarch64-gnu-g++ \
+        "QMAKE_CC=aarch64-linux-gnu-gcc-13" \
+        "QMAKE_CXX=aarch64-linux-gnu-g++-13" \
+        "QMAKE_LINK=aarch64-linux-gnu-g++-13" \
+        "USE_STUBS=0"
+else
+    step "MODE: STUBS (Docker testing, USE_STUBS=1)"
+    $QMAKE "$PROJECT_DIR/LatencyTester.pro" -spec linux-aarch64-gnu-g++ \
+        "QMAKE_CC=aarch64-linux-gnu-gcc-13" \
+        "QMAKE_CXX=aarch64-linux-gnu-g++-13" \
+        "QMAKE_LINK=aarch64-linux-gnu-g++-13" \
+        "USE_STUBS=1"
+fi
 
 step "Compiling ($JOBS parallel jobs)"
 make -j"$JOBS"
 
 # --- Also compile tests (stubs mode only) ---
-step "Compiling tests for ARM64..."
-TESTS_BUILD_DIR="$BUILD_DIR/Tests"
-mkdir -p "$TESTS_BUILD_DIR"
-cd "$TESTS_BUILD_DIR"
-$QMAKE "$PROJECT_DIR/Tests/Tests.pro" -spec linux-aarch64-gnu-g++ \
-    "QMAKE_CC=aarch64-linux-gnu-gcc-13" \
-    "QMAKE_CXX=aarch64-linux-gnu-g++-13" \
-    "QMAKE_LINK=aarch64-linux-gnu-g++-13" \
-    "CONFIG+=no_sanitize"
-make -j"$JOBS"
-cd "$BUILD_DIR"
+if ! $PRODUCTION; then
+    step "Compiling tests for ARM64..."
+    TESTS_BUILD_DIR="$BUILD_DIR/Tests"
+    mkdir -p "$TESTS_BUILD_DIR"
+    cd "$TESTS_BUILD_DIR"
+    $QMAKE "$PROJECT_DIR/Tests/Tests.pro" -spec linux-aarch64-gnu-g++ \
+        "QMAKE_CC=aarch64-linux-gnu-gcc-13" \
+        "QMAKE_CXX=aarch64-linux-gnu-g++-13" \
+        "QMAKE_LINK=aarch64-linux-gnu-g++-13" \
+        "CONFIG+=no_sanitize"
+    make -j"$JOBS"
+    cd "$BUILD_DIR"
+else
+    step "Skipping tests (production mode uses real drivers, not compatible with test stubs)"
+fi
 
 # --- Result ---
 BINARY="$BUILD_DIR/LatencyTester"
