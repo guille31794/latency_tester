@@ -93,6 +93,7 @@ cd "$LIBGPIOD_DIR"
 # Generate configure script if not present
 if [[ ! -f configure ]]; then
     step "Running autogen.sh..."
+    mkdir -p m4
     autoreconf -fi
 fi
 
@@ -106,9 +107,11 @@ fi
     --disable-bindings-python \
     CC=aarch64-linux-gnu-gcc-13 \
     CXX=aarch64-linux-gnu-g++-13 \
-    CFLAGS="--sysroot=$SYSROOT -I$SYSROOT/usr/include" \
-    CXXFLAGS="--sysroot=$SYSROOT -I$SYSROOT/usr/include" \
-    LDFLAGS="--sysroot=$SYSROOT -L$SYSROOT/usr/lib/aarch64-linux-gnu"
+    CFLAGS="--sysroot=$SYSROOT" \
+    CXXFLAGS="--sysroot=$SYSROOT" \
+    LDFLAGS="--sysroot=$SYSROOT -L$SYSROOT/usr/lib/aarch64-linux-gnu" \
+    PKG_CONFIG_PATH="$SYSROOT/usr/lib/aarch64-linux-gnu/pkgconfig" \
+    PKG_CONFIG_SYSROOT_DIR="$SYSROOT"
 
 step "Compiling libgpiod ($JOBS parallel jobs)..."
 make -j"$JOBS"
