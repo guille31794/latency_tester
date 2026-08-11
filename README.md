@@ -101,7 +101,7 @@ cd latency_tester/LatencyTester
 
 ### Quick Start — ARM64 Production Binary
 
-A single script sets up the entire cross-compilation toolchain and generates a production binary for the Raspberry Pi:
+**Option A: Automated local setup** (requires Ubuntu 24.04 + Qt Online Installer)
 
 ```bash
 cd LatencyTester/Scripts/Linux
@@ -114,15 +114,20 @@ This automates 8 steps: host dependencies → ARM64 emulation → Docker image �
 - Subsequent runs: ~5 minutes (skips completed steps)
 - Prerequisite: Qt 6.11.1 host installation via [Qt Online Installer](https://www.qt.io/download-qt-installer) at `~/Qt/6.11.1/gcc_64`
 
-Check toolchain status:
+**Option B: Fully containerized** (works on any OS with Docker — Linux, Windows WSL2, macOS)
+
 ```bash
-./setup-toolchain.sh --status
+cd LatencyTester/Scripts/Linux
+./docker-production.sh build      # Build everything inside Docker (~2-3h)
+./docker-production.sh extract    # Get the ARM64 binary → ./output/LatencyTester
+./docker-production.sh tests      # Run unit tests (ARM64 emulated)
 ```
 
-Re-run a specific step:
+No Qt installation, no cross-compilers, no sysroot setup needed on the host. Just Docker.
+
+Check toolchain status (Option A only):
 ```bash
-./setup-toolchain.sh --only 8     # Only rebuild production binary
-./setup-toolchain.sh --step 6     # Run from step 6 onwards
+./setup-toolchain.sh --status
 ```
 
 ### Build Modes
@@ -188,7 +193,8 @@ All tests pass on Windows x86_64, Linux x86_64, and ARM64 (Docker emulated).
 
 | Script | Purpose |
 |--------|---------|
-| `Scripts/Linux/setup-toolchain.sh` | **One-command full setup** — installs everything, builds production binary |
+| `Scripts/Linux/setup-toolchain.sh` | **One-command local setup** — installs everything, builds production binary |
+| `Scripts/Linux/docker-production.sh` | **Fully containerized build** — no host deps needed, just Docker |
 | `Scripts/Linux/build-arm64.sh` | Cross-compile for ARM64 (stubs or `--production`) |
 | `Scripts/Linux/build-qt6-arm64.sh` | Compile Qt 6.11.1 from source for ARM64 (one-time) |
 | `Scripts/Linux/build-libgpiod-arm64.sh` | Compile libgpiod v2.2 + C++ bindings for ARM64 |

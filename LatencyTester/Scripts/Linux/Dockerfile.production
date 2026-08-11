@@ -1,0 +1,370 @@
+# =============================================================================
+# Dockerfile.production — Self-contained ARM64 production build environment
+#
+# This multi-stage Dockerfile produces a fully portable build environment that:
+#   1. Downloads and compiles Qt 6.11.1 from source for ARM64
+#   2. Compiles libgpiod v2.2 with C++ bindings
+#   3. Compiles pigpio from source
+#   4. Cross-compiles LatencyTester (production + stubs/tests)
+#   5. Runs the unit tests in ARM64 emulation
+#   6. Outputs the production binary as a build artifact
+#
+# Prerequisites on the host:
+#   - Docker with BuildKit (docker build --progress=plain)
+#   - ARM64 emulation: docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+#   - ~25 GB disk space for the build
+#
+# Usage:
+#   # Build the image (produces everything, ~2-3h first time):
+#   docker build -f Dockerfile.production -t latencytester-build .
+#
+#   # Extract the production binary:
+#   docker run --rm latencytester-build cat /output/LatencyTester > LatencyTester
+#
+#   # Run tests inside the container:
+#   docker run --rm --platform linux/arm64 latencytester-build /run-tests.sh
+#
+#   # Interactive shell:
+#   docker run --rm -it latencytester-build bash
+#
+# The image can be built on any machine (Linux, Windows with WSL2, macOS)
+# that has Docker installed with ARM64 emulation support.
+# =============================================================================
+
+
+# =============================================================================
+# STAGE 1: Build environment (x86_64 host — cross-compilation)
+# =============================================================================
+FROM ubuntu:24.04 AS builder
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install cross-compiler and build tools
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc-13-aarch64-linux-gnu \
+    g++-13-aarch64-linux-gnu \
+    lld \
+    cmake \
+    ninja-build \
+    pkg-config \
+    autoconf \
+    automake \
+    libtool \
+    autoconf-archive \
+    make \
+    wget \
+    ca-certificates \
+    xz-utils \
+    python3 \
+    git \
+    file \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create working directories
+WORKDIR /build
+
+# ---------------------------------------------------------------------------
+# STAGE 1a: Build ARM64 sysroot from an ARM64 base image
+# ---------------------------------------------------------------------------
+FROM arm64v8/ubuntu:24.04 AS sysroot-source
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libqt6widgets6 \
+    libqt6concurrent6 \
+    libqt6printsupport6 \
+    libqt6gui6 \
+    libqt6core6 \
+    libqt6network6 \
+    libqt6opengl6 \
+    libqt6qml6 \
+    libqt6quick6 \
+    qt6-qpa-plugins \
+    qt6-virtualkeyboard-plugin \
+    libhunspell-dev \
+    libudev-dev \
+    libgpiod-dev \
+    libgpiod2 \
+    libbrotli-dev \
+    libdbus-1-dev \
+    libdbus-1-3 \
+    libfontconfig-dev \
+    libfreetype-dev \
+    libharfbuzz-dev \
+    libicu-dev \
+    libinput-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libssl-dev \
+    libxkbcommon-dev \
+    libmtdev-dev \
+    libsystemd-dev \
+    libatspi2.0-dev \
+    libglib2.0-dev \
+    libdrm-dev \
+    libgbm-dev \
+    zlib1g-dev \
+    libgl1-mesa-dri \
+    libgl-dev \
+    libegl-dev \
+    libgles-dev \
+    libgles2 \
+    libegl1 \
+    valgrind \
+    xvfb \
+    x11vnc \
+    procps \
+    && rm -rf /var/lib/apt/lists/*
+
+# ---------------------------------------------------------------------------
+# STAGE 1b: Continue building on x86_64
+# ---------------------------------------------------------------------------
+FROM builder AS cross-builder
+
+# Copy sysroot from ARM64 stage
+COPY --from=sysroot-source /usr/lib/aarch64-linux-gnu /sysroot/usr/lib/aarch64-linux-gnu
+COPY --from=sysroot-source /usr/include /sysroot/usr/include
+COPY --from=sysroot-source /lib/aarch64-linux-gnu /sysroot/lib/aarch64-linux-gnu
+
+# Create dynamic linker symlink
+RUN mkdir -p /sysroot/lib && \
+    ln -sf aarch64-linux-gnu/ld-linux-aarch64.so.1 /sysroot/lib/ld-linux-aarch64.so.1
+
+# Create .so symlinks for the cross-linker
+RUN cd /sysroot/usr/lib/aarch64-linux-gnu && \
+    for lib in *.so.*; do \
+        [ -e "$lib" ] || continue; \
+        base=$(echo "$lib" | sed 's/\.so\..*/\.so/'); \
+        [ -e "$base" ] || ln -sf "$lib" "$base"; \
+    done
+
+# ---------------------------------------------------------------------------
+# Download and compile Qt 6.11.1 for ARM64
+# ---------------------------------------------------------------------------
+ENV QT_VERSION=6.11.1
+ENV QT_MAJOR_MINOR=6.11
+
+# Download Qt source
+RUN wget -q "https://download.qt.io/official_releases/qt/${QT_MAJOR_MINOR}/${QT_VERSION}/single/qt-everywhere-src-${QT_VERSION}.tar.xz" \
+    -O /tmp/qt-src.tar.xz && \
+    cd /tmp && tar xf qt-src.tar.xz && \
+    rm qt-src.tar.xz
+
+# First, build Qt for the host (needed as host tools: moc, rcc, uic)
+RUN mkdir -p /tmp/qt-host-build && cd /tmp/qt-host-build && \
+    /tmp/qt-everywhere-src-${QT_VERSION}/configure \
+        -prefix /opt/Qt/${QT_VERSION}/host \
+        -nomake examples -nomake tests \
+        -submodules qtbase \
+        -- -GNinja && \
+    cmake --build . --parallel $(nproc) && \
+    cmake --install .
+
+# Generate CMake toolchain for ARM64
+RUN cat > /tmp/toolchain-arm64.cmake << 'EOF'
+set(CMAKE_SYSTEM_NAME Linux)
+set(CMAKE_SYSTEM_PROCESSOR aarch64)
+set(CMAKE_C_COMPILER /usr/bin/aarch64-linux-gnu-gcc-13)
+set(CMAKE_CXX_COMPILER /usr/bin/aarch64-linux-gnu-g++-13)
+set(CMAKE_SYSROOT /sysroot)
+set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
+set(ENV{PKG_CONFIG_PATH} "/sysroot/usr/lib/aarch64-linux-gnu/pkgconfig")
+set(ENV{PKG_CONFIG_SYSROOT_DIR} "/sysroot")
+include_directories(SYSTEM "/sysroot/usr/lib/aarch64-linux-gnu/glib-2.0/include")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=lld -Wl,-rpath-link,/sysroot/usr/lib/aarch64-linux-gnu")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fuse-ld=lld -Wl,-rpath-link,/sysroot/usr/lib/aarch64-linux-gnu")
+EOF
+
+# Build Qt for ARM64
+RUN mkdir -p /tmp/qt-arm64-build && cd /tmp/qt-arm64-build && \
+    /tmp/qt-everywhere-src-${QT_VERSION}/configure \
+        -prefix /opt/Qt/${QT_VERSION}/arm64 \
+        -qt-host-path /opt/Qt/${QT_VERSION}/host \
+        -platform linux-g++ \
+        -device-option CROSS_COMPILE=aarch64-linux-gnu- \
+        -nomake examples -nomake tests \
+        -submodules qtbase,qtdeclarative,qtvirtualkeyboard,qtsvg,qtshadertools \
+        -- \
+        -DCMAKE_TOOLCHAIN_FILE=/tmp/toolchain-arm64.cmake \
+        -DCMAKE_SYSROOT=/sysroot \
+        -DQT_BUILD_EXAMPLES=OFF \
+        -DQT_BUILD_TESTS=OFF \
+        -DFEATURE_hunspell=OFF \
+        -GNinja && \
+    cmake --build . --parallel $(nproc) && \
+    cmake --install .
+
+# Clean up Qt source to save space
+RUN rm -rf /tmp/qt-everywhere-src-* /tmp/qt-host-build /tmp/qt-arm64-build
+
+# ---------------------------------------------------------------------------
+# Compile libgpiod v2.2 with C++ bindings for ARM64
+# ---------------------------------------------------------------------------
+RUN wget -q "https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/snapshot/libgpiod-2.2.tar.gz" \
+    -O /tmp/libgpiod.tar.gz && \
+    cd /tmp && tar xzf libgpiod.tar.gz && rm libgpiod.tar.gz
+
+RUN cd /tmp/libgpiod-2.2 && \
+    mkdir -p m4 && \
+    autoreconf -fi && \
+    ./configure \
+        --host=aarch64-linux-gnu \
+        --prefix=/usr \
+        --enable-bindings-cxx \
+        --disable-tools \
+        --disable-tests \
+        --disable-bindings-python \
+        CC=aarch64-linux-gnu-gcc-13 \
+        CXX=aarch64-linux-gnu-g++-13 && \
+    make -j$(nproc) && \
+    make DESTDIR=/sysroot install
+
+# Ensure libs are in the right place for the linker
+RUN cp -P /sysroot/usr/lib/libgpiod*.so* /sysroot/usr/lib/aarch64-linux-gnu/ 2>/dev/null || true && \
+    cp -f /sysroot/usr/include/gpiod.hpp /sysroot/usr/include/ 2>/dev/null || true && \
+    cp -rf /sysroot/usr/include/gpiodcxx /sysroot/usr/include/ 2>/dev/null || true
+
+RUN rm -rf /tmp/libgpiod-2.2
+
+# ---------------------------------------------------------------------------
+# Compile pigpio for ARM64
+# ---------------------------------------------------------------------------
+RUN wget -q "https://github.com/joan2937/pigpio/archive/master.tar.gz" \
+    -O /tmp/pigpio.tar.gz && \
+    cd /tmp && tar xzf pigpio.tar.gz && rm pigpio.tar.gz
+
+RUN cd /tmp/pigpio-master && \
+    aarch64-linux-gnu-gcc-13 -O2 -Wall -pthread -fPIC -c pigpio.c -o pigpio.o && \
+    aarch64-linux-gnu-gcc-13 -O2 -Wall -pthread -fPIC -c command.c -o command.o && \
+    aarch64-linux-gnu-gcc-13 -shared -pthread -Wl,-soname,libpigpio.so.1 \
+        -o libpigpio.so.1 pigpio.o command.o -lrt && \
+    ln -sf libpigpio.so.1 libpigpio.so && \
+    aarch64-linux-gnu-ar rcs libpigpio.a pigpio.o command.o && \
+    mkdir -p /sysroot/usr/local/lib /sysroot/usr/local/include && \
+    cp -P libpigpio.so libpigpio.so.1 libpigpio.a /sysroot/usr/local/lib/ && \
+    cp pigpio.h /sysroot/usr/local/include/ && \
+    cp pigpio.h /sysroot/usr/include/
+
+RUN rm -rf /tmp/pigpio-master
+
+# ---------------------------------------------------------------------------
+# Copy project source and compile
+# ---------------------------------------------------------------------------
+COPY . /project
+
+# Build PRODUCTION binary (real drivers)
+RUN mkdir -p /project/build_arm64 && cd /project/build_arm64 && \
+    /opt/Qt/${QT_VERSION}/arm64/bin/qmake /project/LatencyTester/LatencyTester.pro \
+        -spec linux-aarch64-gnu-g++ \
+        "QMAKE_CC=aarch64-linux-gnu-gcc-13" \
+        "QMAKE_CXX=aarch64-linux-gnu-g++-13" \
+        "QMAKE_LINK=aarch64-linux-gnu-g++-13" \
+        "USE_STUBS=0" \
+        "SYSROOT_PATH=/sysroot" && \
+    make -j$(nproc)
+
+# Build STUBS binary (for tests)
+RUN mkdir -p /project/build_arm64_stubs && cd /project/build_arm64_stubs && \
+    /opt/Qt/${QT_VERSION}/arm64/bin/qmake /project/LatencyTester/LatencyTester.pro \
+        -spec linux-aarch64-gnu-g++ \
+        "QMAKE_CC=aarch64-linux-gnu-gcc-13" \
+        "QMAKE_CXX=aarch64-linux-gnu-g++-13" \
+        "QMAKE_LINK=aarch64-linux-gnu-g++-13" \
+        "USE_STUBS=1" && \
+    make -j$(nproc)
+
+# Build tests
+RUN mkdir -p /project/build_arm64_stubs/Tests && cd /project/build_arm64_stubs/Tests && \
+    /opt/Qt/${QT_VERSION}/arm64/bin/qmake /project/LatencyTester/Tests/Tests.pro \
+        -spec linux-aarch64-gnu-g++ \
+        "QMAKE_CC=aarch64-linux-gnu-gcc-13" \
+        "QMAKE_CXX=aarch64-linux-gnu-g++-13" \
+        "QMAKE_LINK=aarch64-linux-gnu-g++-13" \
+        "CONFIG+=no_sanitize" && \
+    make -j$(nproc)
+
+# Collect output artifacts
+RUN mkdir -p /output && \
+    cp /project/build_arm64/LatencyTester /output/LatencyTester && \
+    cp /project/build_arm64_stubs/LatencyTester /output/LatencyTester-stubs && \
+    cp /project/build_arm64_stubs/Tests/LatencyTesterTests /output/LatencyTesterTests
+
+# =============================================================================
+# STAGE 2: Runtime environment (ARM64 — for testing and execution)
+# =============================================================================
+FROM arm64v8/ubuntu:24.04 AS runtime
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV DISPLAY=:0
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libqt6widgets6 \
+    libqt6concurrent6 \
+    libqt6printsupport6 \
+    libqt6gui6 \
+    libqt6core6 \
+    libqt6network6 \
+    libqt6opengl6 \
+    qt6-qpa-plugins \
+    qt6-virtualkeyboard-plugin \
+    libgpiod2 \
+    xvfb \
+    x11vnc \
+    valgrind \
+    procps \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy Qt ARM64 runtime (only libs needed at runtime)
+COPY --from=cross-builder /opt/Qt/6.11.1/arm64/lib /opt/Qt/6.11.1/arm64/lib
+COPY --from=cross-builder /opt/Qt/6.11.1/arm64/plugins /opt/Qt/6.11.1/arm64/plugins
+
+# Copy pigpio and libgpiodcxx shared libs
+COPY --from=cross-builder /sysroot/usr/local/lib/libpigpio.so* /usr/local/lib/
+COPY --from=cross-builder /sysroot/usr/lib/libgpiod*.so* /usr/lib/
+RUN ldconfig
+
+# Copy built binaries
+COPY --from=cross-builder /output /app
+WORKDIR /app
+
+ENV LD_LIBRARY_PATH=/opt/Qt/6.11.1/arm64/lib:/usr/local/lib
+
+# Test runner script
+RUN echo '#!/bin/bash\n\
+echo ">> Starting Xvfb..."\n\
+Xvfb :0 -screen 0 800x480x24 &\n\
+sleep 1\n\
+export DISPLAY=:0\n\
+echo ">> Running unit tests..."\n\
+./LatencyTesterTests -platform offscreen\n\
+echo ">> Tests complete."' > /run-tests.sh && chmod +x /run-tests.sh
+
+# Valgrind runner
+RUN echo '#!/bin/bash\n\
+Xvfb :0 -screen 0 800x480x24 &\n\
+sleep 1\n\
+export DISPLAY=:0\n\
+echo ">> Running Valgrind..."\n\
+valgrind --leak-check=full --show-leak-kinds=definite ./LatencyTester-stubs -platform offscreen\n\
+echo ">> Valgrind complete."' > /run-valgrind.sh && chmod +x /run-valgrind.sh
+
+# VNC runner
+RUN echo '#!/bin/bash\n\
+echo ">> Starting Xvfb (800x480)..."\n\
+Xvfb :0 -screen 0 800x480x24 &\n\
+sleep 1\n\
+echo ">> Starting x11vnc on port 5900..."\n\
+x11vnc -display :0 -forever -nopw -listen 0.0.0.0 -rfbport 5900 &\n\
+sleep 1\n\
+export DISPLAY=:0\n\
+echo ">> Ready. Connect VNC to localhost:5900"\n\
+echo ">> Running LatencyTester (stubs)..."\n\
+./LatencyTester-stubs' > /run-vnc.sh && chmod +x /run-vnc.sh
+
+EXPOSE 5900
+
+CMD ["bash"]
