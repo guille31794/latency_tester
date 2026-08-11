@@ -120,7 +120,7 @@ if $PRODUCTION; then
         "QMAKE_CXX=aarch64-linux-gnu-g++-13" \
         "QMAKE_LINK=aarch64-linux-gnu-g++-13" \
         "USE_STUBS=0" \
-        "LIBS+=-L$SYSROOT/usr/lib/aarch64-linux-gnu -L$SYSROOT/usr/local/lib"
+        "SYSROOT_PATH=$SYSROOT"
 else
     step "MODE: STUBS (Docker testing, USE_STUBS=1)"
     $QMAKE "$PROJECT_DIR/LatencyTester.pro" -spec linux-aarch64-gnu-g++ \

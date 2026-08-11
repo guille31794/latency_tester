@@ -43,6 +43,11 @@ contains(QMAKE_HOST.arch, arm.*) | contains(QT_ARCH, arm.*) | contains(QMAKE_PLA
         message("Building for ARM64 with REAL DRIVERS (production)")
         DEFINES += RASPBERRY_PI
         LIBS += -L/usr/local/lib -L/usr/lib -lpigpio -lrt -lgpiod -lgpiodcxx
+        # When cross-compiling with a custom sysroot, add its lib paths
+        !isEmpty(SYSROOT_PATH) {
+            LIBS += -L$$SYSROOT_PATH/usr/lib/aarch64-linux-gnu \
+                    -L$$SYSROOT_PATH/usr/local/lib
+        }
         SOURCES += Libs/rpi_ads1115/ads1115rpi.cpp
         HEADERS += Libs/rpi_ads1115/ads1115rpi.h
     }
