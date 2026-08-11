@@ -2598,7 +2598,66 @@ El software se encuentra completamente funcional en modo de pruebas (stubs de ha
 
 \section{Conclusiones}
 
+Este proyecto nace con la ambición de desarrollar un producto de ingeniería completo: un dispositivo hardware portátil, con carcasa impresa en 3D, electrónica de adquisición, software embebido y sistema de alimentación autónomo. La realidad del desarrollo demostró rápidamente que el componente software, por sí solo, constituía un proyecto de envergadura suficiente para absorber toda la capacidad de trabajo disponible. Lo que inicialmente se concibió como una de las piezas del conjunto se convirtió en el eje central del proyecto.
+
+La decisión de acotar el alcance al desarrollo software no fue trivial, pero resultó acertada. El medidor de latencias como concepto requiere un software fiable, mantenible y verificable, y alcanzar ese nivel de calidad exige un esfuerzo que no puede comprimirse para dejar espacio al diseño electrónico y mecánico dentro del mismo marco temporal. Se ha preferido entregar un producto software completo y profesional antes que un prototipo integral con deficiencias en cada una de sus capas.
+
+Dentro del desarrollo software, la configuración de la toolchain de compilación cruzada resultó ser, con diferencia, el obstáculo técnico de mayor magnitud. Lo que en la literatura y documentación de Qt se describe como un proceso relativamente directo (instalar compilador cruzado, apuntar al sysroot, compilar) se transformó en una cadena de problemas interdependientes que consumieron una parte significativa del tiempo del proyecto:
+
+\begin{itemize}
+    \item La incompatibilidad de qmake con QEMU user-mode, que impedía ejecutar la herramienta de build dentro del contenedor emulado, obligando a rediseñar el flujo de compilación.
+    \item La ausencia de Qt 6 precompilado para ARM64, que exigió compilar el framework completo desde código fuente — un proceso de más de dos horas con más de una decena de dependencias que resolver iterativamente.
+    \item Los desajustes de versión de GLIBC entre el linker del host y las librerías del sysroot, solucionados mediante el linker alternativo \texttt{lld}.
+    \item La necesidad de GCC 13 para obtener soporte completo de la cabecera \texttt{<format>} de C++20, lo que precipitó la actualización del sistema operativo de desarrollo de Ubuntu 22.04 a 24.04.
+    \item La incompatibilidad de APIs entre libgpiod v1 (disponible en repositorios) y v2 (requerida por el driver ADS1115), que obligó a compilar la librería desde fuente con los bindings C++.
+    \item La ausencia total de pigpio en los repositorios de Debian/Ubuntu para ARM64, requiriendo igualmente su compilación cruzada desde fuente.
+\end{itemize}
+
+Cada uno de estos problemas, de forma individual, tiene una solución relativamente sencilla. La dificultad radica en que se presentan encadenados: resolver uno revela el siguiente, y la documentación disponible asume configuraciones estándar que no se dan en un proyecto con esta combinación concreta de tecnologías (Qt 6.11 + ARM64 + C++20 + libgpiod v2 + pigpio + compilación cruzada desde x86-64).
+
+Una vez resuelta la configuración de la toolchain, el resultado es un flujo de trabajo robusto y completamente automatizado. Un único script (\texttt{setup-toolchain.sh}) permite a cualquier desarrollador, partiendo de un sistema Ubuntu 24.04 limpio, obtener un binario de producción ARM64 sin intervención manual. Alternativamente, un contenedor Docker multi-stage (\texttt{Dockerfile.production}) encapsula absolutamente todo el entorno de compilación, permitiendo generar el binario desde cualquier máquina con Docker instalado — incluyendo Windows con WSL2.
+
+El software desarrollado resuelve un problema real en el ámbito de la videovigilancia para sistemas críticos. En entornos donde la respuesta del operador depende directamente de la latencia del sistema de vídeo — salas de control de infraestructuras críticas, centros de vigilancia penitenciaria, control fronterizo — no existía hasta ahora un instrumento portátil, económico y autónomo capaz de cuantificar ese retardo de forma objetiva y repetible. El dispositivo propuesto llena ese vacío con una solución que combina hardware de bajo coste (Raspberry Pi, LED, fotosensor ADC) con un software embebido que proporciona:
+
+\begin{itemize}
+    \item Medición automatizada con calibración previa para adaptarse a las condiciones ambientales.
+    \item Interfaz táctil accesible, con soporte multilingüe y modos de visualización adaptados (nocturno, daltónico).
+    \item Persistencia y consulta del historial de mediciones, facilitando la comparación temporal y la auditoría de sistemas.
+    \item Verificación exhaustiva mediante 147 pruebas unitarias automatizadas, análisis de memoria con AddressSanitizer y Valgrind, y validación gráfica sobre la resolución real del dispositivo.
+\end{itemize}
+
+El proyecto demuestra que es viable desarrollar software embebido de calidad profesional sobre Qt 6 para plataformas ARM64, incluso partiendo de una cadena de herramientas que no está oficialmente soportada por el fabricante del framework. El coste de esa viabilidad es una inversión inicial considerable en la configuración del entorno, pero una vez amortizada, el ciclo de desarrollo se equipara al de cualquier aplicación Desktop convencional.
+
 \section{Trabajo futuro}
+
+El proyecto, en su estado actual, tiene el software completamente funcional y validado en entorno emulado. Las líneas de trabajo futuro se articulan en torno a tres ejes:
+
+\subsection{Integración con hardware real}
+
+\begin{itemize}
+    \item \textbf{Validación sobre Raspberry Pi física}: desplegar el binario de producción y ejecutar la secuencia completa de calibración y medición con el LED y el fotosensor ADS1115 conectados. Los 2 tests unitarios actualmente omitidos (escenarios de timeout del sensor) se podrán validar en este entorno.
+    \item \textbf{Ajuste de parámetros de medición}: los umbrales de detección del fotosensor, el tiempo de estabilización del LED y los timeouts pueden requerir ajuste fino con el hardware real, en función de las condiciones de iluminación y la distancia al monitor bajo prueba.
+    \item \textbf{Calibración de precisión}: comparar las mediciones del dispositivo con equipos de referencia de laboratorio para establecer la incertidumbre del instrumento y, si procede, aplicar factores de corrección.
+\end{itemize}
+
+\subsection{Mejoras de software}
+
+\begin{itemize}
+    \item \textbf{Exportación de resultados}: añadir la posibilidad de exportar las mediciones a formatos CSV o PDF para facilitar la integración con informes de auditoría.
+    \item \textbf{Modo de medición continua}: implementar un modo de monitorización que realice mediciones periódicas durante un intervalo prolongado (horas/días), generando un perfil temporal de la latencia del sistema bajo prueba.
+    \item \textbf{Conectividad de red}: añadir un módulo de comunicación (WiFi o Ethernet) para enviar resultados a un servidor central, permitiendo la gestión remota de múltiples dispositivos desplegados en distintas localizaciones.
+    \item \textbf{Actualización OTA}: implementar un mecanismo de actualización del firmware por red, evitando la necesidad de acceso físico al dispositivo para instalar nuevas versiones.
+    \item \textbf{Actualización de QCustomPlot}: cuando la versión oficial sea compatible con Qt 6.8+ sin parches, eliminar la macro \texttt{QT\_NO\_CONSTEXPR\_METAOBJECT\_DATA} y las modificaciones al namespace QCP.
+\end{itemize}
+
+\subsection{Hardware y producto final}
+
+\begin{itemize}
+    \item \textbf{Diseño de PCB dedicada}: sustituir la combinación Raspberry Pi + placa de prototipos por una PCB diseñada a medida que integre el microcontrolador, el ADC, el driver del LED y el conector de pantalla en un único circuito.
+    \item \textbf{Carcasa de producción}: evolucionar del prototipo impreso en PLA a una carcasa inyectada en ABS con certificación IP20 para uso industrial.
+    \item \textbf{Certificación y homologación}: obtener el marcado CE para la comercialización del producto como instrumento de medida en el ámbito europeo.
+    \item \textbf{Migración a plataforma más moderna}: evaluar la viabilidad de portar el software a un Raspberry Pi 4 o Compute Module 4, que ofrecen mayor potencia de cómputo y conectividad integrada, o a plataformas alternativas como los módulos NVIDIA Jetson para aplicaciones de mayor rendimiento.
+\end{itemize}
 
 \chapter{Agradecimientos}
 
