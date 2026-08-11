@@ -11,163 +11,201 @@ The device emits a light pulse (LED) into the camera under test, and a photosens
 ## Key Features
 
 - Portable, battery-powered, standalone measurement device
-- Touch-friendly Qt GUI on a 7" capacitive display
+- Touch-friendly Qt GUI on a 7" capacitive display (800×480)
 - Calibration workflow with LED blink feedback
 - Real-time latency graph (QCustomPlot)
 - Measurement history with JSON persistence
 - Multi-language UI (Spanish, English, Polish)
 - Dark mode and colorblind-accessible mode
+- Integrated user manual (HTML, 3 languages)
+- 147 automated unit tests (QTest)
 - Runs on Raspberry Pi 3 Model B
 
 ## Technology Stack
 
 | Component | Technology |
 |---|---|
-| Hardware | Raspberry Pi 3 Model B |
-| Language | C++17 |
-| UI Framework | Qt 6.11 (Widgets) |
-| Charts | QCustomPlot 2.1.0 |
+| Hardware | Raspberry Pi 3 Model B + 7" touch display |
+| Language | C++20 |
+| UI Framework | Qt 6.11.1 (Widgets, Concurrent, VirtualKeyboard) |
+| Charts | QCustomPlot 2.1.0 (patched for Qt 6.11) |
 | GPIO | pigpio |
-| ADC (photosensor) | ADS1115 via I2C (rpi_ads1115) |
+| ADC (photosensor) | ADS1115 via I2C (libgpiod v2 + rpi_ads1115) |
 | OS | Raspi OS Lite (custom) |
-| Virtual keyboard | Qt Virtual Keyboard |
 | Build system | qmake + GNU Make |
-| Languages | Spanish, English, Polish |
+| Cross-compiler | GCC 13 (aarch64-linux-gnu-g++-13) |
+| Testing | QTest (147 tests), AddressSanitizer, Valgrind |
+| Emulation | Docker ARM64 + QEMU user-mode + VNC |
 
 ## Project Structure
 
 ```
 latency_tester/
-├── LatencyTester/                ← Application source code
-│   ├── main.cpp                  ← Entry point
-│   ├── LatencyTester.pro         ← qmake project file
-│   ├── Core/                     ← Business logic (no GUI)
-│   │   ├── dataModel.hpp         ← Shared data structures
-│   │   ├── Helpers/              ← Stubs & header-only utilities
-│   │   ├── AppSettings/          ← Singleton config manager
-│   │   ├── JsonOperator/         ← JSON read/write for measurements
-│   │   └── SensorOperator/       ← LED + photosensor control (ADS1115)
-│   ├── GUI/                      ← UI layer (one folder per screen)
-│   │   ├── MainWindow/           ← Navigation controller (QStackedWidget)
-│   │   ├── HomeScreen/           ← Main menu (4 buttons)
-│   │   ├── MeasureScreen/        ← Calibration, measurement, live graph
-│   │   ├── SettingsScreen/       ← Language, font size, dark/colorblind modes
-│   │   ├── HelpScreen/           ← Help menu
-│   │   ├── HelpInfoScreen/       ← Help content display
-│   │   ├── RegistryScreen/       ← Measurement history (TreeView + actions)
-│   │   └── RegistryDisplayScreen/← Saved measurement viewer (graph + data)
-│   ├── Scripts/                  ← Build & setup automation
-│   │   ├── Doxyfile             ← Doxygen configuration (shared)
-│   │   ├── Windows/
-│   │   │   ├── build.ps1       ← Windows build + docs script
-│   │   │   └── setup.ps1       ← Windows environment setup
-│   │   └── Linux/
-│   │       ├── build.sh         ← Linux build + docs script
-│   │       └── setup.sh         ← Linux environment setup
-│   ├── Libs/                     ← Third-party libraries
-│   │   ├── QCustomPlot/          ← 2D plotting (patched for Qt 6.11)
-│   │   └── rpi_ads1115/          ← ADS1115 ADC driver (git submodule)
-│   ├── Measures/                 ← Saved measurement files (.json)
-│   ├── Tests/                    ← (reserved)
-│   └── Translations/             ← i18n files (.ts: es_ES, en_EN, pl_PL)
-├── Medidor_de_latencias_.../     ← Academic report (LaTeX)
-├── toolchain_setup.md            ← Cross-compilation guide
+├── LatencyTester/                    ← Application source code
+│   ├── main.cpp                      ← Entry point
+│   ├── LatencyTester.pro             ← qmake project file
+│   ├── Core/                         ← Business logic (no GUI)
+│   │   ├── dataModel.hpp             ← Shared data structures
+│   │   ├── Helpers/                  ← Stubs & conditional headers
+│   │   ├── AppSettings/              ← Singleton config manager
+│   │   ├── JsonOperator/             ← JSON read/write for measurements
+│   │   └── SensorOperator/           ← LED + photosensor control
+│   ├── GUI/                          ← UI layer (one folder per screen)
+│   │   ├── MainWindow/               ← Navigation (QStackedWidget, 7 screens)
+│   │   ├── HomeScreen/               ← Main menu
+│   │   ├── MeasureScreen/            ← Calibration, measurement, live graph
+│   │   ├── SettingsScreen/           ← Language, font, dark/colorblind modes
+│   │   ├── HelpScreen/               ← Help menu
+│   │   ├── HelpInfoScreen/           ← Help content viewer (QTextBrowser)
+│   │   ├── RegistryScreen/           ← Measurement history
+│   │   └── RegistryDisplayScreen/    ← Saved measurement viewer
+│   ├── Tests/                        ← 147 unit tests (10 suites)
+│   ├── Scripts/                      ← Build & deployment automation
+│   │   ├── Doxyfile                  ← Doxygen configuration
+│   │   ├── Windows/                  ← build.ps1, setup.ps1
+│   │   └── Linux/                    ← All Linux/ARM64 scripts (see below)
+│   ├── Libs/                         ← Third-party libraries
+│   │   ├── QCustomPlot/              ← 2D plotting
+│   │   └── rpi_ads1115/              ← ADS1115 ADC driver (git submodule)
+│   ├── Resources/                    ← Embedded HTML help (es/en/pl)
+│   ├── Measures/                     ← Saved measurement files (.json)
+│   └── Translations/                 ← i18n files (.ts)
+├── Medidor_de_latencias_.../         ← Academic report (LaTeX)
+├── toolchain_setup.md                ← Detailed cross-compilation guide
 └── README.md
 ```
 
 ## Building
 
-### Prerequisites
+### Quick Start — Desktop (development)
 
-- **Qt 6.11+** with modules: Core, Gui, Widgets, PrintSupport, Concurrent
-- **MinGW 13+** (Windows) or **GCC 11+** (Linux)
-- **Git** (for submodules)
-- (Optional) **Qt Virtual Keyboard** — install via Qt Maintenance Tool
-- (Optional) **Doxygen + Graphviz** — for API documentation generation
-
-### Clone
+Desktop builds use hardware stubs, enabling full UI development without a Raspberry Pi.
 
 ```bash
 git clone --recurse-submodules https://github.com/guille31794/latency_tester.git
 cd latency_tester/LatencyTester
 ```
 
-### Automated build (recommended)
+**Windows (Qt Creator):**
+1. Open `LatencyTester.pro`, select kit *Desktop Qt 6.11 MinGW 64-bit*, Build All.
 
-Both scripts compile the application in Release mode and generate Doxygen documentation into `LatencyTester/Documentation/`.
-
-**Windows (PowerShell):**
+**Windows (CLI):**
 ```powershell
-.\LatencyTester\Scripts\Windows\build.ps1              # Build + docs
-.\LatencyTester\Scripts\Windows\build.ps1 -NoDocs     # Build only
-.\LatencyTester\Scripts\Windows\build.ps1 -DocsOnly   # Docs only
-.\LatencyTester\Scripts\Windows\build.ps1 -Clean      # Remove artifacts
+.\Scripts\Windows\build.ps1
 ```
 
-**Linux (Bash):**
+**Linux (CLI):**
 ```bash
-./LatencyTester/Scripts/Linux/build.sh               # Build + docs
-./LatencyTester/Scripts/Linux/build.sh --no-docs     # Build only
-./LatencyTester/Scripts/Linux/build.sh --docs-only   # Docs only
-./LatencyTester/Scripts/Linux/build.sh --clean       # Remove artifacts
-./LatencyTester/Scripts/Linux/build.sh --jobs 4      # Custom parallelism
+./Scripts/Linux/build.sh
 ```
 
-### Desktop (manual build)
+### Quick Start — ARM64 Production Binary
 
-#### Using Qt Creator
-
-1. Open `LatencyTester/LatencyTester.pro`
-2. Select kit: **Desktop Qt 6.11+ MinGW 64-bit**
-3. Build → Build All
-
-#### From the command line (Windows)
-
-```powershell
-# Ensure Qt's bin and MinGW bin are in PATH
-qmake LatencyTester.pro
-mingw32-make -j8
-```
-
-#### From the command line (Linux)
+A single script sets up the entire cross-compilation toolchain and generates a production binary for the Raspberry Pi:
 
 ```bash
-qmake LatencyTester.pro
-make -j$(nproc)
+cd LatencyTester/Scripts/Linux
+./setup-toolchain.sh
 ```
 
-In Desktop mode, GPIO hardware is replaced by no-op stubs, allowing full UI development without physical hardware.
+This automates 8 steps: host dependencies → ARM64 emulation → Docker image → sysroot extraction → Qt ARM64 from source → libgpiod v2 C++ bindings → pigpio → production binary.
 
-### Raspberry Pi (production)
+- First run: ~2-3 hours (Qt compilation dominates)
+- Subsequent runs: ~5 minutes (skips completed steps)
+- Prerequisite: Qt 6.11.1 host installation via [Qt Online Installer](https://www.qt.io/download-qt-installer) at `~/Qt/6.11.1/gcc_64`
 
-Cross-compilation or native build on the Pi:
+Check toolchain status:
+```bash
+./setup-toolchain.sh --status
+```
+
+Re-run a specific step:
+```bash
+./setup-toolchain.sh --only 8     # Only rebuild production binary
+./setup-toolchain.sh --step 6     # Run from step 6 onwards
+```
+
+### Build Modes
+
+| Mode | Command | Use case |
+|------|---------|----------|
+| Desktop (Windows) | `build.ps1` or Qt Creator | Development, UI testing |
+| Desktop (Linux) | `build.sh` or Qt Creator | Development + ASan |
+| ARM64 Stubs (Docker) | `./build-arm64.sh` | Functional testing via VNC |
+| ARM64 Production | `./build-arm64.sh --production` | Raspberry Pi deployment |
+
+### ARM64 Testing with Docker
 
 ```bash
-# Native build on Raspberry Pi with Qt 6 installed
-qmake LatencyTester.pro
-make -j4
+cd LatencyTester/Scripts/Linux
+
+# Build stubs binary and run in Docker with VNC:
+./build-arm64.sh
+./docker-rpi.sh run
+# Connect VNC client to localhost:5900
+
+# Run unit tests:
+./docker-rpi.sh tests
+
+# Valgrind memory analysis:
+./docker-rpi.sh valgrind
 ```
 
-The build system automatically defines `RASPBERRY_PI` when it detects ARM architecture, linking `pigpio` and `libgpiod`.
+### Deploy to Raspberry Pi
 
-For cross-compilation setup, see [toolchain_setup.md](toolchain_setup.md).
+```bash
+scp build_arm64/LatencyTester pi@<ip>:/home/pi/LatencyTester/bin/
+```
 
-### Build output
+## Testing
 
-The resulting binary is `LatencyTester` (Linux/RPi) or `release/LatencyTester.exe` (Windows).
+147 automated tests in 10 suites, covering Core logic and all GUI screens:
 
-Working directory must contain a `Measures/` folder for JSON persistence (created automatically if absent).
+```bash
+# Desktop (from build directory):
+./LatencyTesterTests
+
+# ARM64 (Docker):
+./docker-rpi.sh tests
+```
+
+| Suite | Tests | Coverage |
+|-------|-------|----------|
+| tst_datamodel | 17 | Data structures, defaults, edge cases |
+| tst_appsettings | 23 | Singleton, QSettings, signals, themes |
+| tst_jsonoperator | 14 | JSON parse/save, corrupt files |
+| tst_sensoroperator | 14 | Calibration, measurement, timeout |
+| tst_homescreen | 10 | Navigation buttons, signals |
+| tst_measurescreen | 14 | Buttons, sliders, graph, states |
+| tst_settingsscreen | 20 | Apply/cancel, widget sync |
+| tst_helpscreen | 11 | Manual button state per language |
+| tst_registryscreen | 10 | TreeView, actions, signals |
+| tst_registrydisplayscreen | 14 | Data display, plot, edge cases |
+
+All tests pass on Windows x86_64, Linux x86_64, and ARM64 (Docker emulated).
+
+## Scripts Reference
+
+| Script | Purpose |
+|--------|---------|
+| `Scripts/Linux/setup-toolchain.sh` | **One-command full setup** — installs everything, builds production binary |
+| `Scripts/Linux/build-arm64.sh` | Cross-compile for ARM64 (stubs or `--production`) |
+| `Scripts/Linux/build-qt6-arm64.sh` | Compile Qt 6.11.1 from source for ARM64 (one-time) |
+| `Scripts/Linux/build-libgpiod-arm64.sh` | Compile libgpiod v2.2 + C++ bindings for ARM64 |
+| `Scripts/Linux/build-pigpio-arm64.sh` | Compile pigpio from source for ARM64 |
+| `Scripts/Linux/extract-sysroot.sh` | Extract ARM64 sysroot from Docker |
+| `Scripts/Linux/docker-rpi.sh` | Docker container management (build/run/tests/valgrind/shell/stop/clean) |
+| `Scripts/Linux/build.sh` | Native Linux Desktop build + Doxygen |
+| `Scripts/Windows/build.ps1` | Native Windows Desktop build + Doxygen |
 
 ## Architecture
 
 The application follows a **Core/GUI separation**:
 
 - **Core** — Pure business logic with no Qt GUI dependencies (settings, sensor control, JSON I/O, data models)
-- **GUI** — Qt Widgets screens, each in its own self-contained folder with `.h`, `.cpp`, and `.ui`
+- **GUI** — Qt Widgets screens, each self-contained with `.h`, `.cpp`, and `.ui`
 
-Navigation is managed by `MainWindow` using a `QStackedWidget` with 7 screens. Screens communicate via Qt signals/slots.
-
-Settings are managed by a singleton (`AppSettings`) that emits signals when configuration changes, allowing the `MainWindow` to apply themes, font sizes, and accessibility modes globally.
+Navigation is managed by `MainWindow` using a `QStackedWidget` (7 screens). Screens communicate via Qt signals/slots. Settings are centralized in a singleton (`AppSettings`) that emits signals for theme, font, and accessibility changes.
 
 ### Screens
 
@@ -176,7 +214,7 @@ Settings are managed by a singleton (`AppSettings`) that emits signals when conf
 | 0 | HomeScreen | Main menu with 4 navigation buttons |
 | 1 | SettingsScreen | Language, font size, dark mode, colorblind mode |
 | 2 | HelpScreen | Help menu (manual + general info) |
-| 3 | HelpInfoScreen | Read-only help content |
+| 3 | HelpInfoScreen | Read-only help content (HTML) |
 | 4 | RegistryScreen | Measurement history (list + check/delete/rename) |
 | 5 | RegistryDisplayScreen | Saved measurement graph and data |
 | 6 | MeasureScreen | Calibration, measurement, live graph, sliders |
@@ -186,11 +224,17 @@ Settings are managed by a singleton (`AppSettings`) that emits signals when conf
 | Component | Purpose |
 |---|---|
 | Raspberry Pi 3 Model B | Main computer |
-| 7" capacitive touch display | User interface (SPI) |
+| 7" capacitive touch display (800×480) | User interface (SPI) |
 | High-luminance LED (GPIO 24) | Light stimulus emitter |
 | OPT101 photosensor + ADS1115 ADC | Light stimulus detector (I2C) |
 | PiSugar 3+ battery (≥3000 mAh) | Portable power supply |
 | 3D-printed case (PLA) | Enclosure |
+
+## Documentation
+
+- **[toolchain_setup.md](toolchain_setup.md)** — Complete cross-compilation guide (architecture, troubleshooting, known issues)
+- **Doxygen** — Auto-generated API docs: `./Scripts/Linux/build.sh --docs-only`
+- **LaTeX report** — Full academic document in `Medidor_de_latencias_.../`
 
 ## License
 
@@ -199,3 +243,5 @@ Academic project — University of Cádiz (UCA).
 Third-party licenses:
 - QCustomPlot: GPL v3
 - rpi_ads1115: GPL v2
+- pigpio: Public Domain
+- libgpiod: LGPL v2.1+ (C library), LGPL v3+ (C++ bindings)
