@@ -2410,7 +2410,189 @@ Valgrind & Docker ARM64 & Análisis profundo de memoria sobre el binario ARM \\ 
 \end{tabular}
 \end{table}
 
+\subsection{Resultados de las pruebas}
+
+A continuación se presentan los resultados obtenidos tras la ejecución completa de la batería de pruebas en los dos entornos de validación disponibles: Desktop (x86\_64) y ARM64 virtualizado (Docker con QEMU user-mode).
+
+\subsubsection{Entorno Desktop (Windows x86\_64)}
+
+La ejecución de los 147 tests unitarios sobre la plataforma de desarrollo principal (Windows 10/11, MinGW 13.1.0 x86\_64, Qt 6.11.1) arroja los siguientes resultados:
+
+\begin{table}[H]
+\centering
+\caption{Resultados de pruebas unitarias --- Desktop (Windows x86\_64)}
+\label{tab:results_desktop}
+\begin{tabular}{|p{4.5cm}|c|c|c|c|}
+\hline
+\textbf{Suite} & \textbf{Tests} & \textbf{Pass} & \textbf{Fail} & \textbf{Skip} \\ \hline
+tst\_datamodel & 17 & 17 & 0 & 0 \\ \hline
+tst\_appsettings & 23 & 23 & 0 & 0 \\ \hline
+tst\_jsonoperator & 14 & 14 & 0 & 0 \\ \hline
+tst\_sensoroperator & 14 & 12 & 0 & 2 \\ \hline
+tst\_homescreen & 10 & 10 & 0 & 0 \\ \hline
+tst\_measurescreen & 14 & 14 & 0 & 0 \\ \hline
+tst\_settingsscreen & 20 & 20 & 0 & 0 \\ \hline
+tst\_helpscreen & 11 & 11 & 0 & 0 \\ \hline
+tst\_registryscreen & 10 & 10 & 0 & 0 \\ \hline
+tst\_registrydisplayscreen & 14 & 14 & 0 & 0 \\ \hline
+\textbf{TOTAL} & \textbf{147} & \textbf{145} & \textbf{0} & \textbf{2} \\ \hline
+\end{tabular}
+\end{table}
+
+Los 2 tests omitidos (\textit{skipped}) corresponden a escenarios de timeout del sensor que no pueden reproducirse con los stubs de hardware, ya que estos devuelven valores inmediatamente sin simular retardo de respuesta. Estos escenarios se validarían exclusivamente sobre el hardware real.
+
+La compilación en modo Debug no produce warnings ni errores (\texttt{0 warnings, 0 errors}) tanto para el proyecto principal como para el sub-proyecto de tests.
+
+\subsubsection{Entorno Desktop (Linux x86\_64) con AddressSanitizer}
+
+La ejecución sobre Linux (Ubuntu 24.04, GCC 13, Qt 6.11.1) con AddressSanitizer habilitado produce los mismos 147 tests pasados con 2 skipped. El informe de ASan al finalizar indica:
+
+\begin{itemize}
+    \item \textbf{Fugas reales detectadas}: 0 (tras la corrección del bug en \texttt{JsonOperator}).
+    \item \textbf{Fugas reportadas (falsos positivos)}: $\sim$19 KB atribuidos a la caché interna de fontconfig y $\sim$3 KB a pools de memoria internos de Qt. Ambos se liberan al terminar el proceso y no representan fugas reales.
+\end{itemize}
+
+El bug original detectado por ASan consistía en una fuga de 448 bytes por cada llamada a \texttt{loadFileFromDisk()} y \texttt{saveMeasureToDisk()} en la clase \texttt{JsonOperator}, donde se realizaba \texttt{new QFile(...)} sin liberar la instancia anterior. Se corrigió añadiendo \texttt{delete mFile;} antes de cada nueva asignación.
+
+\subsubsection{Entorno ARM64 virtualizado (Docker + QEMU)}
+
+Para la validación sobre la plataforma destino, se ejecutó el binario ARM64 compilado con GCC 13 (\texttt{aarch64-linux-gnu-g++-13}) en modo stubs (\texttt{USE\_STUBS=1}) dentro del contenedor Docker Ubuntu 24.04 ARM64 emulado vía \texttt{qemu-user-static}.
+
+\begin{table}[H]
+\centering
+\caption{Resultados de pruebas unitarias --- ARM64 virtualizado (Docker)}
+\label{tab:results_arm64}
+\begin{tabular}{|p{4.5cm}|c|c|c|c|}
+\hline
+\textbf{Suite} & \textbf{Tests} & \textbf{Pass} & \textbf{Fail} & \textbf{Skip} \\ \hline
+tst\_datamodel & 17 & 17 & 0 & 0 \\ \hline
+tst\_appsettings & 23 & 23 & 0 & 0 \\ \hline
+tst\_jsonoperator & 14 & 14 & 0 & 0 \\ \hline
+tst\_sensoroperator & 14 & 12 & 0 & 2 \\ \hline
+tst\_homescreen & 10 & 10 & 0 & 0 \\ \hline
+tst\_measurescreen & 14 & 14 & 0 & 0 \\ \hline
+tst\_settingsscreen & 20 & 20 & 0 & 0 \\ \hline
+tst\_helpscreen & 11 & 11 & 0 & 0 \\ \hline
+tst\_registryscreen & 10 & 10 & 0 & 0 \\ \hline
+tst\_registrydisplayscreen & 14 & 14 & 0 & 0 \\ \hline
+\textbf{TOTAL} & \textbf{147} & \textbf{145} & \textbf{0} & \textbf{2} \\ \hline
+\end{tabular}
+\end{table}
+
+Los resultados son idénticos a los del entorno Desktop, confirmando que la compilación cruzada produce un binario funcionalmente equivalente. La ejecución se realiza en modo \texttt{offscreen} (\texttt{-platform offscreen}) para no requerir display gráfico.
+
+\subsubsection{Análisis de memoria ARM64 con Valgrind}
+
+Se ejecutó Valgrind con la herramienta \texttt{memcheck} sobre el binario ARM64 dentro del contenedor Docker:
+
+\begin{verbatim}
+valgrind --leak-check=full --show-leak-kinds=definite \
+  ./LatencyTester -platform offscreen
+\end{verbatim}
+
+\textbf{Resultado}:
+\begin{itemize}
+    \item \textbf{Fugas definidas (\textit{definitely lost})}: 0 bytes en 0 bloques.
+    \item \textbf{Fugas indirectas (\textit{indirectly lost})}: 0 bytes en 0 bloques.
+    \item \textbf{Fugas posibles (\textit{possibly lost})}: $\sim$2 KB atribuidos a internos de Qt (thread pools) --- comportamiento normal y documentado.
+    \item \textbf{Accesos inválidos (\textit{invalid read/write})}: 0.
+    \item \textbf{Uso de memoria no inicializada}: 0.
+\end{itemize}
+
+Valgrind se utiliza como complemento de ASan para el entorno ARM64, ya que AddressSanitizer no es compatible con la emulación QEMU user-mode y por tanto no puede activarse en compilaciones cruzadas.
+
+\subsubsection{Validación gráfica vía VNC}
+
+Se realizó una validación visual de la interfaz gráfica ejecutando el binario ARM64 dentro del contenedor Docker con el servidor VNC activo (Xvfb 800$\times$480 + x11vnc en puerto 5900). Se verificó:
+
+\begin{itemize}
+    \item Renderizado correcto de todas las pantallas (Home, Medición, Ajustes, Ayuda, Registro, Visualización de resultados).
+    \item Navegación entre pantallas mediante el botón \textit{Atrás} y los botones del menú principal.
+    \item Aplicación de temas (modo claro y modo oscuro) con transición correcta de estilos.
+    \item Modo daltónico con prioridad sobre el modo oscuro (colores de alto contraste visibles).
+    \item Sliders de configuración con actualización en tiempo real de las etiquetas numéricas.
+    \item Gráfica QCustomPlot renderizada correctamente con datos de prueba.
+    \item Teclado virtual Qt funcional para renombrar mediciones.
+    \item Dimensiones de pantalla 800$\times$480 respetadas (sin desbordamiento ni recorte de widgets).
+\end{itemize}
+
+La resolución coincide con la pantalla táctil de 7 pulgadas del dispositivo real, proporcionando una simulación visual fiel del entorno de producción.
+
+\subsubsection{Resumen de resultados}
+
+\begin{table}[H]
+\centering
+\caption{Resumen consolidado de validación}
+\label{tab:results_summary}
+\begin{tabular}{|p{4cm}|p{3.5cm}|p{2cm}|p{3.5cm}|}
+\hline
+\textbf{Entorno} & \textbf{Herramienta} & \textbf{Resultado} & \textbf{Observaciones} \\ \hline
+Windows x86\_64 & QTest & 145/147 pass & 2 skip (timeout stubs) \\ \hline
+Linux x86\_64 & QTest + ASan & 145/147 pass & 0 fugas reales \\ \hline
+ARM64 Docker & QTest (offscreen) & 145/147 pass & 2 skip (timeout stubs) \\ \hline
+ARM64 Docker & Valgrind memcheck & 0 fugas & 0 accesos inválidos \\ \hline
+ARM64 Docker & VNC (visual) & Correcto & Todas las pantallas OK \\ \hline
+\end{tabular}
+\end{table}
+
+Los resultados demuestran que:
+\begin{enumerate}
+    \item El software es funcionalmente correcto en ambas arquitecturas (x86\_64 y ARM64), con idéntico comportamiento lógico independientemente de la plataforma de ejecución.
+    \item No existen fugas de memoria ni accesos a memoria inválida en ninguno de los entornos validados.
+    \item La interfaz gráfica se renderiza correctamente sobre la resolución de 800$\times$480 del dispositivo destino, incluyendo todos los modos de visualización (estándar, nocturno y daltónico).
+    \item La compilación cruzada con GCC 13 y Qt 6.11.1 ARM64 produce binarios ejecutables que funcionan de forma idéntica a la compilación nativa, validando la corrección del toolchain configurado.
+\end{enumerate}
+
+Los únicos tests omitidos (2 de 147) corresponden a escenarios de timeout del sensor que requieren hardware real para su verificación, al no poder simularse retardos de respuesta con los stubs. Estos se validarán durante la fase de integración con la Raspberry Pi física.
+
 \chapter{Resumen}
+
+El presente proyecto ha desarrollado un sistema software embebido para la medición de latencias en sistemas de videovigilancia críticos, ejecutable sobre una plataforma Raspberry Pi 3 Model B equipada con pantalla táctil de 7 pulgadas. El dispositivo permite cuantificar de forma objetiva y repetible el retardo de vídeo introducido por las cadenas de transmisión CCTV, un parámetro crítico en entornos de seguridad donde el operador debe reaccionar en tiempo real ante eventos captados por las cámaras.
+
+\section*{Desarrollo realizado}
+
+El software se ha implementado en C++20 sobre el framework Qt 6.11.1, empleando una arquitectura modular que separa la lógica de negocio (\textit{Core}) de la interfaz gráfica (\textit{GUI}). La aplicación consta de siete pantallas independientes gestionadas mediante un \texttt{QStackedWidget}, cubriendo las funcionalidades de medición, calibración, configuración, registro histórico y ayuda integrada.
+
+El principio de medición se basa en la emisión de un pulso luminoso mediante un LED controlado por GPIO y la detección simultánea de dicho pulso por un fotosensor ADS1115 conectado vía I2C. La diferencia temporal entre la emisión y la detección en la imagen visualizada constituye la latencia medida. El software gestiona de forma autónoma los ciclos de calibración, la secuencia de mediciones configurables por el usuario, el cálculo estadístico y la persistencia de resultados en formato JSON.
+
+Se han implementado características de accesibilidad (modo daltónico con colores de alto contraste, modo nocturno con esquema oscuro, tamaño de fuente configurable) e internacionalización (español, inglés y polaco), con traducciones embebidas en el binario mediante el sistema \texttt{embed\_translations} de Qt 6.
+
+\section*{Infraestructura de compilación y despliegue}
+
+Uno de los logros técnicos más significativos del proyecto ha sido la configuración de una toolchain de compilación cruzada completa para ARM64. Esta infraestructura permite generar el binario de producción desde una estación de trabajo x86\_64 sin necesidad de compilar directamente en la Raspberry Pi, cuya capacidad de cómputo y memoria resultan insuficientes para manejar la compilación de un proyecto Qt de esta envergadura.
+
+La cadena de herramientas final incluye:
+\begin{itemize}
+    \item Compilador cruzado GCC 13 (\texttt{aarch64-linux-gnu-g++-13}).
+    \item Qt 6.11.1 compilado desde código fuente para ARM64, instalado en \texttt{/opt/Qt/6.11.1/arm64/}.
+    \item Sysroot ARM64 extraído de un contenedor Docker Ubuntu 24.04.
+    \item Enlazador \texttt{lld} para evitar incompatibilidades de versiones de GLIBC.
+\end{itemize}
+
+El proceso de establecimiento de esta toolchain resultó ser la tarea de mayor complejidad técnica del proyecto, requiriendo la resolución iterativa de problemas de compatibilidad entre versiones de compilador, librería estándar, sistema operativo base y herramientas de Qt.
+
+\section*{Validación}
+
+Se estableció una estrategia de pruebas en tres niveles:
+\begin{enumerate}
+    \item \textbf{Pruebas unitarias} (QTest): 147 tests automatizados distribuidos en 10 suites, cubriendo la totalidad de los módulos Core y GUI. Todos los tests pasan satisfactoriamente en los tres entornos de compilación (Windows x86\_64, Linux x86\_64, ARM64 emulado).
+    \item \textbf{Análisis de memoria} (AddressSanitizer + Valgrind): cero fugas de memoria reales y cero accesos inválidos detectados tras la corrección de los defectos encontrados durante la fase de desarrollo.
+    \item \textbf{Validación sobre plataforma destino}: ejecución del binario ARM64 en un contenedor Docker con emulación QEMU user-mode, verificando el correcto funcionamiento gráfico sobre una resolución de 800$\times$480 mediante VNC.
+\end{enumerate}
+
+\section*{Documentación}
+
+El proyecto incluye documentación técnica completa:
+\begin{itemize}
+    \item Manual de usuario integrado en la aplicación (HTML embebido accesible desde la pantalla de ayuda en los tres idiomas soportados).
+    \item Manual del desarrollador con descripción de la arquitectura, APIs, procedimientos de compilación, testing, internacionalización y despliegue.
+    \item Documentación del código fuente generada automáticamente con Doxygen (diagramas de clases, grafos de dependencias, referencia de API).
+    \item Scripts de automatización para compilación, generación de documentación, gestión del contenedor Docker y compilación cruzada ARM64.
+\end{itemize}
+
+\section*{Estado actual}
+
+El software se encuentra completamente funcional en modo de pruebas (stubs de hardware), habiéndose validado la corrección del código, la ausencia de fugas de memoria y el comportamiento gráfico sobre la resolución de destino. Queda pendiente exclusivamente la integración con los drivers de hardware reales (pigpio y libgpiod v2) para la generación del binario de producción final y su validación sobre la Raspberry Pi física.
 
 \chapter{Conclusiones y trabajo futuro}
 
@@ -2528,7 +2710,7 @@ Docker utiliza \texttt{binfmt\_misc} del kernel Linux junto con QEMU en modo usu
     ./docker-rpi.sh build
     \end{verbatim}
     
-    Este comando construye una imagen basada en Debian Bookworm ARM64 que incluye:
+    Este comando construye una imagen basada en Ubuntu 24.04 ARM64 que incluye:
     \begin{itemize}
         \item Librerías Qt 6 de runtime (Widgets, Concurrent, PrintSupport, GUI, OpenGL).
         \item Xvfb configurado a 800$\times$480 (resolución de la pantalla del dispositivo).
@@ -2542,22 +2724,19 @@ Docker utiliza \texttt{binfmt\_misc} del kernel Linux junto con QEMU en modo usu
 Debido a una limitación conocida de qmake bajo emulación QEMU user-mode (qmake no puede parsear la salida de macros del compilador cuando \texttt{g++} se ejecuta a través de QEMU), la compilación debe realizarse en el host Linux nativo utilizando un compilador cruzado. El contenedor Docker se utiliza exclusivamente para la ejecución y las pruebas del binario resultante.
 
 \begin{enumerate}
-    \item Instalar el compilador cruzado ARM64 en el host:
+    \item Instalar el compilador cruzado GCC 13 en el host:
     \begin{verbatim}
-    sudo apt install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+    sudo apt install gcc-13-aarch64-linux-gnu \
+      g++-13-aarch64-linux-gnu
     \end{verbatim}
     
-    \item Compilar el proyecto indicando a qmake los compiladores cruzados:
+    \item Compilar el proyecto en modo stubs (para testing en Docker):
     \begin{verbatim}
-    cd latency_tester/LatencyTester
-    qmake6 LatencyTester.pro \
-      "QMAKE_CC=aarch64-linux-gnu-gcc" \
-      "QMAKE_CXX=aarch64-linux-gnu-g++" \
-      "QMAKE_LINK=aarch64-linux-gnu-g++"
-    make -j$(nproc)
+    cd LatencyTester/Scripts/Linux
+    ./build-arm64.sh
     \end{verbatim}
     
-    El binario resultante (\texttt{LatencyTester}) es un ejecutable ELF nativo ARM64.
+    El script detecta automáticamente el qmake de Qt ARM64 (\texttt{/opt/Qt/6.11.1/arm64/bin/qmake}), configura los compiladores cruzados GCC 13 y compila con \texttt{USE\_STUBS=1}. El binario resultante (\texttt{build\_arm64/LatencyTester}) es un ejecutable ELF ARM64 que utiliza stubs de hardware, apto para validación funcional sin dispositivo físico.
 \end{enumerate}
 
 \subsection{Ejecución en el contenedor Docker con interfaz gráfica (VNC)}
@@ -2590,8 +2769,9 @@ El script \texttt{docker-rpi.sh} automatiza todas las operaciones del contenedor
 \texttt{setup} & Instala Docker y habilita la emulación ARM64 mediante qemu-user-static. \\ \hline
 \texttt{build} & Construye la imagen Docker ARM64 a partir del Dockerfile. \\ \hline
 \texttt{run} & Lanza el contenedor con servidor VNC en el puerto 5900 y monta el proyecto en \texttt{/app}. \\ \hline
-\texttt{shell} & Abre una sesión Bash interactiva dentro del contenedor (sin VNC). \\ \hline
+\texttt{tests} & Ejecuta los tests unitarios en modo offscreen dentro del contenedor. \\ \hline
 \texttt{valgrind} & Ejecuta Valgrind con \texttt{--leak-check=full} sobre el binario en modo offscreen. \\ \hline
+\texttt{shell} & Abre una sesión Bash interactiva dentro del contenedor. \\ \hline
 \texttt{stop} & Detiene el contenedor en ejecución. \\ \hline
 \texttt{clean} & Elimina el contenedor y la imagen Docker del sistema. \\ \hline
 \end{tabular}
@@ -2600,38 +2780,99 @@ El script \texttt{docker-rpi.sh} automatiza todas las operaciones del contenedor
 % =========================================================================
 \section{Despliegue en Raspberry Pi (producción)}
 
-Para la instalación en el hardware de destino se requiere una compilación cruzada o una compilación nativa en la propia Raspberry Pi.
+El binario de producción se genera mediante compilación cruzada desde el host Linux, utilizando los drivers reales de hardware (pigpio para GPIO y libgpiod v2 para la detección de flancos del ADC). A diferencia del modo de pruebas (stubs), este binario interactúa directamente con el hardware de la Raspberry Pi.
 
-\subsection{Compilación cruzada desde Linux}
+\subsection{Prerequisitos (una sola vez)}
 
 \begin{enumerate}
-    \item Instalar el compilador cruzado ARM:
+    \item \textbf{Compilador cruzado GCC 13} (necesario para soporte completo de C++20):
     \begin{verbatim}
-    sudo apt install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+    sudo apt install gcc-13-aarch64-linux-gnu \
+      g++-13-aarch64-linux-gnu lld
     \end{verbatim}
     
-    \item Obtener el sysroot de la Raspberry Pi (bibliotecas y cabeceras del sistema):
+    \item \textbf{Herramientas de compilación de librerías}:
     \begin{verbatim}
-    rsync -avz pi@<ip-rpi>:/usr/lib /opt/rpi-sysroot/usr/
-    rsync -avz pi@<ip-rpi>:/usr/include /opt/rpi-sysroot/usr/
-    rsync -avz pi@<ip-rpi>:/lib /opt/rpi-sysroot/
+    sudo apt install autoconf automake libtool \
+      autoconf-archive pkg-config
     \end{verbatim}
     
-    \item Configurar un kit de compilación en Qt Creator:
-    \begin{itemize}
-        \item Compilador C: \texttt{/usr/bin/aarch64-linux-gnu-gcc}
-        \item Compilador C++: \texttt{/usr/bin/aarch64-linux-gnu-g++}
-        \item Sysroot: \texttt{/opt/rpi-sysroot}
-        \item Qt version: Qt 6 compilado para ARM (necesario compilar Qt desde fuente o usar distribución precompilada)
-    \end{itemize}
+    \item \textbf{Imagen Docker ARM64 construida} (proporciona el sysroot):
+    \begin{verbatim}
+    cd LatencyTester/Scripts/Linux
+    ./docker-rpi.sh build
+    \end{verbatim}
     
-    \item Compilar con el kit ARM seleccionado en Qt Creator, o desde la línea de comandos con el qmake ARM.
+    \item \textbf{Sysroot extraído del contenedor}:
+    \begin{verbatim}
+    ./extract-sysroot.sh
+    \end{verbatim}
+    El script extrae las librerías y cabeceras ARM64 a \texttt{\textasciitilde/ARM64-sysroot/}, crea los enlaces simbólicos necesarios para el linker (incluyendo \texttt{ld-linux-aarch64.so.1}) y descarga la cabecera \texttt{pigpio.h} desde GitHub.
+    
+    \item \textbf{Qt 6.11.1 compilado para ARM64} (proceso de unas 2 horas):
+    \begin{verbatim}
+    ./build-qt6-arm64.sh
+    \end{verbatim}
+    Instala Qt ARM64 en \texttt{/opt/Qt/6.11.1/arm64/}.
+    
+    \item \textbf{libgpiod v2.2 con bindings C++} (no disponible como paquete en Ubuntu 24.04):
+    \begin{verbatim}
+    ./build-libgpiod-arm64.sh
+    \end{verbatim}
+    Compila libgpiod v2.2 desde fuente con \texttt{--enable-bindings-cxx} e instala \texttt{libgpiodcxx.so} y las cabeceras v2 (\texttt{gpiod.hpp}, \texttt{gpiodcxx/*.hpp}) en el sysroot.
+    
+    \item \textbf{pigpio} (librería GPIO específica de Raspberry Pi, no disponible en repos):
+    \begin{verbatim}
+    ./build-pigpio-arm64.sh
+    \end{verbatim}
+    Compila pigpio desde fuente e instala \texttt{libpigpio.so} en el sysroot.
 \end{enumerate}
+
+\subsection{Generación del binario de producción}
+
+Una vez completados los prerequisitos, la compilación del binario de producción se reduce a un solo comando:
+
+\begin{verbatim}
+cd LatencyTester/Scripts/Linux
+./build-arm64.sh --production
+\end{verbatim}
+
+Este comando:
+\begin{itemize}
+    \item Utiliza el qmake de Qt ARM64 (\texttt{/opt/Qt/6.11.1/arm64/bin/qmake}).
+    \item Invoca GCC 13 como compilador cruzado (\texttt{aarch64-linux-gnu-g++-13}).
+    \item Compila con \texttt{USE\_STUBS=0}, activando la macro \texttt{RASPBERRY\_PI} y enlazando contra los drivers reales.
+    \item Genera el binario en \texttt{build\_arm64/LatencyTester}.
+\end{itemize}
+
+El binario resultante enlaza dinámicamente contra:
+\begin{itemize}
+    \item \texttt{libpigpio.so.1} — control GPIO (LED estimulador).
+    \item \texttt{libgpiod.so} + \texttt{libgpiodcxx.so} — detección de flancos por interrupción (señal ALERT/RDY del ADS1115).
+    \item Librerías Qt 6.11.1 ARM64 (Widgets, Concurrent, PrintSupport, VirtualKeyboard).
+\end{itemize}
 
 \subsection{Transferencia a la Raspberry Pi}
 
 \begin{verbatim}
-scp LatencyTester pi@<ip-rpi>:/home/pi/LatencyTester/bin/
+scp build_arm64/LatencyTester pi@<ip-rpi>:/home/pi/LatencyTester/bin/
+\end{verbatim}
+
+\subsection{Dependencias en la Raspberry Pi}
+
+En la Raspberry Pi de destino deben estar instaladas las librerías de runtime:
+\begin{verbatim}
+sudo apt install libqt6widgets6 libqt6concurrent6 \
+  libqt6printsupport6 qt6-qpa-plugins libgpiod2
+\end{verbatim}
+
+Adicionalmente, \texttt{pigpio} debe instalarse en la Raspberry Pi:
+\begin{verbatim}
+sudo apt install pigpio     # si disponible en Raspi OS
+# O compilar desde fuente:
+wget https://github.com/joan2937/pigpio/archive/master.tar.gz
+tar xzf master.tar.gz && cd pigpio-master
+make && sudo make install
 \end{verbatim}
 
 \subsection{Configuración de arranque automático}

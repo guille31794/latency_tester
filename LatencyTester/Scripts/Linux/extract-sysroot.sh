@@ -103,6 +103,12 @@ step "Creating compatibility symlinks..."
 mkdir -p "$SYSROOT/usr/lib/aarch64-linux-gnu"
 ln -sf "$SYSROOT/lib/aarch64-linux-gnu" "$SYSROOT/lib/aarch64-linux-gnu" 2>/dev/null || true
 
+# --- Dynamic linker symlink (required for cross-linker to find ld-linux-aarch64.so.1) ---
+step "Creating dynamic linker symlink..."
+mkdir -p "$SYSROOT/lib"
+ln -sf aarch64-linux-gnu/ld-linux-aarch64.so.1 "$SYSROOT/lib/ld-linux-aarch64.so.1"
+ok "ld-linux-aarch64.so.1 symlink created"
+
 # --- Link Qt ARM64 installation into sysroot (compiler uses --sysroot prefix) ---
 if [[ -d "/opt/Qt/6.11.1/arm64" ]]; then
     step "Linking Qt ARM64 installation into sysroot..."
