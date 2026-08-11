@@ -77,6 +77,11 @@ DEFINES += QT_NO_CONSTEXPR_METAOBJECT_DATA
 # Suppress misleading-indentation warning from QCustomPlot (third-party code)
 QMAKE_CXXFLAGS += -Wno-misleading-indentation
 
+# Suppress warnings from third-party submodule code (rpi_ads1115)
+# -Wformat-security: fprintf with non-literal format string
+# -Wunused-result: write() return value not checked in I2C operations
+QMAKE_CXXFLAGS += -Wno-format-security -Wno-unused-result
+
 # --- Sources ---
 
 SOURCES += \
