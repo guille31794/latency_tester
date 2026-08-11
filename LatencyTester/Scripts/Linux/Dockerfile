@@ -27,8 +27,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libudev-dev \
     libgpiod-dev \
     libgpiod2 \
-    libgpiodcxx-dev \
-    libgpiodcxx1 \
     libbrotli-dev \
     libdbus-1-dev \
     libdbus-1-3 \

@@ -42,7 +42,7 @@ contains(QMAKE_HOST.arch, arm.*) | contains(QT_ARCH, arm.*) | contains(QMAKE_PLA
     } else {
         message("Building for ARM64 with REAL DRIVERS (production)")
         DEFINES += RASPBERRY_PI
-        LIBS += -L/usr/local/lib -lpigpio -lrt -lgpiod -lgpiodcxx
+        LIBS += -L/usr/local/lib -L/usr/lib -lpigpio -lrt -lgpiod -lgpiodcxx
         SOURCES += Libs/rpi_ads1115/ads1115rpi.cpp
         HEADERS += Libs/rpi_ads1115/ads1115rpi.h
     }
