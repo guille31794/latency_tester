@@ -98,6 +98,10 @@ if [[ ! -f configure ]]; then
 fi
 
 # Configure for cross-compilation with C++ bindings enabled
+# NOTE: Do NOT pass --sysroot here. The cross-compiler (aarch64-linux-gnu-gcc-13)
+# has its own sysroot at /usr/aarch64-linux-gnu/ which contains the CRT objects
+# (crt1.o, crti.o) needed for configure's test programs.
+# Our custom sysroot is only needed for the final LatencyTester link (Qt libs).
 ./configure \
     --host=aarch64-linux-gnu \
     --prefix="$INSTALL_PREFIX" \
@@ -106,12 +110,7 @@ fi
     --disable-tests \
     --disable-bindings-python \
     CC=aarch64-linux-gnu-gcc-13 \
-    CXX=aarch64-linux-gnu-g++-13 \
-    CFLAGS="--sysroot=$SYSROOT" \
-    CXXFLAGS="--sysroot=$SYSROOT" \
-    LDFLAGS="--sysroot=$SYSROOT -L$SYSROOT/usr/lib/aarch64-linux-gnu" \
-    PKG_CONFIG_PATH="$SYSROOT/usr/lib/aarch64-linux-gnu/pkgconfig" \
-    PKG_CONFIG_SYSROOT_DIR="$SYSROOT"
+    CXX=aarch64-linux-gnu-g++-13
 
 step "Compiling libgpiod ($JOBS parallel jobs)..."
 make -j"$JOBS"
@@ -121,37 +120,27 @@ ok "Build complete."
 # --- Install to sysroot ---
 step "Installing to sysroot at $SYSROOT"
 
-# Install using DESTDIR to redirect into sysroot
-make DESTDIR="$SYSROOT" install
+# Install to a temporary prefix, then copy to sysroot
+TEMP_INSTALL="/tmp/libgpiod-install"
+rm -rf "$TEMP_INSTALL"
+make DESTDIR="$TEMP_INSTALL" install
 
-# The above installs to $SYSROOT/usr/lib/ and $SYSROOT/usr/include/
-# Verify key files exist
-if [[ -f "$SYSROOT/usr/lib/libgpiodcxx.so" || -f "$SYSROOT$INSTALL_PREFIX/lib/libgpiodcxx.so" ]]; then
-    ok "libgpiodcxx.so installed"
-else
-    # Sometimes autotools installs to lib/aarch64-linux-gnu, sometimes to lib
-    # Create symlinks to ensure linker finds them
-    warn "libgpiodcxx.so not in expected location, searching..."
-    find "$SYSROOT" -name "libgpiodcxx*" -type f 2>/dev/null | head -5
-fi
+# Copy libraries to sysroot
+mkdir -p "$SYSROOT/usr/lib/aarch64-linux-gnu"
+cp -P "$TEMP_INSTALL$INSTALL_PREFIX/lib"/libgpiod*.so* "$SYSROOT/usr/lib/aarch64-linux-gnu/" 2>/dev/null || true
+cp -P "$TEMP_INSTALL$INSTALL_PREFIX/lib"/libgpiod*.a "$SYSROOT/usr/lib/aarch64-linux-gnu/" 2>/dev/null || true
 
-# Ensure the libraries are also findable in the standard cross-compilation paths
-if [[ -d "$SYSROOT$INSTALL_PREFIX/lib" ]]; then
-    # Copy/link to the aarch64 lib dir where the linker looks
-    for lib in "$SYSROOT$INSTALL_PREFIX/lib"/libgpiod*.so*; do
-        [ -e "$lib" ] || continue
-        base=$(basename "$lib")
-        if [[ ! -e "$SYSROOT/usr/lib/aarch64-linux-gnu/$base" ]]; then
-            cp -P "$lib" "$SYSROOT/usr/lib/aarch64-linux-gnu/"
-        fi
-    done
-    # Copy headers
-    if [[ -d "$SYSROOT$INSTALL_PREFIX/include" ]]; then
-        cp -n "$SYSROOT$INSTALL_PREFIX/include/gpiod.h" "$SYSROOT/usr/include/" 2>/dev/null || true
-        cp -n "$SYSROOT$INSTALL_PREFIX/include/gpiod.hpp" "$SYSROOT/usr/include/" 2>/dev/null || true
-        cp -rn "$SYSROOT$INSTALL_PREFIX/include/gpiod.hpp" "$SYSROOT/usr/include/" 2>/dev/null || true
-    fi
-fi
+# Copy headers to sysroot
+mkdir -p "$SYSROOT/usr/include"
+cp -f "$TEMP_INSTALL$INSTALL_PREFIX/include/gpiod.h" "$SYSROOT/usr/include/" 2>/dev/null || true
+cp -f "$TEMP_INSTALL$INSTALL_PREFIX/include/gpiod.hpp" "$SYSROOT/usr/include/" 2>/dev/null || true
+
+# Copy pkgconfig
+mkdir -p "$SYSROOT/usr/lib/aarch64-linux-gnu/pkgconfig"
+cp -f "$TEMP_INSTALL$INSTALL_PREFIX/lib/pkgconfig"/libgpiod*.pc "$SYSROOT/usr/lib/aarch64-linux-gnu/pkgconfig/" 2>/dev/null || true
+
+# Cleanup temp
+rm -rf "$TEMP_INSTALL"
 
 # --- Summary ---
 echo ""
