@@ -125,7 +125,10 @@ cd LatencyTester/Scripts/Linux
 
 No Qt installation, no cross-compilers, no sysroot setup needed on the host. Just Docker.
 
-> **Windows users:** Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) or [Rancher Desktop](https://rancherdesktop.io/) (with dockerd/moby engine). Open a WSL2 terminal, navigate to the repo, and run the commands above. ARM64 emulation is included automatically. The scripts are Bash-based but run natively inside WSL2.
+> **Windows users:** Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) or [Rancher Desktop](https://rancherdesktop.io/) (with dockerd/moby engine). You have two options:
+>
+> - **PowerShell (native):** Run `.\LatencyTester\Scripts\Windows\docker-production.ps1 build` directly from PowerShell. No WSL needed.
+> - **WSL2 terminal:** Navigate to the repo inside WSL and run the `.sh` scripts as shown above.
 
 Check toolchain status (Option A only):
 ```bash
@@ -197,6 +200,7 @@ All tests pass on Windows x86_64, Linux x86_64, and ARM64 (Docker emulated).
 |--------|---------|
 | `Scripts/Linux/setup-toolchain.sh` | **One-command local setup** — installs everything, builds production binary |
 | `Scripts/Linux/docker-production.sh` | **Fully containerized build** — no host deps needed, just Docker |
+| `Scripts/Windows/docker-production.ps1` | Same as above, native PowerShell for Windows (no WSL needed) |
 | `Scripts/Linux/build-arm64.sh` | Cross-compile for ARM64 (stubs or `--production`) |
 | `Scripts/Linux/build-qt6-arm64.sh` | Compile Qt 6.11.1 from source for ARM64 (one-time) |
 | `Scripts/Linux/build-libgpiod-arm64.sh` | Compile libgpiod v2.2 + C++ bindings for ARM64 |
