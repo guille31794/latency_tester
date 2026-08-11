@@ -109,7 +109,6 @@ Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/document.pdf
 
 # --- Local context/tracking files ---
 Latency_tester.md
-toolchain_setup.md
 output.txt
 
 # Figures replaced by TikZ (kept locally but not in repo)

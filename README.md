@@ -125,6 +125,8 @@ cd LatencyTester/Scripts/Linux
 
 No Qt installation, no cross-compilers, no sysroot setup needed on the host. Just Docker.
 
+> **Windows users:** Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) or [Rancher Desktop](https://rancherdesktop.io/) (with dockerd/moby engine). Open a WSL2 terminal, navigate to the repo, and run the commands above. ARM64 emulation is included automatically. The scripts are Bash-based but run natively inside WSL2.
+
 Check toolchain status (Option A only):
 ```bash
 ./setup-toolchain.sh --status
