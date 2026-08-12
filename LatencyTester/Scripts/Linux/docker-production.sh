@@ -44,7 +44,6 @@ cmd_build() {
     fi
     
     docker build \
-        --platform linux/amd64 \
         -f "$DOCKERFILE" \
         -t "$IMAGE_NAME" \
         "$PROJECT_DIR"

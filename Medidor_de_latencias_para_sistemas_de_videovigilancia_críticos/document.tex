@@ -28,6 +28,10 @@
 
 \makeatletter
 
+% Reduce verbatim font size to avoid overfull hbox in code blocks
+\let\origverbatim\verbatim
+\renewcommand{\verbatim}{\small\origverbatim}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
 \providecommand{\LyX}{\texorpdfstring%
   {L\kern-.1667em\lower.25em\hbox{Y}\kern-.125emX\@}
@@ -118,6 +122,8 @@
 
 \begin{document}
 \raggedbottom
+\tolerance=1000
+\emergencystretch=3em
 
 \hypersetup{pageanchor=false}
 \begin{titlepage}
@@ -735,14 +741,16 @@ Se llevará a cabo el desarrollo e implementación del software del equipo de me
     \item Biblioteca de funciones standard de C++.
     \item Biblioteca de funciones boost \cite{boost}. En su versión 1.77, que proporcionan un extra de funcionalidad sobre la biblioteca standard de C++, permitiendo aprovechar desarrollos de algoritmos ya implementados y probados en lugar de desarrollarlos de cero para este proyecto.
     \item Qt framework \cite{qt}. En su versión 6, el cuál servirá para el desarrollo de la interfaz de usuario del equipo de medición y ayudar a elevar el nivel de la implementación gracias a la simplificación que provee para tareas que de otro modo serían muy tediosas. Incluye además el módulo Qt Virtual Keyboard para entrada táctil sin dependencias de teclados virtuales externos.
-    \item Sistema de construcción qmake, incluido con Qt, que genera los ficheros Makefile a partir del archivo de proyecto (.pro) y gestiona automáticamente las dependencias, la invocación del preprocesador de meta-objetos (MOC), la compilación de formularios (.ui) y la generación de traducciones (.qm).
-    \item GNU Make, herramienta de automatización de compilación que ejecuta los Makefile generados por qmake, resolviendo el grafo de dependencias entre ficheros fuente y objetos, y paralelizando la compilación cuando es posible.
-    \item ARM GNU Toolchain (anteriormente Linaro), cadena de herramientas de compilación cruzada que permite generar binarios ejecutables para arquitectura ARM v8 (Raspberry Pi) desde un ordenador de desarrollo x86-64. Incluye los compiladores \texttt{aarch64-linux-gnu-gcc} y \texttt{aarch64-linux-gnu-g++}, el enlazador y las utilidades binarias asociadas.
-    \item Se utilizarán algunas bibliotecas de funciones externas extraídas de internet para facilitar el desarrollo de ciertas funcionalidades. Algunas de ellas serán: QCustomPlot \cite{qtcustomplot}, para graficar los resultados de las mediciones, PiGpio \cite{pigpio} para facilitar el acceso a los pines GPIO de la Raspberry Pi, y rpi\_ads1115 para la lectura analógica del fotosensor a través del conversor analógico-digital ADS1115 mediante I2C.
-    \item Doxygen, herramienta de generación automática de documentación a partir de los comentarios presentes en el código fuente C++. Produce documentación navegable en formato HTML con diagramas de clases, grafos de llamadas y relaciones de herencia, facilitando la comprensión y mantenimiento del proyecto.
-    \item Graphviz (dot), motor de renderizado de grafos utilizado por Doxygen para generar diagramas de clases, colaboración y llamadas en formato SVG. Permite visualizar la arquitectura del software de forma automática a partir del análisis estático del código.
+    \item Sistema de construcción qmake \cite{qt}, incluido con Qt, que genera los ficheros Makefile a partir del archivo de proyecto (.pro) y gestiona automáticamente las dependencias, la invocación del preprocesador de meta-objetos (MOC), la compilación de formularios (.ui) y la generación de traducciones (.qm).
+    \item GNU Make \cite{gnumake}, herramienta de automatización de compilación que ejecuta los Makefile generados por qmake, resolviendo el grafo de dependencias entre ficheros fuente y objetos, y paralelizando la compilación cuando es posible.
+    \item ARM GNU Toolchain \cite{armtoolchain} (anteriormente Linaro), cadena de herramientas de compilación cruzada que permite generar binarios ejecutables para arquitectura ARM v8 (Raspberry Pi) desde un ordenador de desarrollo x86-64. Incluye los compiladores \texttt{aarch64-linux-gnu-gcc} y \texttt{aarch64-linux-gnu-g++}, el enlazador y las utilidades binarias asociadas.
+    \item Se utilizarán algunas bibliotecas de funciones externas extraídas de internet para facilitar el desarrollo de ciertas funcionalidades. Algunas de ellas serán: QCustomPlot \cite{qtcustomplot}, para graficar los resultados de las mediciones, PiGpio \cite{pigpio} para facilitar el acceso a los pines GPIO de la Raspberry Pi, rpi\_ads1115 \cite{rpi_ads1115} para la lectura analógica del fotosensor a través del conversor analógico-digital ADS1115 mediante I2C, y libgpiod \cite{libgpiod} para la gestión de interrupciones GPIO mediante la interfaz de dispositivo de caracteres del kernel Linux.
+    \item Doxygen \cite{doxygen}, herramienta de generación automática de documentación a partir de los comentarios presentes en el código fuente C++. Produce documentación navegable en formato HTML con diagramas de clases, grafos de llamadas y relaciones de herencia, facilitando la comprensión y mantenimiento del proyecto.
+    \item Graphviz \cite{graphviz} (dot), motor de renderizado de grafos utilizado por Doxygen para generar diagramas de clases, colaboración y llamadas en formato SVG. Permite visualizar la arquitectura del software de forma automática a partir del análisis estático del código.
     \item Scripts de automatización Bash (Linux) y PowerShell (Windows) que unifican en un solo comando la compilación del proyecto en modo Release y la generación de la documentación Doxygen, simplificando el flujo de trabajo del desarrollador y la integración continua.
-    \item AddressSanitizer (ASan), herramienta de detección de errores de memoria integrada en GCC y Clang. Se activa automáticamente en compilaciones Debug sobre Linux, y detecta en tiempo de ejecución fugas de memoria, desbordamientos de buffer y accesos a memoria liberada, abortando el proceso con un informe detallado del lugar exacto del error.
+    \item AddressSanitizer \cite{asan} (ASan), herramienta de detección de errores de memoria integrada en GCC y Clang. Se activa automáticamente en compilaciones Debug sobre Linux, y detecta en tiempo de ejecución fugas de memoria, desbordamientos de buffer y accesos a memoria liberada, abortando el proceso con un informe detallado del lugar exacto del error.
+    \item Docker \cite{docker}, plataforma de contenedores que permite empaquetar y ejecutar aplicaciones en entornos aislados y reproducibles. En este proyecto se utiliza para crear un contenedor ARM64 (Ubuntu 24.04) que emula el entorno de ejecución de la Raspberry Pi mediante QEMU \cite{qemu} user-mode, permitiendo validar el binario de producción sin hardware físico. Adicionalmente, un Dockerfile multi-stage encapsula toda la cadena de compilación (Qt, libgpiod, pigpio, compiladores cruzados) para generar el binario de forma completamente portable desde cualquier máquina con Docker instalado.
+    \item Valgrind \cite{valgrind} (memcheck), herramienta de análisis dinámico de memoria que se ejecuta sobre el binario ARM64 dentro del contenedor Docker. Detecta fugas de memoria, accesos a memoria no inicializada y lecturas/escrituras fuera de límites sin necesidad de recompilar el código. Se utiliza como complemento de ASan para el entorno ARM64, donde AddressSanitizer no es compatible con la emulación QEMU.
 \end{itemize}
 
 Respecto a la gestión de dependencias externas, se ha optado por la utilización de submódulos de Git para incorporar al repositorio del proyecto aquellas bibliotecas de terceros que se mantienen en repositorios externos. En concreto, la biblioteca rpi\_ads1115 se gestiona como un submódulo Git que referencia el repositorio original de su autor. Este enfoque permite mantener un vínculo directo con la fuente original, facilitar las actualizaciones futuras de la dependencia y mantener separado el código propio del código de terceros. La biblioteca QCustomPlot, por su parte, se incluye directamente en el repositorio al haber sido parcheada para garantizar su compatibilidad con Qt 6.
@@ -1979,6 +1987,14 @@ El desarrollo se ha realizado sobre Windows 11 con Qt Creator 16 como entorno de
 La elección de \textbf{qmake} como sistema de construcción se debe a su integración nativa con Qt Creator y su capacidad para gestionar automáticamente el preprocesador de meta-objetos (MOC), la compilación de formularios (.ui), la generación de traducciones (.qm) y la detección condicional de plataforma (ARM vs x86-64).
 
 Se configuró un proyecto SUBDIRS con dos sub-proyectos: la aplicación principal (\texttt{LatencyTester.pro}) y la batería de pruebas (\texttt{Tests.pro}), permitiendo al desarrollador elegir qué compilar en cada momento.
+
+Adicionalmente se emplearon las siguientes herramientas de soporte:
+\begin{itemize}
+    \item \textbf{Docker} con emulación ARM64 (qemu-user-static): permite ejecutar y validar el binario ARM64 sobre cualquier máquina x86-64 sin hardware Raspberry Pi, proporcionando un entorno gráfico emulado vía VNC a 800$\times$480.
+    \item \textbf{Valgrind} (memcheck): análisis dinámico de memoria sobre el binario ARM64 dentro del contenedor Docker, detectando fugas, accesos inválidos y uso de memoria no inicializada.
+    \item \textbf{AddressSanitizer} (ASan): instrumentación de compilación para detección de errores de memoria en tiempo de ejecución sobre Desktop Linux.
+    \item \textbf{Doxygen} con \textbf{Graphviz}: generación automática de documentación del código fuente (referencia de API, diagramas de clases y grafos de dependencias).
+\end{itemize}
 
 \subsubsection{Compilación cruzada para Raspberry Pi}
 

@@ -75,8 +75,12 @@ tags
 # --- Qt Creator build directories ---
 build-LatencyTester-*/
 LatencyTester/build/
+build/
+LatencyTester/deploy/
+LatencyTester/build_arm64/
+output/
 
-# --- LaTeX auxiliary and generated files ---
+# --- LaTeX auxiliary and generated files (document) ---
 Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/*.aux
 Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/*.bbl
 Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/*.blg
@@ -107,6 +111,19 @@ Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/*.xdy
 Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/.qm/
 Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/document.pdf
 
+# --- LaTeX auxiliary and generated files (presentation) ---
+Presentacion/*.aux
+Presentacion/*.log
+Presentacion/*.nav
+Presentacion/*.out
+Presentacion/*.snm
+Presentacion/*.toc
+Presentacion/*.vrb
+Presentacion/*.synctex.gz
+Presentacion/*.fdb_latexmk
+Presentacion/*.fls
+Presentacion/*.pdf
+
 # --- Local context/tracking files ---
 Latency_tester.md
 output.txt
@@ -123,4 +140,3 @@ Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/Figures/Mockup_D
 Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/Figures/diagrama_gantt.png
 Medidor_de_latencias_para_sistemas_de_videovigilancia_críticos/Figures/prototipo.png
 .vscode/settings.json
-build/Desktop_Qt_6_11_1_MinGW_64_bit_Debug/.qtc_clangd/compile_commands.json

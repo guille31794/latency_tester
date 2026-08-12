@@ -1,0 +1,12 @@
+# Exclude build artifacts and large directories from Docker build context
+build/
+build_arm64/
+output/
+LatencyTester/build/
+LatencyTester/Documentation/
+Medidor_de_latencias_para_sistemas_de_videovigilancia_criticos/
+.git/
+*.pdf
+*.o
+*.obj
+node_modules/

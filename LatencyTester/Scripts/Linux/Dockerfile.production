@@ -41,6 +41,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Install cross-compiler and build tools
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    g++ \
     gcc-13-aarch64-linux-gnu \
     g++-13-aarch64-linux-gnu \
     lld \
@@ -58,6 +60,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
     git \
     file \
+    libgl-dev \
+    libegl-dev \
+    libgles-dev \
+    libxkbcommon-dev \
+    libvulkan-dev \
+    perl \
     && rm -rf /var/lib/apt/lists/*
 
 # Create working directories
@@ -66,7 +74,7 @@ WORKDIR /build
 # ---------------------------------------------------------------------------
 # STAGE 1a: Build ARM64 sysroot from an ARM64 base image
 # ---------------------------------------------------------------------------
-FROM arm64v8/ubuntu:24.04 AS sysroot-source
+FROM --platform=linux/arm64 ubuntu:24.04 AS sysroot-source
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -139,6 +147,14 @@ RUN cd /sysroot/usr/lib/aarch64-linux-gnu && \
         [ -e "$base" ] || ln -sf "$lib" "$base"; \
     done
 
+# Create lld symlink so GCC cross-compiler can find it via -fuse-ld=lld
+RUN ln -sf /usr/bin/ld.lld /usr/bin/aarch64-linux-gnu-ld.lld
+
+# Create version-less symlinks for the cross-compiler (qmake expects these)
+RUN ln -sf /usr/bin/aarch64-linux-gnu-gcc-13 /usr/bin/aarch64-linux-gnu-gcc && \
+    ln -sf /usr/bin/aarch64-linux-gnu-g++-13 /usr/bin/aarch64-linux-gnu-g++ && \
+    ln -sf /usr/bin/aarch64-linux-gnu-ar /usr/bin/aarch64-linux-gnu-ar 2>/dev/null || true
+
 # ---------------------------------------------------------------------------
 # Download and compile Qt 6.11.1 for ARM64
 # ---------------------------------------------------------------------------
@@ -151,12 +167,13 @@ RUN wget -q "https://download.qt.io/official_releases/qt/${QT_MAJOR_MINOR}/${QT_
     cd /tmp && tar xf qt-src.tar.xz && \
     rm qt-src.tar.xz
 
-# First, build Qt for the host (needed as host tools: moc, rcc, uic)
+# First, build Qt for the host (must include ALL submodules used in ARM64 build)
+# This mirrors what the Qt Online Installer provides at ~/Qt/6.11.1/gcc_64
 RUN mkdir -p /tmp/qt-host-build && cd /tmp/qt-host-build && \
     /tmp/qt-everywhere-src-${QT_VERSION}/configure \
         -prefix /opt/Qt/${QT_VERSION}/host \
         -nomake examples -nomake tests \
-        -submodules qtbase \
+        -submodules qtbase,qtshadertools,qtdeclarative,qtsvg,qtvirtualkeyboard,qttools \
         -- -GNinja && \
     cmake --build . --parallel $(nproc) && \
     cmake --install .
@@ -198,8 +215,17 @@ RUN mkdir -p /tmp/qt-arm64-build && cd /tmp/qt-arm64-build && \
     cmake --build . --parallel $(nproc) && \
     cmake --install .
 
-# Clean up Qt source to save space
-RUN rm -rf /tmp/qt-everywhere-src-* /tmp/qt-host-build /tmp/qt-arm64-build
+# Verify Qt ARM64 installation has headers
+RUN ls /opt/Qt/${QT_VERSION}/arm64/include/QtCore/qglobal.h || \
+    (echo "ERROR: Qt ARM64 headers not installed correctly" && exit 1)
+
+# Link Qt ARM64 into sysroot so --sysroot=/sysroot can find headers
+RUN mkdir -p /sysroot/opt/Qt && \
+    ln -sfn /opt/Qt/${QT_VERSION} /sysroot/opt/Qt/${QT_VERSION}
+
+# Ensure qmake can find host tools (lrelease, etc.)
+RUN ls /opt/Qt/${QT_VERSION}/host/bin/lrelease || \
+    (echo "WARNING: lrelease not found in host, translations will fail" && true)
 
 # ---------------------------------------------------------------------------
 # Compile libgpiod v2.2 with C++ bindings for ARM64
@@ -293,10 +319,14 @@ RUN mkdir -p /output && \
     cp /project/build_arm64_stubs/LatencyTester /output/LatencyTester-stubs && \
     cp /project/build_arm64_stubs/Tests/LatencyTesterTests /output/LatencyTesterTests
 
+# Clean up sources to reduce image size (only after all builds succeeded)
+RUN rm -rf /tmp/qt-everywhere-src-* /tmp/qt-host-build /tmp/qt-arm64-build \
+    /tmp/libgpiod-* /tmp/pigpio-*
+
 # =============================================================================
 # STAGE 2: Runtime environment (ARM64 — for testing and execution)
 # =============================================================================
-FROM arm64v8/ubuntu:24.04 AS runtime
+FROM --platform=linux/arm64 ubuntu:24.04 AS runtime
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV DISPLAY=:0

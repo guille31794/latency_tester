@@ -51,16 +51,15 @@ switch ($Command) {
         Write-Host "  Context:    $ProjectDir"
         Write-Host ""
 
-        # Ensure ARM64 emulation is available (may already be enabled on Docker Desktop/Rancher)
-        Write-Step "Ensuring ARM64 emulation is available..."
-        try {
-            docker run --rm --privileged multiarch/qemu-user-static --reset -p yes 2>$null | Out-Null
-        } catch {
-            Write-Host "   (ARM64 emulation likely already enabled by Docker Desktop)" -ForegroundColor DarkGray
+        # ARM64 emulation: required for building ARM64 stages.
+        # tonistiigi/binfmt is lightweight and compatible with all Docker implementations.
+        Write-Step "Ensuring ARM64 emulation is registered..."
+        docker run --rm --privileged tonistiigi/binfmt --install arm64 2>$null | Out-Null
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host "   (If already enabled, this is safe to ignore)" -ForegroundColor DarkGray
         }
         
         docker build `
-            --platform linux/amd64 `
             -f "$DockerfilePath" `
             -t $ImageName `
             "$ProjectDir"
@@ -80,9 +79,11 @@ switch ($Command) {
         $OutputDir = Join-Path $ProjectDir "output"
         if (-not (Test-Path $OutputDir)) { New-Item -ItemType Directory -Path $OutputDir | Out-Null }
 
-        # Extract production binary
-        docker run --rm $ImageName cat /app/LatencyTester | Set-Content -Path "$OutputDir\LatencyTester" -AsByteStream
-        docker run --rm $ImageName cat /app/LatencyTesterTests | Set-Content -Path "$OutputDir\LatencyTesterTests" -AsByteStream
+        # Create a temporary container to copy files from
+        $containerId = docker create $ImageName 2>$null
+        docker cp "${containerId}:/app/LatencyTester" "$OutputDir\LatencyTester"
+        docker cp "${containerId}:/app/LatencyTesterTests" "$OutputDir\LatencyTesterTests"
+        docker rm $containerId 2>$null | Out-Null
 
         Write-Ok "Binaries extracted to: $OutputDir"
         Write-Host ""

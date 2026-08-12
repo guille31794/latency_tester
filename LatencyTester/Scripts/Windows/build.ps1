@@ -85,9 +85,57 @@ if (-not $DocsOnly) {
         # Some configurations output directly
         $exeAlt = Join-Path $BuildDir "LatencyTester.exe"
         if (Test-Path $exeAlt) {
+            $exe = $exeAlt
             Write-Host "`n  Build successful: $exeAlt" -ForegroundColor Green
         } else {
             Write-Warning "Build completed but binary not found at expected location."
+        }
+    }
+
+    # --- Deploy (windeployqt) ---
+    if (Test-Path $exe) {
+        Write-Step "Running windeployqt (packaging DLLs)"
+        $windeployqt = Get-Command windeployqt -ErrorAction SilentlyContinue
+        if (-not $windeployqt) {
+            # Try to find it relative to qmake
+            $qtBinDir = Split-Path $qmake.Source -Parent
+            $windeployqtPath = Join-Path $qtBinDir "windeployqt.exe"
+            if (Test-Path $windeployqtPath) {
+                $windeployqt = Get-Item $windeployqtPath
+            }
+        }
+        if (-not $windeployqt) {
+            # Fallback: well-known Qt installation path
+            $fallbackPath = "C:\Qt\6.11.1\mingw_64\bin\windeployqt.exe"
+            if (Test-Path $fallbackPath) {
+                $windeployqt = Get-Item $fallbackPath
+            }
+        }
+
+        if ($windeployqt) {
+            $deployDir = Join-Path $ProjectDir "deploy"
+            if (Test-Path $deployDir) { Remove-Item -Recurse -Force $deployDir }
+            New-Item -ItemType Directory -Force -Path $deployDir | Out-Null
+            Copy-Item $exe -Destination $deployDir
+
+            $deployExe = Join-Path $deployDir "LatencyTester.exe"
+            & $windeployqt.FullName $deployExe --release --no-translations --no-system-d3d-compiler --no-opengl-sw 2>$null
+            if ($LASTEXITCODE -eq 0) {
+                # Copy Measures folder if it exists
+                $measuresDir = Join-Path $ProjectDir "Measures"
+                if (Test-Path $measuresDir) {
+                    Copy-Item -Recurse $measuresDir -Destination $deployDir
+                } else {
+                    New-Item -ItemType Directory -Force -Path (Join-Path $deployDir "Measures") | Out-Null
+                }
+                Write-Host "  Deployable package: $deployDir" -ForegroundColor Green
+                Write-Host "  (ZIP this folder to distribute)"
+            } else {
+                Write-Warning "windeployqt returned an error. Package may be incomplete."
+            }
+        } else {
+            Write-Warning "windeployqt not found. Skipping deployment packaging."
+            Write-Host "  Add Qt's bin directory to PATH or install windeployqt."
         }
     }
 }
