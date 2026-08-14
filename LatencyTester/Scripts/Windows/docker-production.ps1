@@ -51,6 +51,15 @@ switch ($Command) {
         Write-Host "  Context:    $ProjectDir"
         Write-Host ""
 
+        # Ensure submodules are initialized
+        $submoduleFile = Join-Path $ProjectDir "LatencyTester\Libs\rpi_ads1115\ads1115rpi.cpp"
+        if (-not (Test-Path $submoduleFile)) {
+            Write-Step "Initializing git submodules..."
+            Push-Location $ProjectDir
+            git submodule update --init --recursive
+            Pop-Location
+        }
+
         # ARM64 emulation: required for building ARM64 stages.
         # tonistiigi/binfmt is lightweight and compatible with all Docker implementations.
         Write-Step "Ensuring ARM64 emulation is registered..."
