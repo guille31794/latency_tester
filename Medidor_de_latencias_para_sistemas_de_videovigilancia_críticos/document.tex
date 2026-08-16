@@ -122,8 +122,8 @@
 
 \begin{document}
 \raggedbottom
-\tolerance=1000
-\emergencystretch=3em
+\tolerance=2000
+\emergencystretch=4em
 
 \hypersetup{pageanchor=false}
 \begin{titlepage}
@@ -153,20 +153,20 @@
 
 \chapter{Introducción\label{cap:introducci=0000F3n}}
 
-Durante la lectura de este documento, le será presentado con todo lujo de detalles un dispositivo electrónico de nuevo desarrollo, cuyas aplicaciones, serán especialmente útiles en el ámbito militar y de la seguridad de entornos en tiempo real, pero que también puede tener aplicaciones en otros sectores, como la industria, donde puede ayudar a cuantificar y estandarizar así una medida, como es el retardo de vídeo.
+Durante la lectura de este documento, será presentado con todo detalle un dispositivo electrónico de nuevo desarrollo, cuyas aplicaciones serán especialmente útiles en el ámbito militar y de la seguridad de entornos en tiempo real, pero que también puede tener aplicaciones en otros sectores, como la industria, donde puede ayudar a cuantificar y estandarizar una medida como es el retardo de vídeo.
 
 Para comenzar, se dice que un sistema de videovigilancia es aquel que permite a través de la utilización de un circuito cerrado de televisión, la monitorización de vídeos e imágenes a distancia, con el objetivo de aumentar la seguridad de un entorno \cite{videovigilancia}.
  
-A su vez, un sistema de videovigilancia es crítico cuando tiene que funcionar “en tiempo real”, es decir, ser capaz de captar una imagen, y mostrarla en un monitor con un tiempo de latencia suficientemente bajo como para que el operador de cámaras no tenga sensación de disonancia entre las entradas que recibe la cámara y el tiempo que tarda ésta en dar una respuesta a dichas entradas.
+A su vez, un sistema de videovigilancia es crítico cuando tiene que funcionar “en tiempo real”, es decir, ser capaz de captar una imagen, y mostrarla en un monitor con un tiempo de latencia suficientemente bajo como para que el operador de cámaras no perciba disonancia entre las entradas que recibe la cámara y el tiempo que tarda esta en dar una respuesta a dichas entradas.
 
 Se vuelve importante este hecho en entornos donde se conjugan un altísimo nivel de seguridad, con la necesidad de una respuesta muy rápida a cualquier evento que se produzca y pueda afectar a la misma.
 
-Se contextualiza este concepto, en el hecho que se conoce como revolución digital, cuyo avance ha afectado enormemente a los dispositivos y medios de captación de imágenes y su posterior tratamiento y adecuación al medio en el que serán utilizadas.
+Se contextualiza este concepto en el fenómeno que se conoce como revolución digital, cuyo avance ha afectado enormemente a los dispositivos y medios de captación de imágenes y su posterior tratamiento y adecuación al medio en el que serán utilizadas.
  
 Este proyecto pretende dar respuesta a si un sistema de videovigilancia es o no de tiempo real.
 Consistirá en el desarrollo de un sistema de medición de latencias para sistemas de videovigilancia, que incluye un dispositivo de medición de bajo coste y alta efectividad, equipado con un software capaz de suplir las necesidades del personal técnico encargado de realizar dichas mediciones. 
  
-Así mismo, se realizará una descripción de toda la metodología aplicada al realizar las mediciones, un completo análisis de todo el transfondo tecnológico del hardware utilizado durante el proyecto y se documentará el desarrollo e instalación del software que constituye el sistema de medición.
+Asimismo, se realizará una descripción de toda la metodología aplicada al realizar las mediciones, un completo análisis del transfondo tecnológico del hardware utilizado durante el proyecto y se documentará el desarrollo e instalación del software que constituye el sistema de medición.
 
 % \section*{Listados}
 
@@ -184,33 +184,33 @@ Así mismo, se realizará una descripción de toda la metodología aplicada al r
 
 \section{Motivación}
 
-Dado el actual auge de los sistemas digitales en todos los posibles ámbitos de la vida cotidiana, hay uno que ha destacado de sobre manera, y es la captación, tratamiento y visualización de las imágenes, y por ende, al vídeo.
+Dado el actual auge de los sistemas digitales en todos los posibles ámbitos de la vida cotidiana, hay uno que ha destacado sobremanera: la captación, tratamiento y visualización de las imágenes y, por ende, del vídeo.
 
-Aplicada esta revolución digital al entorno de la defensa y seguridad, llegamos a los sistemas de videovigilancia modernos, los cuales aumentan la complejidad de los antiguos sistemas analógicos, añadiendo componentes electrónicos de diversa índole que son los encargados de conseguir una imagen digital de calidad, pero a que su vez, producen inherentemente un retardo en la consecución y retransmisión de la misma a través de un monitor.
+Aplicada esta revolución digital al entorno de la defensa y seguridad, se llega a los sistemas de videovigilancia modernos, los cuales aumentan la complejidad de los antiguos sistemas analógicos, añadiendo componentes electrónicos de diversa índole que son los encargados de conseguir una imagen digital de calidad, pero que a su vez producen inherentemente un retardo en la consecución y retransmisión de la misma a través de un monitor.
 
 La necesidad laboral y el interés de algunas empresas en el desarrollo de un producto, de bajo coste, y de eficacia probada son el motivo principal de este estudio.
 
-Eso nos lleva hasta la idea de este estudio el cuál, pretende dar una herramienta sencilla y barata para medir dichos retardos y a la vez, establecer una serie de pautas generales las cuales para identificar que sistemas pueden ser considerados como críticos y cuales no, precisamente, en base a este criterio de medida que es su latencia de funcionamiento.
+Esto lleva hasta la idea de este estudio, el cual pretende proporcionar una herramienta sencilla y económica para medir dichos retardos y, a la vez, establecer una serie de pautas generales para identificar qué sistemas pueden ser considerados como críticos y cuáles no, precisamente con base en este criterio de medida que es su latencia de funcionamiento.
 
-Se comenzará el desarrollo del sistema con la premisa de desarrollar un prototipo de producto funcional, el cuál, disponga entre sus características técnicas:
+Se comenzará el desarrollo del sistema con la premisa de desarrollar un prototipo de producto funcional, el cual disponga entre sus características técnicas:
 
 \begin{itemize}
     \item La capacidad de ser portátil y transportable.
     \item Funcionar utilizando una batería incorporada en lugar de conectado a una red de corriente.
     \item Tener una interfaz de usuario sencilla y amigable.
-    \item Ser capaz de realizar mediciones precisas de las latencias de un sistemas de vídeo.
+    \item Ser capaz de realizar mediciones precisas de las latencias de un sistema de vídeo.
     \item Tener un bajo coste y estar desarrollado inicialmente con hardware open source.
 \end{itemize}
 
-Para ello, se ha comenzado revisando el estado del arte y la existencia de dispositivos similares en el mercado. Comercialmente, no se ha encontrado ninguno, y de fabricación casera, aunque usado profesionalmente, se ha encontrado un sistema similar, construido  por los ingenieros de la empresa sueca Voysys, con la salvedad de que no es portátil y solo trabaja bajo entorno Windows, dependiendo de un ordenador que realice los cálculos e inicie las mediciones. Este dispositivo es brevemente mostrado en un vídeo subido en el canal de Youtube de la compañía y no se proporciona información de como está construido, utilizando que componentes, como se conecta con el ordenador o que lenguaje se ha utilizado para su programación, pero a simple vista se puede observar que utiliza los mismos componentes que se pretenden utilizar en este proyecto conectados mediante una conexión serie o usb. Estos son:
+Para ello, se ha comenzado revisando el estado del arte y la existencia de dispositivos similares en el mercado. Comercialmente, no se ha encontrado ninguno, y de fabricación casera, aunque usado profesionalmente, se ha encontrado un sistema similar, construido por los ingenieros de la empresa sueca Voysys, con la salvedad de que no es portátil y solo trabaja bajo entorno Windows, dependiendo de un ordenador que realice los cálculos e inicie las mediciones. Este dispositivo es brevemente mostrado en un vídeo publicado en el canal de YouTube de la compañía y no se proporciona información de cómo está construido, qué componentes utiliza, cómo se conecta con el ordenador o qué lenguaje se ha utilizado para su programación, pero a simple vista se puede observar que utiliza los mismos componentes que se pretenden utilizar en este proyecto conectados mediante una conexión serie o USB. Estos son:
 
 \begin{itemize}
     \item Placa microcontroladora.
     \item Fotosensor.
-    \item Led.
+    \item LED.
 \end{itemize}
 
-Estos dispositivos, que son los responsables de las mediciones en el sistema de Voysys, serán los encargados de tanto de tomar mediciones como de realizar los cálculos y representar las mismas para su visualización, y es por ello y por su condición de portátil por lo que se realizarán los siguientes cambios en los componentes:
+Estos dispositivos, que son los responsables de las mediciones en el sistema de Voysys, serán los encargados tanto de tomar mediciones como de realizar los cálculos y representar los resultados para su visualización. Es por ello, y por la condición de portátil del dispositivo, por lo que se realizarán los siguientes cambios en los componentes:
 
 \begin{itemize}
     \item SBC en lugar de placa microcontroladora.
@@ -219,7 +219,7 @@ Estos dispositivos, que son los responsables de las mediciones en el sistema de 
     \item Interfaz gráfica propia y adaptada integrada en un sistema operativo propio.
 \end{itemize}
 
-Respecto a la medición de latencias en sistemas de visión nocturna, se debe tener en cuenta que existe un amplio abanico de tecnologías disponibles actualmente, partiendo de las tradicionales con iluminación fosfórica verde a las modernas imágenes térmicas digitales. Pese a ello, no se ha encontrado nada similar al dispositivo que pretende desarrollar este proyecto. Teniendo en cuenta que todo lo relacionado a este ámbito de la vigilancia nocturna suele pertenecer al ámbito militar, es comprensible que haya menos información al respecto.
+Respecto a la medición de latencias en sistemas de visión nocturna, se debe tener en cuenta que existe un amplio abanico de tecnologías disponibles actualmente, partiendo de las tradicionales con iluminación fosfórica verde hasta las modernas imágenes térmicas digitales. Pese a ello, no se ha encontrado nada similar al dispositivo que pretende desarrollar este proyecto. Teniendo en cuenta que todo lo relacionado con este ámbito de la vigilancia nocturna suele pertenecer al ámbito militar, es comprensible que haya menos información al respecto.
 
 \section{Objetivos}
 
@@ -237,19 +237,51 @@ El objetivo de este proyecto es el desarrollo del software embebido que controla
 
 El alcance de este proyecto se centra en el desarrollo, despliegue e instalación del software embebido del medidor de latencias. El producto hardware (placa, sensores, LED, batería, carcasa) será formalmente descrito y esquematizado en este documento, pero su diseño electrónico y fabricación física quedan fuera del alcance del mismo.
 
-Se dará por concluido el proyecto cuando se tenga desarrollado el software del medidor de latencias con un funcionamiento eficaz y adecuado, instalado y desplegado correctamente sobre la plataforma hardware de destino, y además haya sido testado en diversas situaciones.
+Se dará por concluido el proyecto cuando se tenga desarrollado el software del medidor de latencias con un funcionamiento correcto y adecuado, validado tanto en el entorno de desarrollo como en emulación de la plataforma destino (ARM64), y se disponga de la infraestructura de compilación cruzada necesaria para generar el binario de producción desplegable sobre la Raspberry Pi.
 
-Respecto a los dispositivos de videograficos, se han mostrado de forma introductoria y no serán cubiertos en primera instancia por el alcance de este proyecto.
+Respecto a los dispositivos videográficos, se han mostrado de forma introductoria y no serán cubiertos en primera instancia por el alcance de este proyecto.
 
 \section{Glosario}
 
 \begin{description}
-    \item [{Balance de blancos}] Ajuste de la cámara que sirve para equilibrar el nivel de los colores básicos, rojo verde y azul.
-    \item [{Zoom}] Variación de la longitud focal y  ángulo de visión manteniendo el plano de la imagen en el mismo sitio.
-    \item [{Resolución}] Cantidad de detalles que pueden apreciarse en una imagen. Medida en píxeles. 
     \item [{Apertura}] Indica la luminosidad del objetivo que incorpora la cámara.
-    \item [{ISO}] Sensibilidad que tiene el sensor de la cámara para captar luz.
+    \item [{Autogating}] Técnica de alimentación pulsada en dispositivos de visión nocturna que enciende y apaga el intensificador a alta frecuencia para evitar la saturación por fuentes de luz intensa.
+    \item [{Balance de blancos}] Ajuste de la cámara que sirve para equilibrar el nivel de los colores básicos, rojo verde y azul.
+    \item [{Baseline}] Valor de referencia obtenido durante la calibración, utilizado como umbral base para la detección de cambios en las lecturas del sensor.
+    \item [{Blooming}] Efecto de saturación lumínica en sensores de imagen que provoca la pérdida parcial o total de la imagen por sobreexposición.
+    \item [{Buffering}] Almacenamiento temporal de datos en memoria intermedia para compensar diferencias de velocidad entre emisor y receptor.
+    \item [{Bump-in-the-wire}] Dispositivo de seguridad insertado de forma transparente en un enlace de comunicaciones sin alterar la topología de la red.
+    \item [{Cut-through}] Modo de conmutación en switches de red que reenvía el paquete antes de recibirlo completamente, minimizando la latencia.
+    \item [{Debug}] Modo de compilación que incluye información de depuración para facilitar la localización de errores en el código fuente.
+    \item [{Deploy / Deployment}] Proceso de distribución e instalación de un software en su entorno de ejecución final.
+    \item [{Flag}] Variable booleana utilizada como indicador de estado o señalización entre hilos de ejecución.
     \item [{Fotones}] Partículas con energía lumínica.
+    \item [{Framework}] Conjunto de bibliotecas, herramientas y convenciones que proporcionan una estructura base para el desarrollo de aplicaciones.
+    \item [{Framerate}] Tasa de fotogramas por segundo a la que un sistema de vídeo captura o reproduce imágenes.
+    \item [{GOP (Group of Pictures)}] Grupo de fotogramas consecutivos en una secuencia de vídeo comprimido que comparten una estructura de predicción común.
+    \item [{Hardware}] Conjunto de componentes físicos y electrónicos que conforman un sistema informático.
+    \item [{ISO}] Sensibilidad que tiene el sensor de la cámara para captar luz.
+    \item [{Jitter}] Variación en el retardo de llegada de paquetes de datos en una red, que puede causar irregularidades en la reproducción de vídeo.
+    \item [{LED (Light Emitting Diode)}] Diodo emisor de luz utilizado como fuente de estímulo luminoso controlado.
+    \item [{Open source}] Modelo de desarrollo de software cuyo código fuente es de libre acceso, modificación y distribución.
+    \item [{Offscreen}] Modo de renderizado gráfico sin pantalla física conectada, utilizado en entornos de pruebas automatizadas.
+    \item [{Pipeline}] Cadena secuencial de etapas de procesamiento por las que pasa una señal o dato desde su origen hasta su destino.
+    \item [{Polling}] Técnica de muestreo periódico en la que el procesador consulta repetidamente el estado de un dispositivo hasta obtener una respuesta.
+    \item [{Release}] Modo de compilación optimizado para producción, sin información de depuración y con optimizaciones de rendimiento activas.
+    \item [{Resolución}] Cantidad de detalles que pueden apreciarse en una imagen. Medida en píxeles.
+    \item [{Sensor-to-screen}] Latencia extremo a extremo medida desde la captura en el sensor de la cámara hasta la presentación en el monitor del operador.
+    \item [{Signal / Slot}] Mecanismo de comunicación entre objetos en Qt que permite la emisión de eventos (signals) y su recepción por funciones suscritas (slots).
+    \item [{Singleton}] Patrón de diseño que garantiza la existencia de una única instancia de una clase durante toda la ejecución del programa.
+    \item [{Software}] Conjunto de programas, instrucciones y datos que permiten el funcionamiento de un sistema informático.
+    \item [{Store-and-forward}] Modo de conmutación en switches de red que almacena el paquete completo antes de reenviarlo, introduciendo mayor latencia pero permitiendo verificación de errores.
+    \item [{Streaming}] Transmisión continua de datos multimedia (audio o vídeo) que permite su reproducción simultánea a la recepción.
+    \item [{Stub}] Implementación simulada de un componente hardware o software utilizada en pruebas unitarias para aislar el código bajo test.
+    \item [{Timecode}] Marca temporal insertada en la señal de vídeo que permite identificar el instante exacto de captura de cada fotograma.
+    \item [{Timeout}] Tiempo máximo de espera configurado para una operación antes de considerarla fallida.
+    \item [{Toolchain}] Conjunto de herramientas de compilación (compilador, enlazador, bibliotecas) configuradas para generar código ejecutable para una arquitectura específica.
+    \item [{Whitepaper}] Documento técnico publicado por un fabricante o institución que describe en detalle una tecnología, metodología o producto.
+    \item [{Widget}] Componente visual de interfaz gráfica de usuario (botón, deslizador, campo de texto, etc.).
+    \item [{Zoom}] Variación de la longitud focal y ángulo de visión manteniendo el plano de la imagen en el mismo sitio.
 \end{description}
 
 \subsection{Acrónimos}
@@ -261,17 +293,34 @@ Respecto a los dispositivos de videograficos, se han mostrado de forma introduct
   \acro{SVC}{Sistema de videovigilancia crítico}
   \acro{CCTV}{Circuito de televisión cerrado}
   \acro{NIR}{Near Infrared - Cercano al infrarrojo}
-  \acro{PPP}{Pixels por pulgada}
+  \acro{PPP}{Píxeles por pulgada}
   \acro{CMOS}{Semiconductor complementario de óxido metálico}
   \acro{CCD}{Dispositivo de carga acoplada}
   \acro{MCP}{Placa de microcanales}
   \acro{GaAs}{Arseniuro de gallio}
   \acro{CRA}{Central receptora de alarmas}
-  \acro{SBC}{Ordenador en una unica placa}
-  \acro{ARM}{Maquina RISC Avanzada}
+  \acro{SBC}{Ordenador en una única placa}
+  \acro{ARM}{Máquina RISC Avanzada}
   \acro{RISC}{Conjunto reducido de instrucciones de computación}
   \acro{USB}{Bus de serie universal}
   \acro{SOC}{Sistema en chip}
+  \acro{GPIO}{General Purpose Input/Output - Entrada/Salida de propósito general}
+  \acro{I2C}{Inter-Integrated Circuit - Bus de comunicación serie entre circuitos integrados}
+  \acro{ADC}{Analog-to-Digital Converter - Conversor analógico-digital}
+  \acro{FPGA}{Field-Programmable Gate Array - Matriz de puertas programable en campo}
+  \acro{NTP}{Network Time Protocol - Protocolo de tiempo de red}
+  \acro{PTP}{Precision Time Protocol - Protocolo de tiempo de precisión}
+  \acro{ISP}{Internet Service Provider - Proveedor de servicios de Internet}
+  \acro{LAN}{Local Area Network - Red de área local}
+  \acro{UTP}{Unshielded Twisted Pair - Par trenzado sin apantallar}
+  \acro{JSON}{JavaScript Object Notation - Notación de objetos JavaScript}
+  \acro{API}{Application Programming Interface - Interfaz de programación de aplicaciones}
+  \acro{VNC}{Virtual Network Computing - Computación virtual en red}
+  \acro{SSH}{Secure Shell - Intérprete de comandos seguro}
+  \acro{LED}{Light Emitting Diode - Diodo emisor de luz}
+  \acro{IP}{Internet Protocol - Protocolo de Internet}
+  \acro{GOP}{Group of Pictures - Grupo de imágenes}
+  \acro{ASan}{AddressSanitizer - Herramienta de detección de errores de memoria}
 \end{acronym}
 
 \chapter{Transfondo tecnológico}
@@ -280,10 +329,10 @@ En este capítulo se darán a conocer las tecnologías con las que se trabajará
 
 \section{Comienzos}
 
-A finales del siglo XIX, alrededor del 1880 surgen las vídeo cámaras \cite{gray1993multiformat}, con fines cinematográficos, y es desde entonces, que son dispositivos que no han dejado de evolucionar, tanto en forma, como en calidad, funcionalidad o tamaño.
+A finales del siglo XIX, alrededor de 1880, surgen las videocámaras \cite{gray1993multiformat} con fines cinematográficos, y desde entonces son dispositivos que no han dejado de evolucionar tanto en forma como en calidad, funcionalidad o tamaño.
 
 \hfill\break
-A mitad del siglo XX, en 1942, nace en plena segunda guerra mundial, el termino que acuñamos como vídeovigilancia, de la mano del primer circuito de televisión cerrado o CCTV. Fue en este momento, cuando se comenzó a utilizar un sistema videográfico \enquote*{a tiempo real} como elemento de seguridad en un entorno crítico \cite{fan2015survey}. Ver Figura \ref{fig:cctv_simple}.
+A mitad del siglo XX, en 1942, nace en plena Segunda Guerra Mundial el término que se acuña como videovigilancia, de la mano del primer circuito de televisión cerrado o CCTV. Fue en este momento cuando se comenzó a utilizar un sistema videográfico \enquote*{a tiempo real} como elemento de seguridad en un entorno crítico \cite{fan2015survey}. Ver Figura \ref{fig:cctv_simple}.
 
 \begin{figure}[H]
     \centering
@@ -292,10 +341,10 @@ A mitad del siglo XX, en 1942, nace en plena segunda guerra mundial, el termino 
     \label{fig:cctv_simple}
 \end{figure}
 
-Al principio, estos circuitos de televisión eran enormemente sencillos, y solo incluían cámaras en blanco y negro conectadas a monitores remotos, que eran a su vez utilizados, para controlar el lanzamiento de cohetes. Desde entonces, y hasta la fecha, los avances en vídeo vigilancia han tenido un enorme auge, y han propiciado el desarrollo de nuevas tecnologías que han ido escalando a la vez que estos sistemas.
+Al principio, estos circuitos de televisión eran enormemente sencillos y solo incluían cámaras en blanco y negro conectadas a monitores remotos, que eran a su vez utilizados para controlar el lanzamiento de cohetes. Desde entonces y hasta la fecha, los avances en videovigilancia han tenido un enorme auge y han propiciado el desarrollo de nuevas tecnologías que han ido escalando a la vez que estos sistemas.
 
 \hfill \break
-En un principio, los CCTV, requerían de supervisión humana constante para funcionar y ser eficaces, pero con el paso de los años y la invención de las cintas de vídeo se facilitó el proceso de vigilancia, gracias a poder grabar lo que sucedía en las cámaras. Ver Figura \ref{fig:cctv_recorder}.
+En un principio, los CCTV requerían de supervisión humana constante para funcionar y ser eficaces, pero con el paso de los años y la invención de las cintas de vídeo se facilitó el proceso de vigilancia, gracias a poder grabar lo que sucedía en las cámaras. Ver Figura \ref{fig:cctv_recorder}.
 
 \begin{figure}[H]
     \centering
@@ -304,222 +353,31 @@ En un principio, los CCTV, requerían de supervisión humana constante para func
     \label{fig:cctv_recorder}
 \end{figure}
 
-Poco después, en los años 60's, se comenzó a popularizar el uso de cámaras de vídeo vigilancia en lugares públicos, situándolas en puntos estratégicos, los cuales permitían aprovechar al máximo sus recursos, e incluso pasar desapercibidas en muchos casos\cite{videovigilancia_historia:2017:Online}. 
+Poco después, en la década de 1960, se comenzó a popularizar el uso de cámaras de videovigilancia en lugares públicos, situándolas en puntos estratégicos que permitían aprovechar al máximo sus recursos e incluso pasar desapercibidas en muchos casos \cite{videovigilancia_historia}. 
 
 \hfill \break
-Unos años más tarde, este boom de la vídeo vigilancia, comienza a afectar a otros sectores de la sociedad, y se populariza, la utilización de CCTV's en otros lugares, como bancos y tiendas, utilizándose como una medida de seguridad añadida antirrobos. Es gracias a este auge, que al igual que sucedió en el sector de la informática, con las cámaras de vídeo vigilancia, se fueron mejorando enormemente las características de los sistemas, abaratando costes, reduciendo sus tamaños, y mejorando la visibilidad en situaciones de poca luz, lo que conllevó con el paso de los años a su irrupción en el mercado doméstico como una medida para mantener a las familias seguras disuadiendo a posibles invasores del hogar.
+Unos años más tarde, este auge de la videovigilancia comienza a afectar a otros sectores de la sociedad y se populariza la utilización de CCTV en otros lugares, como bancos y tiendas, empleándose como una medida de seguridad añadida contra robos. Es gracias a este auge que, al igual que sucedió en el sector de la informática, las cámaras de videovigilancia fueron mejorando enormemente las características de los sistemas, abaratando costes, reduciendo sus tamaños y mejorando la visibilidad en situaciones de poca luz, lo que conllevó con el paso de los años a su irrupción en el mercado doméstico como medida de seguridad para disuadir a posibles intrusos.
 
 \section{Visión Nocturna}
 
-Se conoce como visión Nocturna al fenómeno de poder vislumbrar en ausencia de luz, el entorno que nos rodea, y no resulta nada nuevo. Desde mucho tiempo atrás, se sabe que ciertos animales, como son los búhos, los gatos, pueden ver en la oscuridad y otros como las abejas, incluso llegan a detectar partes del espectro visible que son invisibles al ojo humano. Este fenómeno tiene cabida, al ser estos animales capaces de detectar con sus ojos frecuencias del espectro electromagnético que nosotros no podemos \cite{sionyx_night_vision}. 
+Los sistemas de videovigilancia críticos operan frecuentemente en condiciones de baja luminosidad, por lo que resulta pertinente mencionar brevemente las principales tecnologías de visión nocturna disponibles. No obstante, la validación del medidor de latencias con cámaras de visión nocturna o térmicas queda fuera del alcance del presente proyecto y se contempla como trabajo futuro.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale = 0.5]{Figures/espectro_luminoso.PNG}
-    \caption{Espectro luminoso visible + infrarrojo. Fuente: \cite{spectre}}
-    \label{fig:espectre}
-\end{figure}
-
-Durante la segunda guerra mundial y sucesivas, se comenzaron a desarrollar y utilizar distintas soluciones técnicas, que permitían a los soldados, operar en completa oscuridad, imitando con ellas, el comportamiento de la visión animal \cite{tsuji2002development}. No mucho más tarde, se aplicarían estas técnicas a la vídeo vigilancia, añadiendo estos dispositivos a vídeo cámaras de un CCTV, en forma de filtros o sensores, dando así lugar a las primeras cámaras de visión nocturna.
-
-\break
-
-Esencialmente, podríamos clasificar los tipos de visión nocturnas utilizados en la actualidad en cuatro \cite{chrzanowski2013review}:
+Las tecnologías de visión nocturna pueden clasificarse en cuatro categorías principales \cite{chrzanowski2013review}:
 
 \begin{itemize}
-    \item Visión nocturna analógica: mediante un tubo intensificador de luz con fósforo y una batería.
-    \item Visión nocturna digital: utiliza sensores fotográficos ultrasensibles y postprocesado de imágenes para proyectar una imagen nítida.
-    \item Visión térmica: basada en la detección de la radiación infrarroja.
-    \item Dispositivos novedosos: destacan por el auge de una nueva tecnología que incorpora la utilización de visión nocturna digital y analógica para la reducción de ruido en la señal de imagen.
+    \item \textbf{Visión nocturna analógica}: utiliza un tubo intensificador de imagen con fotocátodo y pantalla de fósforo para amplificar la luz ambiental residual. Clasificada en tres generaciones por el Ejército de EE.\,UU. \cite{kotulak1992methods}, desde los primeros \textit{Starlight Scopes} de la década de 1960 hasta los dispositivos actuales con fósforo blanco y arseniuro de gallio (GaAs).
+    \item \textbf{Visión nocturna digital}: emplea sensores CMOS o CCD de alta sensibilidad que operan en el espectro NIR, con postprocesado digital de la imagen \cite{tsuji2002development}. Ofrecen menor coste y capacidad de superposición de información, a cambio de menor resolución que los analógicos.
+    \item \textbf{Visión térmica}: detecta radiación infrarroja mediante microbolómetros cuya resistencia varía con la temperatura. No requiere luz ambiental, pero ofrece resoluciones inferiores y dificultad en la interpretación de escenas isotermas.
+    \item \textbf{Iluminación infrarroja activa}: dispositivos que proyectan luz infrarroja invisible al ojo humano para iluminar escenas en oscuridad total, complementando a los anteriores \cite{sionyx_night_vision}.
 \end{itemize}
 
-\subsection{Visión nocturna analógica}
+Cada una de estas tecnologías introduce latencias de procesamiento específicas (conversión fotoeléctrica, digitalización, postprocesado) que podrían ser objeto de medición con el dispositivo desarrollado en este proyecto, una vez se disponga del hardware de visión nocturna necesario para las pruebas.
 
-Comenzaremos explicando la principal morfología común que comparten casi todos los dispositivos de visión nocturna analógicos. Dichos componentes se conocen como:
+\section{Videovigilancia IP}
 
-\begin{itemize}
-    \item Lentes objetivo.
-    \item Una pieza ocular.
-    \item Fuente de alimentación.
-    \item Un tubo intensificador de imágenes.
-\end{itemize}
+Se conoce como videovigilancia IP a aquella tecnología de seguridad que permite la observación mediante cámaras de vídeo pertenecientes a un CCTV en red, utilizando para ello Internet y protocolos de interconexión. Con ello se consigue la transmisión y supervisión remotas de vídeo a distancia aun sin estar conectado directamente al CCTV \cite{norris2004growth}.
 
-La visión nocturna, en este caso, surge durante la intensificación de la imagen en el tubo intensificador, el cuál cuenta con dos subcomponentes principales que son los que se encargan de mejorar la imagen. Estos son:
-
-\begin{itemize}
-    \item \textbf{Fotocátodo} Absorbe fotones y libera electrones.
-    \item \textbf{Fotomultiplicador} Absorbe electrones, los multiplica y libera fotones intensificados o multiplicados.
-\end{itemize}
-
-A continuación se detalla como funciona la visión nocturna analógica. Al frente de cualquier dispositivo, se encuentran las lentes objetivo, cuyo trabajo consiste en reunir toda energía infrarroja ambiental y artificial disponible antes de enviarla al tubo de amplificación. Este tubo tiene forma de túnel y está alimentado electrónicamente.
-Todos estos fotones captados, pasan a trace de un fotocátodo, el cuál los convierte en electrones. Estos electrones se mueven hacia una placa de micro canales, donde son amplificados por un factor de miles a través de una de reacción eléctrica y química en cadena que se produce cuando estos electrones impactan en las paredes de los micro canales. Ver Figura \ref{fig:analog_intensification}.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale = 0.5]{Figures/amplificacion_analogica.PNG}
-    \caption{Amplificación analógica de fotones. Fuente: \cite{intensifier}}
-    \label{fig:analog_intensification}
-\end{figure}
-
-Estos electrones supercargados, son golpeados en una pantalla cubierta de fósforo donde alcanzan un estado de excitación, liberando así nuevas partículas fotónicas o de luz visible las cuales pueden verse a través de una pieza ocular. La imagen aparecerá como una recreación clara y lúcida de la escena que estamos observando, pero en una combinación de tonos verdes y negros.
-
-El motivo de que el color de imagen sea verde o verdoso viene del uso de la pantalla de fósforo, el cuál se utiliza a su vez por una sencilla razón, y es que el ojo humano es muy sensible a los tonos verdes y puede distinguir más formas de verde que de ningún otro color en el espectro. Ver Figura \ref{fig:analog_vision}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale = 0.25]{Figures/vision_amplificacion_analogica.png}
-    \caption{Ejemplo de visión nocturna analógica. Fuente: \cite{sionyx_night_vision}}
-    \label{fig:analog_vision}
-\end{figure}
-
-\subsection{Visión nocturna digital}
-
-Los dispositivos de visión nocturna digital operan de manera diferente a los analógicos. En su lugar, la luz que captan las lentes objetivo, es transformada en una señal digital mediante un sensor de imagen que puede variar entre dos tipos:
-
-\begin{description}
-        \item [{CMOS}] Complementary Metal Oxide Semiconductor
-        \item [{CCD}] Charge Coupled Device
-\end{description}
-
-Estas son las mismas tecnologías empleadas en todas las cámaras digitales domésticas. 
-En ellas, la imagen es mejorada varias veces antes de ser visible en las pantallas de los dispositivos. Cuanto más grandes los tamaños de píxeles de los sensores CMOS o CCD, mejor rendirán en entornos de baja luminosidad.
-En este tipo de dispositivos se utilizan y desarrollan tecnologías de sensores que funcionan en el espectro NIR, consiguiendo así imágenes con nitidez, pero que en ausencia de luz, se representan con aberraciones cromáticas. Se los conoce como dispositivos "low light".
-
-Como desventaja frente a sistemas analógicos tradicionales, presentan una muy baja resolución de imagen, ya que al tener píxeles muy grandes, apenas se pueden introducir entre uno y dos megapíxeles en un sensor.
-Como ventaja, tienen un menor coste y una enorme capacidad para superponer iconos, indicadores y otra información de valor sobre la imagen proyectada. Ver Figura \ref{fig:digital_vision}.
-
-Ya que estos dispositivos convierten imágenes ópticas en señales digitales, son dispositivos que tienen la posibilidad nativa de grabar vídeo, imágenes y sonido, el cuál puede ser almacenado a bordo fácilmente en una memoria, serán los principalmente utilizados durante el estudio y pruebas de éste proyecto.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale = 0.7]{Figures/low_light_example.jpg}
-    \caption{Ejemplo de visión low light (izquierda) vs térmica (derecha). Fuente: \cite{night_vision}}
-    \label{fig:digital_vision}
-\end{figure}
-
-\subsection{Visión Artificial}
-
-En la actualidad, los dispositivos de visión nocturna van equipados con un nivel de tecnología enorme, pero aún con él, en condiciones de apagón total, en ausencia completa de radiación lumínica, siguen sin ser más útil que un ojo humano sin ayudas. Es aquí donde aparece el \textbf{iluminador infrarrojo}. Ver Figura \ref{fig:ir_iluminator}.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale = 0.8]{Figures/no_ir_iluminator.PNG}
-    \caption{Ejemplo de visión sin iluminador infrarrojo. Fuente: \cite{sionyx_night_vision}}
-    \label{fig:no_ir_iluminator}
-\end{figure}
-
-Como ocurre en los ya mencionados dispositivos, analógicos y digitales, todos los aparatos de visión nocturna deben tener alguna luz que amplificar. Existen situaciones donde simplemente no existe suficiente luz para que un amplificador de luz las intensifique. Ejemplos de ellas pueden ser:
-
-\begin{itemize}
-    \item Estructuras subterráneas.
-    \item Cuevas.
-    \item Noche nublada sin luna.
-\end{itemize}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale = 0.75]{Figures/ir_iluminator.PNG}
-    \caption{Ejemplo de visión con iluminador infrarrojo. Fuente: \cite{sionyx_night_vision}}
-    \label{fig:ir_iluminator}
-\end{figure}
-
-En estas situaciones, es cuando el iluminador infrarrojo entra en acción. Se trata de un dispositivo que provee de iluminación artificial de una longitud de onda apropiada cercana al espectro infrarrojo que permite al usuario iluminar áreas de interés específico mientras además mejoran el contraste de la imagen.
-Se puede interpretar como una linterna invisible que solo puede ser vista a través de un dispositivo de visión nocturna. En las siguientes figuras se mostrarán tres ejemplos de visión con iluminador infrarrojo (Figura \ref{fig:laser_ir_iluminator} y sin él ver Figura \ref{fig:no_ir_iluminator}).
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale = 0.7]{Figures/laser_ir_iluminator.PNG}
-    \caption{Ejemplo de visión con iluminador infrarrojo láser}
-    \label{fig:laser_ir_iluminator}
-\end{figure}
-
-\subsection{Clasificación de los dispositivos de visión nocturna en generaciones}
-
-Comúnmente se clasifican en tres generaciones para facilitar la segmentación según su tecnología. Esta clasificación es dada por el Ejercito de Estados Unidos \cite{kotulak1992methods}.
-
-\subsubsection{Primera Generación}
-
-El primer sistema de visión nocturna fue creado por la Armada de los Estados Unidos y utilizado durante la segunda guerra mundial. Este sistema dependía enteramente de una fuente de iluminación infrarroja para funcionar. La tecnología desarrollada llevó a lo que se conocen como Starlight Scopes (Visores de estrellas), popularizados en la década de 1960 y utilizados durante la guerra de Vietnam.
-Siendo dispositivos arcaicos, se caracterizaban por ser capaces de proveer una imagen utilizable en todo entorno ayudados de un iluminador infrarrojo, del cual eran capaces de prescindir en las noches de luna llena sin nubes, y de proporcionar imágenes plagadas de ruido eléctrico. Ver Figura \ref{fig:starlight_scope}.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale = 1]{Figures/first_gen.PNG}
-    \caption{Ejemplo de Starlight Scope. Fuente: \cite{sionyx_night_vision}}
-    \label{fig:starlight_scope}
-\end{figure}
-
-\subsubsection{Segunda Generación}
-
-Se considera como primordial diferencia en este cambio generacional la incorporación de una placa de microcanales (MCP) al tubo intensificador de imágenes. Un MCP es un disco de vidrio recubierto de metal que multiplica los electrones producidos por el intensificador de imágenes y que además, elimina la distorsión. Adicionalmente, el número de agujeros, o canales, es un factor contribuyente en la determinación de la resolución. Ver Figura \ref{fig:second_gen}.
-
-Los MCP, actuan como un supercargador de electrones y se encuentran localizados detrás del fotocátodo. Consisten en miles de orificios paralelos en el vidrio. A medida que los electrones pasan a través de estos tubos, miles de electrones adicionales se liberan, permitiendo a la luz ser amplificada muchas más veces que en los dispositivos de primera generación. Con esto al final, se consiguen mejores imágenes. Ver Figura \ref{fig:second_gen_example}.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale = 1]{Figures/second_gen.PNG}
-    \caption{Ejemplo de dispositivo de segunda generación. Fuente: \cite{sionyx_night_vision}}
-    \label{fig:second_gen}
-\end{figure}
-
-\subsubsection{Tercera Generación}
-
-Son dispositivos que se benefician primordialmente de la utilización de un material semiconductor, conocido como arseniuro de gallio (GaAs), añadido al proceso de fabricación del fotocátodo contenido en el tubo intensificador de imagen. La adición del GaAs, ayuda en la consecución de imágenes aún más brillantes, y más nítidas, gracias a su alto nivel de eficiencia en convertir fotones en electrones, mejorando así la detección de objetos a mayores distancias, en condiciones lumínicas más adversas.
-
-Otro hito de esta generación es la inclusión de una película de iones, que actúan como barrera incrementando la vida útil del tubo intensificador de imágenes y protegiéndolo de fuentes de luz adversas.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale = 0.8]{Figures/second_gen_example.PNG}
-    \caption{Ejemplo de visión a con dispositivo de segunda generación. Fuente: \cite{sionyx_night_vision}}
-    \label{fig:second_gen_example}
-\end{figure}
-
-Los dispositivos de visión nocturna de tercera generación típicos, ven resoluciones de aproximadamente 64 a 72 pares de lineas por milímetro y se benefician de una fuente de alimentación de alto voltaje. Los más actuales, también utilizan una fuente de alimentación cerrada, comúnmente conocida como Autogating. Esta fuente provee de rendimiento aumentado en entornos urbanos donde existen condiciones excesivas de luz ambiental, la cuales, crean lo que comúnmente se conoce como efecto blooming o halo. Este efecto consiste en la pérdida de porciones o de la misma imagen completa, debido a sobrecargas por una fuente de luz brillante, que blanquean la imagen.
-El autogating minimiza las interferencias de estas luces brillantes encendiéndose y apagándose a un ritmo que es indetectable para el usuario incrementando así la efectividad de estos dispositivos en entornos urbanos. Ver Figura \ref{fig:third_gen}.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale = 1]{Figures/thrid_gen.PNG}
-    \caption{Ejemplo de dispositivo de tercera generación. Fuente: \cite{sionyx_night_vision}}
-    \label{fig:third_gen}
-\end{figure}
-
-\subsubsection{Fósforo blanco, pseudo cuarta generación}
-
-Los dispositivos de cuarta generación per se, no existen ya que el Ejercito de Estados Unidos no ha dado aún tal designación. Dicho lo cual, los dispositivos sin películas de iones con fósforo blanco, son el pináculo de actual de la tecnología de visión nocturna analógica.
-Estos dispositivos equipan un MCP sin película que proveen un ratio mucho más alto de señal-ruido que los típicos dispositivos de tercera generación, reduciendo así el ruido estático o electrónico en condiciones muy oscuras.
-
-Estas unidades de fósforo blanco ofrecen un nivel de detalle incrementado, mayor contraste y rango de tonos. La imagen azulado cálido también ofrece mayor gama de intensidad, resultante en mejor percepción de profundidad que con los tradicionales dispositivos de fósforo verde. En uso prolongado, parecen reducir también la fatiga ocular y los dolores de cabeza comparados con sus homólogos de verde. Ver figura \ref{fig:white_phosphore}.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale = 0.4]{Figures/thrid_gen_example.PNG}
-    \caption{Ejemplo de dispositivo con fósforo blanco. Fuente: \cite{white_phosphore}}
-    \label{fig:white_phosphore}
-\end{figure}
-
-\subsubsection{Visión Térmica}
-
-Podríamos considerar la visión Térmica como una subcategoría de la visión nocturna, ya que es una de las principales técnicas utilizadas en la actualidad cuando se trata de realizar videovigilancia en entornos de baja visibilidad.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale = 0.4]{Figures/thermal_example.PNG}
-    \caption{Ejemplo de dispositivo con fósforo blanco. Fuente \cite{thermal}}
-    \label{fig:thermal_example}
-\end{figure}
-
-En estos dispositivos, en lugar de buscar luz que amplificar, se detecta radiación infrarroja mediante microbolómetros que cambian su resistencia basándose en la temperatura. Este cambio de microbolómetros puede ser medido y convertido a una imagen visible en miles de píxeles.
-Para su funcionamiento se parte de la base de que todo objeto emite algún nivel de luz infrarroja. A más caliente esté el objeto, más radiación emitirá y más cambiará la luz, la resistencia de cada bolómetro.
-
-La resolución de estos dispositivos está bastante por detrás de los dispositivos de visión nocturna actuales, aún así, las distancias de detección de objetivos son típicamente mayores. La regla general es que cuanto mayor sea la resolución, más capaz será la unidad y más va a costar económicamente. También, como la resolución en este caso es más baja que en los dispositivos de visión nocturna, sus imágenes son más dificiles de interpretar y dificultan el reconocimiento de objetos y paisajes. Para más inri, si todos los objetos de la escena se encuentran a similar temperatura, habrá poco contraste entre ellos. Ver figura \ref{fig:thermal_example}.
-
-\section{Video vigilancia IP}
-
-Se conoce como vídeo vigilancia IP a aquella tecnología de seguridad que permite la observación mediante cámaras de vídeo pertenecientes a un CCTV, en red, utilizando para ello internet y protocolos de interconexión. Con ello se consigue la transmisión y supervisión remotas de vídeo a distancia aún sin estar conectado directamente al CCTV \cite{norris2004growth}.
-
-Esta tecnología, que es de alta implantación y utilización en la actualidad, aprovecha el cableado de red local existente para la interconexión de cámaras del circuito e incluso pueden transmitir las imágenes al exterior de la red local por medio de un ISP, permitiendo una transmisión de imágenes en línea. Con ello, se ahorra parte del coste del cableado que utilizan los CCTV y se re-aprovecha en muchos casos el ya existente de red. Otra posible ventaja que ofrecen, es la completa eliminación de cables y la transmisión de vídeo mediante tecnologías inalámbricas \cite{ipvm}.
+Esta tecnología, de alta implantación y utilización en la actualidad, aprovecha el cableado de red local existente para la interconexión de cámaras del circuito e incluso permite transmitir las imágenes al exterior de la red local por medio de un ISP, posibilitando la transmisión de imágenes en línea. Con ello se ahorra parte del coste del cableado que utilizan los CCTV y se reaprovecha en muchos casos el ya existente de red. Otra posible ventaja que ofrecen es la completa eliminación de cables y la transmisión de vídeo mediante tecnologías inalámbricas \cite{ipvm}.
 
 Entre sus posibles usos, aparte de como cámaras de seguridad tradicionales, en la actualidad se la utiliza principalmente en aplicaciones de adquisición de datos mediante inteligencia artificial, ya que al ser cámaras digitales conectadas a una red donde puede haber ordenadores, resulta más sencillo tratar directamente las imágenes que estas captan.
 
@@ -529,6 +387,70 @@ Entre sus posibles usos, aparte de como cámaras de seguridad tradicionales, en 
     \caption{Esquema de sistema de videovigilancia IP distribuido. Fuente: \cite{novus}}
     \label{fig:ip_cctv_example}
 \end{figure}
+
+\section{Estado de la técnica en medición de latencia}
+
+La medición de la latencia extremo a extremo (\textit{sensor-to-screen}) en sistemas de videovigilancia constituye un problema abierto que ha sido abordado desde distintas perspectivas en la literatura reciente.
+
+\subsection{Definición del problema}
+
+En el contexto de la videovigilancia en red, la latencia se define como el intervalo temporal transcurrido desde que un fotograma es captado por el sensor de la cámara hasta que ese mismo fotograma es presentado en el monitor del operador. Este pipeline incluye múltiples etapas: captura del sensor, codificación, transmisión por red, decodificación y renderizado en pantalla. Cada una de ellas contribuye de forma aditiva a la latencia total del sistema.
+
+\subsection{Métodos basados en fotosensor y estímulo luminoso}
+
+El enfoque más directo para medir la latencia extremo a extremo consiste en generar un estímulo luminoso controlado frente al objetivo de la cámara y detectar su aparición en el monitor mediante un fotosensor. La diferencia temporal entre la emisión del estímulo y la detección de su representación en pantalla constituye la latencia del sistema. Este es precisamente el principio de funcionamiento del dispositivo desarrollado en este proyecto.
+
+Kaknjo et al. \cite{latency_measurement} propusieron un método similar utilizando un fotosensor y un LED para medir latencias en sistemas de teleoperación robótica, obteniendo valores típicos entre 488\,ms y 850\,ms en redes LAN, y entre 558\,ms y 1211\,ms a través de Internet. En un trabajo posterior \cite{latency_measurement2}, los mismos autores extendieron el método incorporando un FPGA como elemento de seguridad \textit{bump-in-the-wire}, demostrando que la adición de cifrado hardware incrementa la latencia en aproximadamente 33\,ms por fotograma.
+
+\subsection{Métodos basados en marcas temporales y sincronización}
+
+Una segunda familia de métodos se basa en la inserción de marcas temporales (\textit{timecodes}) en la señal de vídeo y su posterior lectura en el extremo receptor. Este enfoque requiere sincronización precisa entre emisor y receptor, típicamente mediante servidores NTP o PTP. Su principal limitación reside en la necesidad de modificar la señal de vídeo o disponer de acceso al software de la cámara, lo que no siempre es posible en instalaciones de videovigilancia operativas.
+
+\subsection{Métodos basados en detección de objetos}
+
+Trabajos recientes han explorado la utilización de técnicas de visión artificial para automatizar la medición de latencia. En particular, se ha propuesto el uso de modelos de detección de objetos (YOLO-V5) para identificar cambios en la escena y calcular el retardo de respuesta en sistemas de videovigilancia ferroviaria, eliminando la necesidad de hardware dedicado a cambio de una mayor complejidad computacional y menor precisión temporal.
+
+\subsection{Influencia del medio de transmisión en la latencia}
+
+Un aspecto frecuentemente sobreestimado en las instalaciones de videovigilancia es la contribución del cableado a la latencia total del sistema. La propagación de la señal eléctrica u óptica a través del medio físico introduce un retardo que es función directa de la longitud del enlace y de la velocidad de propagación del medio.
+
+\subsubsection{Retardo de propagación por tipo de cable}
+
+Según las especificaciones de la norma ANSI/TIA-568 \cite{tia568}, el retardo de propagación típico para cableado de cobre UTP categoría 5e es inferior a 5\,ns/m, con un valor máximo admisible de 5,7\,ns/m \cite{fluke_propagation}. Para un enlace Ethernet de longitud máxima (100\,m), esto supone un retardo de propagación de aproximadamente 500\,ns (0,5\,\textmu s).
+
+En el caso de la fibra óptica monomodo, la velocidad de propagación de la luz en el vidrio es aproximadamente $c/n$, donde $n \approx 1{,}47$ es el índice de refracción típico. Esto se traduce en un retardo de aproximadamente 4,9\,\textmu s por kilómetro de fibra \cite{iosrjournals_fiber}. Para instalaciones de campus con distancias de 1--2\,km, el retardo de propagación pura se sitúa en el rango de 5--10\,\textmu s.
+
+El cable coaxial (RG-59, RG-6), ampliamente utilizado en instalaciones CCTV analógicas, presenta velocidades de propagación entre 0,66c y 0,82c dependiendo del dieléctrico, resultando en retardos de 4--5\,ns/m, similares al UTP.
+
+\subsubsection{Contribución relativa del cableado frente a otros factores}
+
+Estos valores de retardo de propagación son órdenes de magnitud inferiores a las latencias introducidas por los demás componentes del pipeline de vídeo. Según el \textit{whitepaper} de Axis Communications \cite{axis_latency}, la latencia típica en un sistema de videovigilancia IP se descompone en:
+
+\begin{itemize}
+    \item \textbf{Captura y exposición del sensor}: 8--33\,ms (dependiendo del framerate).
+    \item \textbf{Codificación H.264/H.265}: 30--100\,ms (según perfil y GOP).
+    \item \textbf{Transmisión por red}: 1--5\,ms en LAN (dominado por buffering de switches, no por propagación).
+    \item \textbf{Decodificación y renderizado}: 30--80\,ms.
+\end{itemize}
+
+La latencia total típica oscila entre 100\,ms y 300\,ms para sistemas IP optimizados, pudiendo superar 1\,s en configuraciones con múltiples saltos o codificación de alta compresión \cite{latency_measurement}.
+
+\subsubsection{Impacto indirecto de la longitud del cable}
+
+Aunque la propagación pura es despreciable, las tiradas de cable largas impactan indirectamente en la latencia al requerir equipos activos intermedios (switches, amplificadores, media converters). Cada switch gestionado en modo \textit{store-and-forward} puede añadir entre 1 y 4\,ms de latencia por salto, mientras que los amplificadores de señal coaxial introducen retardos del orden de decenas de microsegundos. En sistemas con múltiples saltos de red, la latencia acumulada de los equipos intermedios puede alcanzar valores significativos.
+
+Adicionalmente, un cableado degradado o de categoría inferior provoca retransmisiones a nivel de enlace en sistemas digitales, incrementando la latencia efectiva de forma impredecible.
+
+\subsection{Posicionamiento del presente proyecto}
+
+El dispositivo desarrollado en este proyecto se enmarca en la primera categoría (fotosensor + estímulo luminoso), con las siguientes diferencias respecto al estado de la técnica:
+
+\begin{itemize}
+    \item \textbf{Portabilidad}: a diferencia de los montajes de laboratorio de Kaknjo et al., el medidor está diseñado como un dispositivo autónomo y transportable, alimentado por batería.
+    \item \textbf{Interfaz integrada}: incorpora una pantalla táctil con interfaz gráfica Qt que permite al técnico operar el dispositivo sin necesidad de un ordenador externo.
+    \item \textbf{Independencia del sistema}: no requiere modificar la señal de vídeo, acceder al software de la cámara ni sincronizar relojes entre dispositivos. El método es puramente óptico y funciona con cualquier cámara y monitor.
+    \item \textbf{Bajo coste}: construido íntegramente con componentes de hardware abierto (Raspberry Pi, ADS1115, fotosensor genérico, LED), frente a soluciones que emplean FPGAs o equipamiento de laboratorio especializado.
+\end{itemize}
 
 \section{Comparativa de Hardware}
 \label{hardware}
@@ -707,8 +629,8 @@ Por ejemplo, dándonos una medición de cuánto tarda una imagen desde que es ca
 
 \section{Funciones}
 
-La principal y única función de este equipo medidor de latencias es la de cuantificar el retardo de un sistema de videovigilancia tomando como punto inicial la toma de la imagen y como final, su retransmisión a través del monitor, mostrando este cálculo el equipo en su pantalla.
-El dispositivo podrá así mismo graficar el retardo que tiene la entrada en ser procesada y mostrada con respecto a una línea temporal y además será capaz de funcionar en la mayor diversidad posible de entornos lumínicos y con la mayoría de cámaras y sistemas de videovigilancia conocidos, esto incluye algunas de las variedades de sistemas de visión nocturna previamente mostradas en este documento.
+La principal función de este equipo medidor de latencias es la de cuantificar el retardo de un sistema de videovigilancia tomando como punto inicial la toma de la imagen y como final, su retransmisión a través del monitor, mostrando este cálculo el equipo en su pantalla.
+El dispositivo podrá así mismo graficar el retardo que tiene la entrada en ser procesada y mostrada con respecto a una línea temporal. El principio de medición es aplicable a cualquier sistema que produzca una imagen visible en un monitor, si bien la validación con cámaras de visión nocturna o térmicas requerirá un ajuste del umbral de detección del fotosensor que se contempla como trabajo futuro.
 
 \section{Características del usuario}
 
@@ -725,11 +647,11 @@ Todo este software, será ejecutado sobre una \textbf{Raspberry Pi Model 3B}.
 Entre las posibles restricciones que se han encontrado a la hora de crear el equipo de medición de latencias podemos enumerar:
 
 \begin{itemize}
-    \item \textbf{Capacidad de medición en entornos muy luminoso}. Se tiene dependencia de un LED que puede variar en tamaño e intensidad, pero que en situaciones de mucha luz, se verá crispado para conseguir destacar en el ambiente. Se considera en este proyecto un ambiente muy luminoso cualquiera que parta de los 300 lúmenes, como puedan ser estancias con amplia iluminación natural o exposición solar directa. %TODO: realizar medidas y variar el número en consonancia
+    \item \textbf{Capacidad de medición en entornos muy luminosos}. Se tiene dependencia de un LED que puede variar en tamaño e intensidad, pero que en situaciones de mucha luz se verá comprometido para conseguir destacar en el ambiente. Se considera en este proyecto un ambiente muy luminoso cualquiera que supere los 300 lúmenes, como puedan ser estancias con amplia iluminación natural o exposición solar directa. %TODO: realizar medidas y variar el número en consonancia
     \item \textbf{Capacidad de medición en sistemas de vídeo térmico}. Al tratarse de equipos que detectan y aumentan el contraste de las imágenes que desprenden calor, el LED deja de resultar útil en estos casos, siendo preciso idear un nuevo sistema para llevar a término las mediciones en estos sistemas.
-    \item \textbf{Capacidad de la batería}. Factor limitante en tanto en cuando se depende de ella para el funcionamiento del dispositivo y establece cuanto tiempo podrá permanecer en funcionamiento el equipo de medición. A su vez, la restricción a la batería es impuesta por el coste de la misma, el peso que añada al dispositivo, que debe seguir siendo portátil, y el propio espacio disponible para ella dentro de la carcasa con el resto de componentes ensamblados.
-    \item \textbf{Longitud de los cables del medidor}. Será una restricción debido a que no se podrán realizar mediciones en CCTV's que ya se encuentren instalados, ya que el LED y el fotosensor tienen únicamente un metro de separación entre ellos. Esto será debido a que en primera instancia, el diseño del dispositivo no contempla la latencia introducida por su propio cableado en el tiempo de encendido del LED y la recepción de las señales del sensor, lo cuál obliga a utilizar un cable de corta longitud, de un metro, para no añadir más variables a las mediciones.
-    \item \textbf{Longitud de los cables de los CCTV's}. Se precisarán de los cables que se utilizarán en la instalación de los equipos para llevar a cabo las mediciones, ya que, dos cámaras conectadas al mismo monitor, pero con cables de longitud distinta, tendrán distinta latencia.
+    \item \textbf{Capacidad de la batería}. Factor limitante en tanto en cuanto se depende de ella para el funcionamiento del dispositivo y establece cuánto tiempo podrá permanecer en funcionamiento el equipo de medición. A su vez, la restricción a la batería es impuesta por el coste de la misma, el peso que añada al dispositivo, que debe seguir siendo portátil, y el propio espacio disponible para ella dentro de la carcasa con el resto de componentes ensamblados.
+    \item \textbf{Longitud de los cables del medidor}. Será una restricción debido a que no se podrán realizar mediciones en CCTV que ya se encuentren instalados, ya que el LED y el fotosensor tienen únicamente un metro de separación entre ellos. Esto será debido a que, en primera instancia, el diseño del dispositivo no contempla la latencia introducida por su propio cableado en el tiempo de encendido del LED y la recepción de las señales del sensor, lo cual obliga a utilizar un cable de corta longitud, de un metro, para no añadir más variables a las mediciones.
+    \item \textbf{Longitud de los cables de los CCTV}. Se precisarán los cables que se utilizarán en la instalación de los equipos para llevar a cabo las mediciones, ya que dos cámaras conectadas al mismo monitor, pero con cables de longitud distinta, tendrán distinta latencia.
 \end{itemize}
 
 \subsection{Tecnologías empleadas}
@@ -738,13 +660,13 @@ Se llevará a cabo el desarrollo e implementación del software del equipo de me
 
 \begin{itemize}
     \item Lenguaje de programación C++ \cite{c++}. En su estándar 2020, utilizando su compilador GNU g++, en su versión 11. Será el lenguaje elegido por preferencia personal del autor, y al ser un lenguaje más cercano al entorno hardware que a menudo proporciona un rendimiento de ejecución superior en todas las aplicaciones.
-    \item Biblioteca de funciones standard de C++.
-    \item Biblioteca de funciones boost \cite{boost}. En su versión 1.77, que proporcionan un extra de funcionalidad sobre la biblioteca standard de C++, permitiendo aprovechar desarrollos de algoritmos ya implementados y probados en lugar de desarrollarlos de cero para este proyecto.
-    \item Qt framework \cite{qt}. En su versión 6, el cuál servirá para el desarrollo de la interfaz de usuario del equipo de medición y ayudar a elevar el nivel de la implementación gracias a la simplificación que provee para tareas que de otro modo serían muy tediosas. Incluye además el módulo Qt Virtual Keyboard para entrada táctil sin dependencias de teclados virtuales externos.
+    \item Biblioteca de funciones estándar de C++.
+    \item Biblioteca de funciones boost \cite{boost}. En su versión 1.77, que proporciona funcionalidad adicional sobre la biblioteca estándar de C++, permitiendo aprovechar desarrollos de algoritmos ya implementados y probados en lugar de desarrollarlos desde cero para este proyecto.
+    \item Qt framework \cite{qt}. En su versión 6, el cual servirá para el desarrollo de la interfaz de usuario del equipo de medición y ayudar a elevar el nivel de la implementación gracias a la simplificación que provee para tareas que de otro modo serían muy tediosas. Incluye además el módulo Qt Virtual Keyboard para entrada táctil sin dependencias de teclados virtuales externos.
     \item Sistema de construcción qmake \cite{qt}, incluido con Qt, que genera los ficheros Makefile a partir del archivo de proyecto (.pro) y gestiona automáticamente las dependencias, la invocación del preprocesador de meta-objetos (MOC), la compilación de formularios (.ui) y la generación de traducciones (.qm).
     \item GNU Make \cite{gnumake}, herramienta de automatización de compilación que ejecuta los Makefile generados por qmake, resolviendo el grafo de dependencias entre ficheros fuente y objetos, y paralelizando la compilación cuando es posible.
     \item ARM GNU Toolchain \cite{armtoolchain} (anteriormente Linaro), cadena de herramientas de compilación cruzada que permite generar binarios ejecutables para arquitectura ARM v8 (Raspberry Pi) desde un ordenador de desarrollo x86-64. Incluye los compiladores \texttt{aarch64-linux-gnu-gcc} y \texttt{aarch64-linux-gnu-g++}, el enlazador y las utilidades binarias asociadas.
-    \item Se utilizarán algunas bibliotecas de funciones externas extraídas de internet para facilitar el desarrollo de ciertas funcionalidades. Algunas de ellas serán: QCustomPlot \cite{qtcustomplot}, para graficar los resultados de las mediciones, PiGpio \cite{pigpio} para facilitar el acceso a los pines GPIO de la Raspberry Pi, rpi\_ads1115 \cite{rpi_ads1115} para la lectura analógica del fotosensor a través del conversor analógico-digital ADS1115 mediante I2C, y libgpiod \cite{libgpiod} para la gestión de interrupciones GPIO mediante la interfaz de dispositivo de caracteres del kernel Linux.
+    \item Se utilizarán algunas bibliotecas de funciones externas extraídas de Internet para facilitar el desarrollo de ciertas funcionalidades. Algunas de ellas serán: QCustomPlot \cite{qtcustomplot}, para graficar los resultados de las mediciones, pigpio \cite{pigpio} para facilitar el acceso a los pines GPIO de la Raspberry Pi, rpi\_ads1115 \cite{rpi_ads1115} para la lectura analógica del fotosensor a través del conversor analógico-digital ADS1115 mediante I2C, y libgpiod \cite{libgpiod} para la gestión de interrupciones GPIO mediante la interfaz de dispositivo de caracteres del kernel Linux.
     \item Doxygen \cite{doxygen}, herramienta de generación automática de documentación a partir de los comentarios presentes en el código fuente C++. Produce documentación navegable en formato HTML con diagramas de clases, grafos de llamadas y relaciones de herencia, facilitando la comprensión y mantenimiento del proyecto.
     \item Graphviz \cite{graphviz} (dot), motor de renderizado de grafos utilizado por Doxygen para generar diagramas de clases, colaboración y llamadas en formato SVG. Permite visualizar la arquitectura del software de forma automática a partir del análisis estático del código.
     \item Scripts de automatización Bash (Linux) y PowerShell (Windows) que unifican en un solo comando la compilación del proyecto en modo Release y la generación de la documentación Doxygen, simplificando el flujo de trabajo del desarrollador y la integración continua.
@@ -755,49 +677,7 @@ Se llevará a cabo el desarrollo e implementación del software del equipo de me
 
 Respecto a la gestión de dependencias externas, se ha optado por la utilización de submódulos de Git para incorporar al repositorio del proyecto aquellas bibliotecas de terceros que se mantienen en repositorios externos. En concreto, la biblioteca rpi\_ads1115 se gestiona como un submódulo Git que referencia el repositorio original de su autor. Este enfoque permite mantener un vínculo directo con la fuente original, facilitar las actualizaciones futuras de la dependencia y mantener separado el código propio del código de terceros. La biblioteca QCustomPlot, por su parte, se incluye directamente en el repositorio al haber sido parcheada para garantizar su compatibilidad con Qt 6.
 
-Tras la comparativa técnica realizada en \ref{hardware}, a continuación se mostrará otra tabla comparativa que, al final, acabará desembocando en la conclusión de por qué se ha elegido la Raspberry Pi Model 3B en lugar del Arduino Uno u otras posibles alternativas. Ver tabla \ref{tab:hardware2}.
-
-\begin{table}[H]
-\caption{Comparativa de placas programables II}
-\label{tab:hardware2}
-\begin{longtable}[c]{|c|c|}
-\toprule 
-\textbf{Arduino} & \textbf{Raspberry Pi}\tabularnewline
-\midrule 
-Parte de un ordenador, que ejecuta & Es un mini PC que puede ejecutar \tabularnewline
-un único programa una y otra vez. & múltiples programas al mismo tiempo. \tabularnewline
-\midrule 
-Pensado para funcionar con & Complicado de hacer funcionar \tabularnewline
-batería. & con batería. \tabularnewline
-\midrule
-Sus componentes y sensores & Requiere instalar bibliotecas \tabularnewline
-funcionan de manera & y software para interactuar con sensores \tabularnewline
-integrada. & y otros componentes. \tabularnewline
-\midrule
-Es barato. & Es caro en relación a Arduino. \tabularnewline
-\midrule 
-Requiere hardware externo & Se conecta fácilmente a internet \tabularnewline
-para conectarse a internet & con su puerto RJ-45 o WiFi por USB. \tabularnewline
-y hay que programarlo para ello. & \tabularnewline
-\midrule 
-Puede venir con almacenamiento & No tiene almacenamiento, pero \tabularnewline
-integrado. & puede usar su ranura \tabularnewline
-& micro SD para ello. \tabularnewline
-\midrule 
-Es un dispositivo & Se debe apagar correctamente \tabularnewline
-plug \& play. & para que no haya riesgo de \tabularnewline
-& corrupción de archivos. \tabularnewline
-\midrule 
-Solo utiliza Arduino y & Se recomienda Python \tabularnewline
-y C/C++. & pero puede usar C, C++ y Ruby. \tabularnewline
-\midrule
-Tiene pines i/o & No tiene pines i/o \tabularnewline
-analógicos. & analógicos. \tabularnewline
-\bottomrule
-\end{longtable}
-\end{table}
-
-Se ha decidido utilizar finalmente la Raspberry Pi 3 Model B debido a su mayor versatilidad con respecto al Arduino, ya que a la hora de implementar el software, Arduino no es compatible con pantallas táctiles de alta resolución y profundidad de color, dando lugar así a una interfaz de usuario menos amigable.
+Como se detalló en la comparativa técnica de la sección \ref{hardware} (tabla \ref{tab:hardware}), se ha elegido la Raspberry Pi 3 Model B frente a Arduino Uno debido a su capacidad para ejecutar un sistema operativo completo, soportar pantallas táctiles de alta resolución y ofrecer conectividad de red integrada — requisitos fundamentales para la interfaz gráfica Qt del medidor de latencias.
 Se ha decidido descartar de esta comparativa arquitecturas de procesador más complejas, como x86-64 \cite{ye2006performance}, por los siguientes motivos:
 
 \begin{enumerate}
@@ -818,30 +698,30 @@ Se utilizarán estas herramientas ajustando sus parámetros para ser compatibles
     \item Protocolo I2C\cite{i2c}.
 \end{itemize}
 
-A estas herramientas habrá que añadir una base de trabajo en forma de sistema operativo, que para el caso, será Raspbian, versión Lite ahora llamada Raspi OS, distribución linux basada en Debian, para Raspberry Pi y que por antonomasia, es referente en buen funcionamiento y estabilidad. Este sistema irá personalizado para ofrecer una experiencia únicamente centrada en la medición de latencias.
-Sobre Raspi Os se ejecutará un script a la inicialización del sistema que será el encargado de lanzar la aplicación automáticamente.
+A estas herramientas habrá que añadir una base de trabajo en forma de sistema operativo, que para el caso será Raspberry Pi OS (anteriormente conocida como Raspbian), versión Lite, distribución Linux basada en Debian para Raspberry Pi y que por antonomasia es referente en buen funcionamiento y estabilidad. Este sistema irá personalizado para ofrecer una experiencia únicamente centrada en la medición de latencias.
+Sobre Raspberry Pi OS se ejecutará un script a la inicialización del sistema que será el encargado de lanzar la aplicación automáticamente.
 
-Se desarrollará todo el proyecto sobre el IDE Qt Creator versión 16, el cual da soporte a todos los elementos de programación anteriormente mencionados, con gran capacidad de abstracción, y en un entorno gráfico amigable. Además provee de herramientas de trabajo compatibles con sistemas embebidos que facilitarán la tarea de generar versiones del software para un dispositivo no X86-64 como es la Raspberry Pi.
+Se desarrollará todo el proyecto sobre el IDE Qt Creator versión 16, el cual da soporte a todos los elementos de programación anteriormente mencionados, con gran capacidad de abstracción y en un entorno gráfico amigable. Además, provee de herramientas de trabajo compatibles con sistemas embebidos que facilitarán la tarea de generar versiones del software para un dispositivo no x86-64 como es la Raspberry Pi.
 
-De cara al control de versiones, se propone la utilización de un repositorio privado durante el desarrollo del producto, alojado en Github y controlado con Git y Qt Creator.
+De cara al control de versiones, se propone la utilización de un repositorio privado durante el desarrollo del producto, alojado en GitHub y controlado con Git y Qt Creator.
 
-Para facilitar todo el desarrollo, en un entorno controlado, se pretendía, en un inicio, utilizar una máquina virtual con Raspi Os la cual correrá sobre VirtualBox \cite{virtualbox}. Se encuentra el impedimento de que no existe una versión de Raspo Os, suficientemente actualizada para la ejecución del proyecto en arquitectura x86-64. A esto hay que añadir, la incompatibilidad de las bibliotecas de funciones, que compiladas en arquitectura x86-64, no resultarían útiles a la hora de portar el proyecto software a la placa programable final y además, en este caso al ser un proyecto que trabaja directamente sobre el hardware de la placa, en este caso, los pines GPIO, y la pantalla táctil, imposibilitaría la necesidad de ir haciendo pruebas directamente sobre la máquina virtual, requiriendo del hardware real para poder testar todo el código escrito relacionado a estos respectos.
-Se propone en este caso, trabajar directamente sobre arquitectura x86, sin necesidad de virtualizar nada, con el objetivo de aumentar el rendimiento de trabajo, acortar tiempos de espera y simplificar la sincronización del hardware arm con la máquina x86, eliminando la capa hipervisora que de otra forma correría funcionando sobre el ordenador de desarrollo.
-A este respecto se ha utilizado una compilación cruzada a través de un compilador para arm que trabaja directamente sobre las bibliotecas de funciones extraídas de la Raspberry Pi, ya precompiladas en ARM. Todos estos ficheros se extraen y copian a la máquina x86 la cuál servirá de plataforma para la compilación cruzada y el despliegue del proyecto posterior en la placa programable.
-La interconexión para compartir las bibliotecas de funciones entre la Raspberry Pi y el pc x86, se realizarás a través de conexión SSH \cite{ssh}, mediante la herramienta rsync\cite{rsync}. A su vez, a la hora de desplegar la aplicación ya compilada desde la máquina x86, se volverá a recurrir al protocolo SSH\cite{ssh}.
-En el caso, para compilar el proyecto, se utilizará el ARM GNU Toolchain, antiguamente conocido como Linaro. La configuración de la toolchain necesaria para compilar desde un ordenador x64 a ARM v8 se explicará más adelante en este documento, pero se adelanta que funcionará utilizando el compilador gcc y g++ en sus respectivas ediciones ARM.
-Una toolchain o cadena de herramientas, que sería su traducción literal, en informática se refiere a un conjunto de programas que utilizados en cadena, es decir, enlazando la salida de uno con la entrada de otro, ayudan en la generación de un producto software.
+Para facilitar todo el desarrollo en un entorno controlado, se pretendía, en un inicio, utilizar una máquina virtual con Raspberry Pi OS que correría sobre VirtualBox \cite{virtualbox}. Se encontró el impedimento de que no existe una versión de Raspberry Pi OS suficientemente actualizada para la ejecución del proyecto en arquitectura x86-64. A esto hay que añadir la incompatibilidad de las bibliotecas de funciones que, compiladas en arquitectura x86-64, no resultarían útiles a la hora de portar el proyecto software a la placa programable final. Además, al ser un proyecto que trabaja directamente sobre el hardware de la placa (pines GPIO y pantalla táctil), se imposibilitaría la realización de pruebas sobre la máquina virtual, requiriendo del hardware real para poder verificar todo el código relacionado con estos aspectos.
+Se propone en este caso trabajar directamente sobre arquitectura x86, sin necesidad de virtualizar, con el objetivo de aumentar el rendimiento de trabajo, acortar tiempos de espera y simplificar la sincronización del hardware ARM con la máquina x86, eliminando la capa hipervisora que de otra forma estaría funcionando sobre el ordenador de desarrollo.
+A este respecto se ha utilizado una compilación cruzada a través de un compilador para ARM que trabaja directamente sobre las bibliotecas de funciones extraídas de la Raspberry Pi, ya precompiladas en ARM. Todos estos ficheros se extraen y copian a la máquina x86, la cual servirá de plataforma para la compilación cruzada y el despliegue del proyecto posterior en la placa programable.
+La interconexión para compartir las bibliotecas de funciones entre la Raspberry Pi y el PC x86 se realizará a través de conexión SSH \cite{ssh}, mediante la herramienta rsync \cite{rsync}. A su vez, a la hora de desplegar la aplicación ya compilada desde la máquina x86, se volverá a recurrir al protocolo SSH \cite{ssh}.
+Para compilar el proyecto se utilizará el ARM GNU Toolchain, antiguamente conocido como Linaro. La configuración de la toolchain necesaria para compilar desde un ordenador x64 a ARM v8 se explicará más adelante en este documento, pero se adelanta que funcionará utilizando el compilador gcc y g++ en sus respectivas ediciones ARM.
+Una toolchain, o cadena de herramientas (que sería su traducción literal), en informática se refiere a un conjunto de programas que, utilizados en cadena —es decir, enlazando la salida de uno con la entrada de otro—, ayudan en la generación de un producto software.
 
-Una consideración muy a tener en cuenta durante el análisis de la placa a utilizar, es que la Raspberry frente a Arduino, no tiene pines de entrada/salida analógicos, con lo cuál no podrá ser utilizada inicialmente para hacer lecturas del sensor de luz OPT101, que es, en este caso, el elegido para el proyecto frente al resto de sus competidores de tipo foto resistivo, los cuáles tienen un tiempo de respuesta superior y no son tan apropiados para hacer mediciones de latencias que deben ser "instantáneas". Es este y no otro, el motivo por el cual ha sido elegido candidato para la realización de este proyecto. Para salvar este escoyo, que no se tuvo en cuenta durante el análisis inicial del proyecto se ha recurrido a I2C\cite{i2c}, una interfaz de intercomunicación de circuitos que tiene integrada la Raspberry Pi en sus pines GPIO y que es posible activar desde la bios de configuración de la misma. Será, utilizando esta interfaz, la biblioteca PiGpio\cite{pigpio}, y un conversor de señal analógico digital modelo ADS1115.
+Una consideración importante durante el análisis de la placa a utilizar es que la Raspberry, frente a Arduino, no tiene pines de entrada/salida analógicos, con lo cual no podrá ser utilizada inicialmente para hacer lecturas del sensor de luz OPT101, que es, en este caso, el elegido para el proyecto frente al resto de sus competidores de tipo fotorresistivo, los cuales tienen un tiempo de respuesta superior y no son tan apropiados para hacer mediciones de latencias que deben ser prácticamente instantáneas. Es este y no otro el motivo por el cual ha sido elegido candidato para la realización de este proyecto. Para salvar este escollo, que no se tuvo en cuenta durante el análisis inicial del proyecto, se ha recurrido a I2C \cite{i2c}, una interfaz de intercomunicación de circuitos que tiene integrada la Raspberry Pi en sus pines GPIO y que es posible activar desde la configuración del sistema. Será utilizando esta interfaz, la biblioteca pigpio \cite{pigpio} y un conversor de señal analógico-digital modelo ADS1115.
 
 \chapter{Desarrollo del proyecto}
 
-El medidor de latencias para sistemas de videovigilancia, es un dispositivo, que de manera sencilla, a través de la emisión y captación de un impulso lumínico, realiza los cálculos necesarios para averiguar el tiempo existente que necesita un dispositivo de vídeo desde que capta una imagen hasta que la proyecta en un monitor.
-Se detallarán en este capítulo, las fases de su ciclo comercial, como funciona, que características y apariencia tendrán su sistema software, que problemas es capaz de resolver y como está programado.
+El medidor de latencias para sistemas de videovigilancia es un dispositivo que, de manera sencilla, a través de la emisión y captación de un impulso lumínico, realiza los cálculos necesarios para averiguar el tiempo que necesita un dispositivo de vídeo desde que capta una imagen hasta que la proyecta en un monitor.
+Se detallarán en este capítulo las fases de su ciclo comercial, cómo funciona, qué características y apariencia tendrá su sistema software, qué problemas es capaz de resolver y cómo está programado.
 
 \section{Modelo de ciclo de vida}
 
-Se describe a continuación cuales son las posibilidades del producto a lo largo de su vida útil más allá del alcance de este proyecto. Como se pretende comercializar el producto, se proporciona a continuación un modelo de ciclo de vida con la planificación estratificada de las expectativas actuales al respecto.
+Se describe a continuación cuáles son las posibilidades del producto a lo largo de su vida útil más allá del alcance de este proyecto. Dado que se pretende comercializar el producto, se proporciona a continuación un modelo de ciclo de vida con la planificación estratificada de las expectativas actuales al respecto.
 
 \begin{itemize}
     \item \textbf{Desarrollo del producto}: Se comienza el proyecto en esta fase, que es la que ocupa la redacción de este documento. Inicialmente, se concibe la idea como un proyecto con potencial, que no tiene competencia en el mercado y en el que hay que hacer una inversión inicial para su desarrollo. Se asume aquí que el prototipo del proyecto tal como se está desarrollando cumple unos mínimos requisitos de funcionalidad y que además es viable en cuanto a coste económico y tiempo. Se desarrolla el medidor de latencia teniendo en cuenta su posible actualización posterior en función de su continuidad o las necesidades.
@@ -872,7 +752,7 @@ En cuanto al producto software, se seguirá un modelo de ciclo de vida tradicion
     \renewcommand{\theenumi}{R.F.\arabic{enumi}}
     \renewcommand{\theenumii}{\theenumi.\arabic{enumii}}
     \renewcommand{\theenumiii}{\theenumii.\arabic{enumiii}}
-    \item Como usuario se desea que su aspecto físico, sea el de una caja plastica PLA rectangular, impresa en 3D con unas dimensiones de (insertar dimensiones reales aquí), que incorpore una pantalla táctil en su frontal y un conmutador de encendido en alguno de sus laterales.
+    \item Como usuario se desea que su aspecto físico sea el de una caja plástica PLA rectangular, impresa en 3D con unas dimensiones de (insertar dimensiones reales aquí), que incorpore una pantalla táctil en su frontal y un conmutador de encendido en alguno de sus laterales.
     \item Como usuario se solicita que en la carcasa, se disponga también de tres aberturas funcionales. 
     \begin{enumerate}
         \item La primera, será utilizada para el puerto de carga de la batería del medidor de latencia.
@@ -921,8 +801,8 @@ En cuanto al producto software, se seguirá un modelo de ciclo de vida tradicion
     \label{rf15}
     \item Como usuario se quiere que el lenguaje por defecto del software sea español.
     \label{rf16}
-    \item Como usuario se desea que desde la pantalla de mediciones se puedan visualizar los resultados de las mediciones de latencia en forma de gráfico bidimensional cíclico, en base al tiempo entre mediciones especificado, en tiempo real mientras se van realizando. 
-    \item Como usuario se quiere mostrar numéricamente en ms's la latencia del sistema medido en tiempo real mientras se realiza la medición.
+    \item Como usuario se desea que desde la pantalla de mediciones se puedan visualizar los resultados de las mediciones de latencia en forma de gráfico bidimensional cíclico, con base en el tiempo entre mediciones especificado, en tiempo real mientras se van realizando. 
+    \item Como usuario se quiere mostrar numéricamente en ms la latencia del sistema medido en tiempo real mientras se realiza la medición.
     \item Como usuario se quiere comenzar la medición pulsando un botón dentro de la pantalla de mediciones.
     \item Como usuario se quiere poder pausar la medición pulsando el mismo botón de inicio dentro de la pantalla de mediciones.
     \item Como usuario se especifica que se podrá detener la medición con un botón situado a la derecha del de iniciar medición.
@@ -1393,7 +1273,7 @@ Excepciones               & \tabitem \hyperref[pasito2]{Paso 2}. Si el usuario p
                           & \rownumber El sistema vuelve a la pantalla de inicio \\
                           & y termina el caso de uso. \\ \hline
 Comentarios               & Se podrá borrar también la medición una \\
-                          & vez consultados los datos de ésta desde la \\
+                          & vez consultados los datos de esta desde la \\
                           & pantalla final de \ref{cu6}. \\ \hline
 \end{longtable}
     
@@ -1947,7 +1827,7 @@ Ya se tendría la base de la carcasa preparada para anclar en ella la Raspberry 
     \label{fig:pinout_scheme}
 \end{figure}
 
-En primer lugar, se procede a la preparación de la pantalla. Se le quitan los separadores que unen la pcb a la pantalla per se y se atornilla la pantalla completa a la parte superior de la carcasa impresa previamente en 3D.
+En primer lugar, se procede a la preparación de la pantalla. Se le quitan los separadores que unen la PCB a la pantalla propiamente dicha y se atornilla la pantalla completa a la parte superior de la carcasa impresa previamente en 3D.
 
 El siguiente paso es, instalar y cablear la placa controladora de la batería, en el espacio destinado para ello, realizar su cableado e instalar la batería sobre esta.
 
@@ -1972,9 +1852,9 @@ Se puede cerrar la carcasa con los cuatro tornillos restantes. Se facilita ahora
     \label{fig:wiring_pi}
 \end{figure}
 
-Para finalizar la instalación se instalara la tarjeta micro sd con el software previamente cargado en su ranura correspondiente.
+Para finalizar la instalación se instalará la tarjeta micro SD con el software previamente cargado en su ranura correspondiente.
 
-* Para el prototipo se ha fabricado una nueva versión de la carcasa utilizando como molde la original a mano modificada anteriormente, y complementada con los componentes que a posteriori se instalarán en ella para la correcta medición de los espacios necesarios para los puertos de carga y la instalación del controlador de las baterías.
+* Para el prototipo se ha fabricado una nueva versión de la carcasa utilizando como molde la original modificada a mano anteriormente, y complementada con los componentes que posteriormente se instalarán en ella para la correcta medición de los espacios necesarios para los puertos de carga y la instalación del controlador de las baterías.
 
 \section{Implementación}
 
@@ -2059,7 +1939,8 @@ El \texttt{MainWindow} escucha la señal \texttt{settingsApplied()} para re-apli
 Gestiona la serialización de mediciones a formato JSON y su almacenamiento en disco. El formato elegido es sencillo y legible:
 \begin{verbatim}
 { "Name": "...", "Date": "ISO8601",
-  "TimeFactor": N, "Duration": N, "Latencies": [...] }
+  "TimeFactor": N, "Duration": N,
+  "Latencies": [...] }
 \end{verbatim}
 
 \subsubsection{Bugs detectados y corregidos}
@@ -2326,9 +2207,9 @@ qemu-system-aarch64 -machine raspi3b -cpu cortex-a53 -m 1024 \
 \textbf{Dificultades encontradas}:
 \begin{itemize}
     \item La extracción del kernel de la imagen requiere montar la partición boot con offset calculado manualmente (\texttt{mount -o loop,offset=\$((Start*512))}). Los comandos \texttt{losetup --partscan} no funcionaban correctamente en todas las distribuciones.
-    \item Las imágenes recientes de Raspi OS utilizan sectores de 4096 bytes en lugar de 512, generando warnings de \texttt{fdisk} y offsets incorrectos si no se tiene en cuenta.
+    \item Las imágenes recientes de Raspberry Pi OS utilizan sectores de 4096 bytes en lugar de 512, generando warnings de \texttt{fdisk} y offsets incorrectos si no se tiene en cuenta.
     \item El formato qcow2 no es compatible con la interfaz SD emulada de la máquina \texttt{raspi3b}: se requiere formato raw con tamaño potencia de 2.
-    \item La máquina \texttt{raspi3b} de QEMU es altamente inestable con kernels recientes: el proceso QEMU finalizaba inmediatamente sin mostrar salida ni error, al no ser compatible el \texttt{kernel8.img} de imágenes Raspi OS modernas con la emulación limitada del hardware (GPU VideoCore no emulada).
+    \item La máquina \texttt{raspi3b} de QEMU es altamente inestable con kernels recientes: el proceso QEMU finalizaba inmediatamente sin mostrar salida ni error, al no ser compatible el \texttt{kernel8.img} de imágenes Raspberry Pi OS modernas con la emulación limitada del hardware (GPU VideoCore no emulada).
     \item No emula GPU, por lo que las aplicaciones gráficas no pueden renderizarse de forma nativa.
 \end{itemize}
 
@@ -2418,7 +2299,7 @@ El \texttt{Dockerfile} incluye:
 \begin{tabular}{|p{3.5cm}|p{3cm}|p{6.5cm}|}
 \hline
 \textbf{Herramienta} & \textbf{Plataforma} & \textbf{Propósito} \\ \hline
-QTest & Windows + Linux & Pruebas unitarias automatizadas (147 tests, Core + GUI) \\ \hline
+QTest & Windows + Linux & Pruebas unitarias automatizadas (145 superados, 2 pendientes de hardware) \\ \hline
 AddressSanitizer & Linux & Detección de fugas de memoria y accesos inválidos \\ \hline
 Docker + qemu-user & Linux & Emulación ARM64 para ejecución del binario destino \\ \hline
 Xvfb + x11vnc & Docker ARM64 & Visualización gráfica de la aplicación vía VNC \\ \hline
@@ -2461,7 +2342,7 @@ La compilación en modo Debug no produce warnings ni errores (\texttt{0 warnings
 
 \subsubsection{Entorno Desktop (Linux x86\_64) con AddressSanitizer}
 
-La ejecución sobre Linux (Ubuntu 24.04, GCC 13, Qt 6.11.1) con AddressSanitizer habilitado produce los mismos 147 tests pasados con 2 skipped. El informe de ASan al finalizar indica:
+La ejecución sobre Linux (Ubuntu 24.04, GCC 13, Qt 6.11.1) con AddressSanitizer habilitado produce los mismos resultados: 145 tests superados y 2 omitidos. El informe de ASan al finalizar indica:
 
 \begin{itemize}
     \item \textbf{Fugas reales detectadas}: 0 (tras la corrección del bug en \texttt{JsonOperator}).
@@ -2540,7 +2421,7 @@ La resolución coincide con la pantalla táctil de 7 pulgadas del dispositivo re
 \centering
 \caption{Resumen consolidado de validación}
 \label{tab:results_summary}
-\begin{tabular}{|p{4cm}|p{3.5cm}|p{2cm}|p{3.5cm}|}
+\begin{tabular}{|p{3.5cm}|p{3.5cm}|p{2.5cm}|p{3.5cm}|}
 \hline
 \textbf{Entorno} & \textbf{Herramienta} & \textbf{Resultado} & \textbf{Observaciones} \\ \hline
 Windows x86\_64 & QTest & 145/147 pass & 2 skip (timeout stubs) \\ \hline
@@ -2591,7 +2472,7 @@ El proceso de establecimiento de esta toolchain resultó ser la tarea de mayor c
 
 Se estableció una estrategia de pruebas en tres niveles:
 \begin{enumerate}
-    \item \textbf{Pruebas unitarias} (QTest): 147 tests automatizados distribuidos en 10 suites, cubriendo la totalidad de los módulos Core y GUI. Todos los tests pasan satisfactoriamente en los tres entornos de compilación (Windows x86\_64, Linux x86\_64, ARM64 emulado).
+    \item \textbf{Pruebas unitarias} (QTest): 147 tests automatizados distribuidos en 10 suites, cubriendo la totalidad de los módulos Core y GUI. De estos, 145 se superan satisfactoriamente en los tres entornos de compilación (Windows x86\_64, Linux x86\_64, ARM64 emulado) y 2 quedan pendientes de validación con hardware real (escenarios de timeout del sensor).
     \item \textbf{Análisis de memoria} (AddressSanitizer + Valgrind): cero fugas de memoria reales y cero accesos inválidos detectados tras la corrección de los defectos encontrados durante la fase de desarrollo.
     \item \textbf{Validación sobre plataforma destino}: ejecución del binario ARM64 en un contenedor Docker con emulación QEMU user-mode, verificando el correcto funcionamiento gráfico sobre una resolución de 800$\times$480 mediante VNC.
 \end{enumerate}
@@ -2633,14 +2514,16 @@ Cada uno de estos problemas, de forma individual, tiene una solución relativame
 
 Una vez resuelta la configuración de la toolchain, el resultado es un flujo de trabajo robusto y completamente automatizado. Un único script (\texttt{setup-toolchain.sh}) permite a cualquier desarrollador, partiendo de un sistema Ubuntu 24.04 limpio, obtener un binario de producción ARM64 sin intervención manual. Alternativamente, un contenedor Docker multi-stage (\texttt{Dockerfile.production}) encapsula absolutamente todo el entorno de compilación, permitiendo generar el binario desde cualquier máquina con Docker instalado — incluyendo Windows con WSL2.
 
-El software desarrollado resuelve un problema real en el ámbito de la videovigilancia para sistemas críticos. En entornos donde la respuesta del operador depende directamente de la latencia del sistema de vídeo — salas de control de infraestructuras críticas, centros de vigilancia penitenciaria, control fronterizo — no existía hasta ahora un instrumento portátil, económico y autónomo capaz de cuantificar ese retardo de forma objetiva y repetible. El dispositivo propuesto llena ese vacío con una solución que combina hardware de bajo coste (Raspberry Pi, LED, fotosensor ADC) con un software embebido que proporciona:
+El software desarrollado aborda un problema real en el ámbito de la videovigilancia para sistemas críticos. En entornos donde la respuesta del operador depende directamente de la latencia del sistema de vídeo — salas de control de infraestructuras críticas, centros de vigilancia penitenciaria, control fronterizo — no se ha identificado hasta ahora un instrumento portátil, económico y autónomo diseñado específicamente para cuantificar ese retardo. El dispositivo propuesto ofrece una solución que combina hardware de bajo coste (Raspberry Pi, LED, fotosensor ADC) con un software embebido que proporciona:
 
 \begin{itemize}
     \item Medición automatizada con calibración previa para adaptarse a las condiciones ambientales.
     \item Interfaz táctil accesible, con soporte multilingüe y modos de visualización adaptados (nocturno, daltónico).
     \item Persistencia y consulta del historial de mediciones, facilitando la comparación temporal y la auditoría de sistemas.
-    \item Verificación exhaustiva mediante 147 pruebas unitarias automatizadas, análisis de memoria con AddressSanitizer y Valgrind, y validación gráfica sobre la resolución real del dispositivo.
+    \item Verificación exhaustiva del software mediante 145 pruebas unitarias superadas (2 pendientes de validación con hardware real), análisis de memoria con AddressSanitizer y Valgrind, y validación gráfica sobre la resolución del dispositivo destino.
 \end{itemize}
+
+Cabe señalar que la precisión y repetibilidad de las mediciones deberá ser caracterizada mediante calibración frente a equipos de referencia una vez se disponga de la integración completa con el hardware real, aspecto que se contempla como trabajo futuro.
 
 El proyecto demuestra que es viable desarrollar software embebido de calidad profesional sobre Qt 6 para plataformas ARM64, incluso partiendo de una cadena de herramientas que no está oficialmente soportada por el fabricante del framework. El coste de esa viabilidad es una inversión inicial considerable en la configuración del entorno, pero una vez amortizada, el ciclo de desarrollo se equipara al de cualquier aplicación Desktop convencional.
 
@@ -2837,7 +2720,7 @@ cd /app
 
 Conectar un cliente VNC (TigerVNC, Remmina, RealVNC) a \texttt{localhost:5900} para visualizar la pantalla emulada de 800$\times$480 píxeles.
 
-\textbf{Nota sobre la limitación de qmake bajo QEMU}: el error \texttt{Variable QMAKE\_CXX.COMPILER\_MACROS is not defined} se produce porque qmake ejecuta internamente \texttt{g++ -E -dM} para extraer las macros del compilador. Cuando \texttt{g++} se ejecuta a través de QEMU user-mode, la emulación altera sutilmente la salida estándar del subproceso, impidiendo que qmake la parsee correctamente. La solución adoptada (compilar en el host con cross-compiler y ejecutar en el contenedor) evita este problema al no invocar qmake bajo emulación.
+\textbf{Nota}: La limitación de qmake bajo emulación QEMU que motiva esta arquitectura de compilación se describe en detalle en la sección de Implementación.
 
 \subsection{Script de gestión docker-rpi.sh}
 
@@ -3330,7 +3213,7 @@ Define las estructuras compartidas entre capas:
 \centering
 \caption{Estructuras de datos principales}
 \label{tab:dev_datamodel}
-\begin{tabular}{|p{4.5cm}|p{9cm}|}
+\begin{tabular}{|p{4cm}|p{9cm}|}
 \hline
 \textbf{Estructura} & \textbf{Descripción} \\ \hline
 \texttt{Languages} & Enum: SPANISH(0), ENGLISH(1), POLISH(2). \\ \hline
@@ -3348,7 +3231,7 @@ Singleton que centraliza la carga, guardado y notificación de cambios de config
 \centering
 \caption{API pública de AppSettings}
 \label{tab:dev_appsettings}
-\begin{tabular}{|p{4.5cm}|p{8.5cm}|}
+\begin{tabular}{|p{4.5cm}|p{8cm}|}
 \hline
 \textbf{Método} & \textbf{Descripción} \\ \hline
 \texttt{instance()} & Devuelve la instancia única (patrón Singleton). \\ \hline
@@ -3373,12 +3256,12 @@ Gestiona la serialización y deserialización de mediciones en formato JSON.
 \centering
 \caption{API pública de JsonOperator}
 \label{tab:dev_jsonoperator}
-\begin{tabular}{|p{4.5cm}|p{8.5cm}|}
+\begin{tabular}{|p{5cm}|p{8cm}|}
 \hline
 \textbf{Método} & \textbf{Descripción} \\ \hline
 \texttt{loadFileFromDisk(path)} & Abre un fichero .json, lo parsea y almacena el documento interno. Devuelve \texttt{true} si el fichero existe y se abre correctamente. \\ \hline
-\texttt{saveMeasureToDisk(measures)} & Serializa una estructura \texttt{Measures} a JSON y la escribe en disco. El nombre del fichero se genera automáticamente a partir de la fecha ISO (con colons reemplazados por guiones para compatibilidad Windows). \\ \hline
-\texttt{parseJsonToStruct(measures)} & Transfiere los datos del documento JSON interno a una estructura \texttt{Measures}. Calcula automáticamente la latencia media. \\ \hline
+\texttt{saveMeasureToDisk(\-measures)} & Serializa una estructura \texttt{Measures} a JSON y la escribe en disco. El nombre del fichero se genera automáticamente a partir de la fecha ISO (con dos puntos reemplazados por guiones para compatibilidad Windows). \\ \hline
+\texttt{parseJsonToStruct(\-measures)} & Transfiere los datos del documento JSON interno a una estructura \texttt{Measures}. Calcula automáticamente la latencia media. \\ \hline
 \texttt{setPath(path)} & Establece el directorio base para lectura/escritura de ficheros. \\ \hline
 \end{tabular}
 \end{table}
@@ -3402,7 +3285,7 @@ Controla el LED estimulador (GPIO 24) y el fotosensor (ADS1115 ADC vía I2C). En
 \centering
 \caption{API pública de SensorOperator}
 \label{tab:dev_sensoroperator}
-\begin{tabular}{|p{4.5cm}|p{8.5cm}|}
+\begin{tabular}{|p{4.5cm}|p{8cm}|}
 \hline
 \textbf{Método} & \textbf{Descripción} \\ \hline
 \texttt{takeMeasure(registry)} & Ejecuta un ciclo completo de medición. Para cada pulso: apaga LED (50ms estabilización), enciende LED, espera detección del fotosensor (timeout 5s), registra latencia. Repite según \texttt{duration/timeFactor}. Devuelve \texttt{true} si al menos una medición fue válida (latencia $>$ 0). \\ \hline
@@ -3447,16 +3330,16 @@ Cada pantalla es un \texttt{QWidget} independiente con su propio \texttt{.ui} (Q
 \centering
 \caption{Responsabilidades de cada pantalla}
 \label{tab:dev_screens}
-\begin{tabular}{|p{4.5cm}|p{9cm}|}
+\begin{tabular}{|p{4cm}|p{9cm}|}
 \hline
 \textbf{Pantalla} & \textbf{Responsabilidad} \\ \hline
 \texttt{HomeScreen} & 4 botones de navegación. Sin estado interno. \\ \hline
-\texttt{MeasureScreen} & Calibración y medición asíncronas (\texttt{QtConcurrent::run}). Flash visual no-bloqueante con \texttt{QTimer}. Gráfica con paralelización para datasets $>$ 100 puntos. \\ \hline
+\texttt{MeasureScreen} & Calibración y medición asíncronas (\texttt{QtConcurrent::run}). Flash visual no bloqueante con \texttt{QTimer}. Gráfica con paralelización para datasets $>$ 100 puntos. \\ \hline
 \texttt{SettingsScreen} & Widgets sincronizados con \texttt{AppSettings}. Bloquea señales durante carga para evitar efectos secundarios. \\ \hline
-\texttt{HelpScreen} & Botón ``Manual de usuario'' se habilita/deshabilita según exista el recurso HTML embebido para el idioma activo. \\ \hline
+\texttt{HelpScreen} & Botón «Manual de usuario» se habilita o deshabilita según exista el recurso HTML embebido para el idioma activo. \\ \hline
 \texttt{HelpInfoScreen} & \texttt{QTextBrowser} que renderiza HTML embebido vía \texttt{qrc:/} o texto plano. \\ \hline
 \texttt{RegistryScreen} & \texttt{QFileSystemModel} sobre la carpeta \texttt{Measures/}. Acciones: comprobar, borrar, renombrar. \\ \hline
-\texttt{RegistryDisplayScreen} & Muestra datos de una medición guardada + gráfica con la misma lógica de \texttt{plotMeasure}. \\ \hline
+\texttt{RegistryDisplayScreen} & Muestra datos de una medición guardada y gráfica con la misma lógica de \texttt{plotMeasure}. \\ \hline
 \end{tabular}
 \end{table}
 
@@ -3498,10 +3381,10 @@ El proyecto incluye una batería de pruebas unitarias basadas en \textbf{QTest}.
 \centering
 \caption{Cobertura de pruebas unitarias}
 \label{tab:dev_tests}
-\begin{tabular}{|p{3.5cm}|p{1cm}|p{6cm}|}
+\begin{tabular}{|p{4.5cm}|p{1cm}|p{6cm}|}
 \hline
 \textbf{Suite} & \textbf{Tests} & \textbf{Ámbito} \\ \hline
-\texttt{tst\_datamodel} & 17 & Valores por defecto, edge cases de structs. \\ \hline
+\texttt{tst\_datamodel} & 17 & Valores por defecto, casos extremos de structs. \\ \hline
 \texttt{tst\_appsettings} & 23 & Singleton, load/save, señales, stylesheets. \\ \hline
 \texttt{tst\_jsonoperator} & 14 & Parse, save, round-trip, ficheros corruptos. \\ \hline
 \texttt{tst\_sensoroperator} & 14 & Validación parámetros, stop, calibración con stubs. \\ \hline
@@ -3510,7 +3393,7 @@ El proyecto incluye una batería de pruebas unitarias basadas en \textbf{QTest}.
 \texttt{tst\_settingsscreen} & 20 & Apply/cancel, sincronización widgets-settings. \\ \hline
 \texttt{tst\_helpscreen} & 11 & Botón manual habilitado por idioma. \\ \hline
 \texttt{tst\_registryscreen} & 10 & TreeView, botones, señales. \\ \hline
-\texttt{tst\_registrydisplayscreen} & 14 & displayMeasure, ploteo, edge cases. \\ \hline
+\texttt{tst\_registrydisplay\-screen} & 14 & displayMeasure, ploteo, casos extremos. \\ \hline
 \hline
 \textbf{Total} & \textbf{147} & \\ \hline
 \end{tabular}
