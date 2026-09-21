@@ -107,6 +107,72 @@ para cuantificar de forma objetiva la latencia de un sistema de videovigilancia.
 \end{frame}
 
 % =============================================================================
+\section{Estado de la técnica}
+% =============================================================================
+
+\begin{frame}{Estado de la técnica en medición de latencia}
+
+\begin{columns}[T]
+\begin{column}{0.55\textwidth}
+\textbf{Tres enfoques existentes:}
+\begin{enumerate}
+    \item \textbf{Fotosensor + estímulo luminoso} \\
+    {\small LED → cámara → monitor → fotosensor. Kaknjo et al.: 488--850\,ms (LAN), 558--1211\,ms (Internet).}
+    \item \textbf{Marcas temporales (timecodes)} \\
+    {\small Requiere NTP/PTP y acceso al software de la cámara. No viable en instalaciones operativas.}
+    \item \textbf{Detección de objetos (YOLO-V5)} \\
+    {\small Sin hardware dedicado, pero menor precisión temporal y alta complejidad computacional.}
+\end{enumerate}
+\end{column}
+\begin{column}{0.4\textwidth}
+\begin{block}{Latencia típica (sistema IP)}
+\scriptsize
+\begin{tabular}{lr}
+\toprule
+\textbf{Etapa} & \textbf{Retardo} \\
+\midrule
+Sensor (captura) & 8--33\,ms \\
+Codificación & 30--100\,ms \\
+Red (LAN) & 1--5\,ms \\
+Decodificación & 30--80\,ms \\
+\midrule
+\textbf{Total típico} & \textbf{100--300\,ms} \\
+\bottomrule
+\end{tabular}
+\end{block}
+\vspace{0.2cm}
+{\small Puede superar 1\,s con alta compresión o múltiples saltos.}
+\end{column}
+\end{columns}
+
+\end{frame}
+
+% =============================================================================
+\begin{frame}{Posicionamiento del proyecto}
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Criterio} & \textbf{Kaknjo et al.} & \textbf{Este proyecto} \\
+\midrule
+Portabilidad & Montaje laboratorio & Dispositivo autónomo \\
+Interfaz & PC externo & Pantalla táctil integrada \\
+Hardware & FPGA & Raspberry Pi (bajo coste) \\
+Modificación señal & No requerida & No requerida \\
+Autonomía & Alimentación fija & Batería \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{0.5cm}
+
+\begin{block}{Diferenciación clave}
+Método puramente óptico, independiente del sistema bajo prueba: funciona con \textbf{cualquier cámara y monitor} sin modificar la señal de vídeo ni sincronizar relojes.
+\end{block}
+
+\end{frame}
+
+% =============================================================================
 \section{Objetivos y alcance}
 % =============================================================================
 

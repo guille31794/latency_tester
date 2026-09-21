@@ -282,6 +282,12 @@ RUN rm -rf /tmp/pigpio-master
 # ---------------------------------------------------------------------------
 COPY . /project
 
+# Ensure submodule content is present (in case COPY didn't include it)
+RUN if [ ! -f /project/LatencyTester/Libs/rpi_ads1115/ads1115rpi.cpp ]; then \
+        cd /project && git init && git submodule update --init --recursive 2>/dev/null || \
+        (echo "ERROR: rpi_ads1115 submodule not found. Clone with --recurse-submodules" && exit 1); \
+    fi
+
 # Build PRODUCTION binary (real drivers)
 RUN mkdir -p /project/build_arm64 && cd /project/build_arm64 && \
     /opt/Qt/${QT_VERSION}/arm64/bin/qmake /project/LatencyTester/LatencyTester.pro \

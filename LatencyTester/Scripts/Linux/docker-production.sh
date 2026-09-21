@@ -37,6 +37,12 @@ err()   { echo -e "${RED}ERROR: $1${NC}" >&2; exit 1; }
 cmd_build() {
     step "Building production image (this takes 2-3 hours on first run)..."
     
+    # Ensure submodules are initialized
+    if [[ ! -f "$PROJECT_DIR/LatencyTester/Libs/rpi_ads1115/ads1115rpi.cpp" ]]; then
+        step "Initializing git submodules..."
+        cd "$PROJECT_DIR" && git submodule update --init --recursive
+    fi
+    
     # Ensure ARM64 emulation is available
     if ! docker run --rm --platform linux/arm64 arm64v8/ubuntu:24.04 uname -m &>/dev/null 2>&1; then
         step "Enabling ARM64 emulation..."
